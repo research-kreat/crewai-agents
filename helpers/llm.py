@@ -8,14 +8,19 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 def embed_text(text: str, model: str) -> List[float]:
     try:
         response = ollama.embeddings(model=model, prompt=text)
-        return response.get("embedding", [])
+        if not response or "embedding" not in response:
+            print(f"⚠️ No embedding in response for: {text[:50]}... | Response: {response}")
+            return None
+        return response["embedding"]
     except Exception as e:
+        print(f"❌ Exception embedding: {text[:50]}... | Error: {e}")
         return None
+
 
 # ---------- Main Embedding Function ----------
 def generate_embeddings(
     texts: List[str],
-    model: str = "mxbai-embed-large",
+    model: str = "mxbai-embed-large:latest",
     chunk_size: int = 100,
     max_workers: int = 6,
     collection: Any = None,

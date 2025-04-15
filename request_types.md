@@ -47,7 +47,7 @@ Run a Cypher query and return GPT-generated insights from the result data.
 ### `GET /agent/scout/summary-info?type=...`
 Retrieve pre-summarized database information.
 
-**Query Parameter:**
+**Query Parameter:** 
 - `type`:  `inventor_analysis`
 - `type` (optional): Defaults to `technology_trends`
 ---------
