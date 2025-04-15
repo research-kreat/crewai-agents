@@ -3,6 +3,7 @@ from neo4j import GraphDatabase
 import re
 import os
 from dotenv import load_dotenv
+from helpers.chroma_helpers import chroma_trends
   
 load_dotenv()
 
