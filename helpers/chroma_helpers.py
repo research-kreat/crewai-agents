@@ -92,11 +92,22 @@ def init_all_collections():
 # -----------------------------
 def chroma_query(dataset_name: str, prompt: str, top_k: int = 5):
     collection = chroma_client.get_collection(name=dataset_name, embedding_function=embedding_fn)
+    
+    # Perform the query with the prompt
     results = collection.query(query_texts=[prompt], n_results=top_k)
+    
+    # Extract the indices of the top K results
     indices = [int(id) for id in results["ids"][0]]
+    
+    # Return the data for the corresponding rows
     return dataframes[dataset_name].iloc[indices].to_dict(orient="records")
 
 # -----------------------------
 # Shortcut for Trends Dataset
 # -----------------------------
-chroma_trends = lambda prompt, top_k=5: chroma_query("trends", prompt, top_k)
+def chroma_trends(prompt: str, top_k: int = 5):
+    return chroma_query("trends", prompt, top_k)
+
+# Example Usage
+# trends = chroma_trends("AI trends in 2025")
+# print(trends)

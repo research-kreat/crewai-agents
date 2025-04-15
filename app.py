@@ -53,8 +53,8 @@ def run_scout_query():
     except Exception as e:
         return jsonify({"error": f"Failed to run query: {str(e)}"}), 500
 
-    # Step 4: Generate insights from the data
-    insights_output = scout.convert_data_to_insights(data_from_neo, generated_query)
+    # Step 4: Generate insights from the data and trends
+    insights_output = scout.convert_data_to_insights(data_from_neo, generated_query, user_prompt)
 
     return jsonify(insights_output), 200
 
