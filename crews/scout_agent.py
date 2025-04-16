@@ -3,7 +3,7 @@ from neo4j import GraphDatabase
 import re
 import os
 from dotenv import load_dotenv
-from helpers.chroma_helpers import chroma_trends  # Your ChromaDB integration
+from helpers.chroma_helpers import chroma_trends, similarity_search_with_score
 
 load_dotenv()
 
@@ -34,6 +34,21 @@ class ScoutAgent:
             verbose=True,
             llm="azure/gpt-4o-mini"
         )
+
+    
+    def is_valid_cypher(self, query):
+        for label in re.findall(r'\((?:\w*):(\w+)\)', query):
+            if label not in self.node_labels:
+                return False, f"Invalid node label: {label}"
+        for rel in re.findall(r'-\[:(\w+)\]', query):
+            if rel not in self.rel_types:
+                return False, f"Invalid relationship: {rel}"
+        return True, "Valid Cypher query"
+    
+    def run_neo4j_query(self, query):
+        with self.driver.session() as session:
+            result = session.run(query)
+            return result.data()
 
     def get_relevant_trend_context(self, prompt):
         """
@@ -171,14 +186,22 @@ class ScoutAgent:
                 "cypher_query_by_llm": cypher_query_by_llm,
                 "message": "No relevant data found in the database.",
                 "data_from_neo": data,
-                "trend_matches": []  # added field
             }
 
         # 1. Get trend matches using Chroma
         try:
-            trend_matches = chroma_trends(prompt, top_k=5)
+            trend_matches = similarity_search_with_score(prompt, top_k=5)
+            trend_with_scores = [
+                {
+                    "trend": match["data"].get("title", "No title"),
+                    "summary": match["data"].get("summary_text", ""),
+                    "score": match["similarity_score"]
+                }
+                for match in trend_matches
+            ]
+            trend_with_scores.sort(key=lambda x: x["score"], reverse=True)
         except Exception as e:
-            trend_matches = []
+            trend_with_scores = []
             print(f"Error fetching trends: {e}")
 
         # 2. Gather keys from Neo4j data
@@ -195,7 +218,7 @@ class ScoutAgent:
             "fields": list(all_fields),
             "domains": list(domains) if domains else "No domain data detected.",
             "num_records": len(data),
-            "trend_matches": trend_matches
+            "trend_matches": trend_with_scores  # Include trend scores
         }
 
         # 3. Generate insights with combined prompt
@@ -212,15 +235,23 @@ class ScoutAgent:
             verbose=True
         )
 
-        # Updated prompt with proper string formatting
+        # Pre-format the trend matches into a string
+        trend_summary = "\n".join([
+            f"- {t['trend']} (Score: {t['score']:.4f})\n  Summary: {t.get('summary', 'N/A')}"
+            for t in trend_with_scores
+        ])
+
+
+        # Build the prompt using the formatted string
         prompt_for_insights = (
             f"You are analyzing both Neo4j patent graph data and vector-matched trend information.\n\n"
             f"Neo4j Fields: {crew_inputs['fields']}\n"
             f"Domains: {crew_inputs['domains']}\n"
             f"Total Records: {crew_inputs['num_records']}\n\n"
-            f"Top Trend Matches (from vector search):\n{trend_matches}\n\n"
+            f"Relevant Trends (from vector search):\n{trend_summary}\n\n"
             "Based on this, provide detailed insights, trends, and recommendations."
         )
+
 
         try:
             result = crew.kickoff(inputs={"prompt": prompt_for_insights})
@@ -233,11 +264,10 @@ class ScoutAgent:
                 "isData": True,
                 "insights": [f"Generated insights: {insights}"],
                 "recommendations": ["Review trends and identify upcoming technologies."],
-                "relevant_trends": trend_matches,
+                "relevant_trends": trend_with_scores,  # Include trends with scores
                 "cypher_query_by_llm": cypher_query_by_llm,
                 "message": "Insights and recommendations based on Neo4j data and trends.",
                 "data_from_neo": data,
-                "trend_matches": trend_matches
             }
 
         except Exception as e:
@@ -245,7 +275,6 @@ class ScoutAgent:
                 "error": f"Failed to generate insights: {str(e)}",
                 "raw_output": str(result)
             }
-
 
     def close(self):
         self.driver.close()

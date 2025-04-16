@@ -13,7 +13,7 @@ Send user query and previous summary to get a new chat response and updated summ
 }
 ```
 ## ScoutAgent
-
+ 
 ### `POST /agent/scout/generate-query`
 Generate a Cypher query from a natural language prompt.
 
