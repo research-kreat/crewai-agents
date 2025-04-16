@@ -3,7 +3,7 @@ from neo4j import GraphDatabase
 import re
 import os
 from dotenv import load_dotenv
-from helpers.chroma_helpers import chroma_trends, similarity_search_with_score
+from helpers.chroma_helpers import chroma_trends
 
 load_dotenv()
 
@@ -190,7 +190,7 @@ class ScoutAgent:
 
         # 1. Get trend matches using Chroma
         try:
-            trend_matches = similarity_search_with_score(prompt, top_k=5)
+            trend_matches = chroma_trends.similarity_search_with_score(prompt, top_k=5)
             trend_with_scores = [
                 {
                     "trend": match["data"].get("title", "No title"),

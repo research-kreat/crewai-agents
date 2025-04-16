@@ -104,5 +104,6 @@ def close_scout():
     scout.close()
     return jsonify({'message': 'Neo4j connection closed successfully.'})
 
+
 if __name__ == '__main__':
     app.run(debug=True)

@@ -148,7 +148,6 @@ def chroma_trends(prompt: str, top_k: int = 5):
 # trends = chroma_trends("AI trends in 2025")
 # print(trends)
 
-# Perform similarity search with score
-query = "AI trends in 2025"
-scored_results = similarity_search_with_score(query)
-print(scored_results)
+# query = "AI trends in 2025"
+# scored_results = similarity_search_with_score(query)
+# print(scored_results)
