@@ -65,6 +65,7 @@ class ScoutAgent:
             relevant_trends = []
             for trend in trend_results:
                 trend_info = {
+                    "_id":trend.get("_id","No _id Found"),
                     "summary_text": trend.get("summary_text", "No summary_text"),
                     "title": trend.get("title", "No title listed"),
                     "similarity_score": trend.get("similarity_score", 0.00),
@@ -210,6 +211,7 @@ class ScoutAgent:
         for item in data:
             if isinstance(item, dict) and "chroma_data" in item:
                 chroma_data.append({
+                    "_id": item["chroma_data"].get("_id", "No _id Found"),
                     "similarity_score": item["chroma_data"].get("similarity_score", 0.00),
                     "summary_text": item["chroma_data"].get("summary_text", "No summary_text"),
                     "title": item["chroma_data"].get("title", "No title listed")
@@ -220,6 +222,7 @@ class ScoutAgent:
         trend_with_scores = []
         for item in chroma_data:
             trend_with_scores.append({
+                "_id": item.get("_id", "No _id"),
                 "summary_text": item.get("summary_text", "No summary_text"),
                 "title": item.get("title", "No title listed"),
                 "similarity_score": item.get("similarity_score", 0.00)
@@ -242,7 +245,7 @@ class ScoutAgent:
         }
 
         trend_summary_for_prompt = "\n".join([
-            f"- Title: {t['title']} | Score: {t['similarity_score']:.4f}\n  Summary: {t['summary_text']}"
+            f"- ID: {t['_id']} | Title: {t['title']} | Score: {t['similarity_score']:.4f} | Summary: {t['summary_text']}"
             for t in trend_with_scores[:5]
         ])
 

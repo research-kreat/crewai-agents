@@ -167,6 +167,7 @@ def similarity_search_with_score(query: str, dataset: str = "trends", k: int = 5
             "similarity_score": scaled_scores[i],
             "title": row.get("title", DEFAULT_VALUES["title"]),
             "summary_text": row.get("summary_text", DEFAULT_VALUES["summary_text"]),
+            "_id": row.get("_id", None),
             "data": row  # full original row if needed
         }
         # ✅ Optional debug print
