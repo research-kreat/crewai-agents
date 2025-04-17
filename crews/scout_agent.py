@@ -241,7 +241,7 @@ class ScoutAgent:
             "fields": list(all_fields),
             "domains": list(domains) or ["No domain data detected"],
             "num_records": len(data),
-            "trend_matches": trend_with_scores
+            "trend_matches": trend_with_scores 
         }
 
         trend_summary_for_prompt = "\n".join([
