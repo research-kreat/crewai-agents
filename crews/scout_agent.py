@@ -3,7 +3,7 @@ from neo4j import GraphDatabase
 import re
 import os
 from dotenv import load_dotenv
-from helpers.chroma_helpers import chroma_trends
+from helpers.chroma_helpers import similarity_search_with_score
 
 load_dotenv()
 
@@ -55,7 +55,7 @@ class ScoutAgent:
         Use ChromaDB trend vectors to return relevant trend documents based on user prompt.
         """
         try:
-            results = chroma_trends.similarity_search_with_score(prompt, k=5)
+            results =similarity_search_with_score(prompt, k=5)
             trends = [doc.page_content for doc, score in results]
             return "\n\n".join(trends)
         except Exception as e:
@@ -190,11 +190,11 @@ class ScoutAgent:
 
         # 1. Get trend matches using Chroma
         try:
-            trend_matches = chroma_trends.similarity_search_with_score(prompt, top_k=5)
+            trend_matches = similarity_search_with_score(prompt, top_k=5)
             trend_with_scores = [
                 {
                     "trend": match["data"].get("title", "No title"),
-                    "summary": match["data"].get("summary_text", ""),
+                    "summary": match["data"].get("summary_text") or "No summary available",
                     "score": match["similarity_score"]
                 }
                 for match in trend_matches
@@ -237,10 +237,9 @@ class ScoutAgent:
 
         # Pre-format the trend matches into a string
         trend_summary = "\n".join([
-            f"- {t['trend']} (Score: {t['score']:.4f})\n  Summary: {t.get('summary', 'N/A')}"
-            for t in trend_with_scores
+            f"- {t['trend']} (Score: {t['score']:.4f})\n  Summary: {t.get('summary', 'No summary available') or 'No summary available'}"
+            for t in trend_with_scores[:3]
         ])
-
 
         # Build the prompt using the formatted string
         prompt_for_insights = (
@@ -252,7 +251,6 @@ class ScoutAgent:
             "Based on this, provide detailed insights, trends, and recommendations."
         )
 
-
         try:
             result = crew.kickoff(inputs={"prompt": prompt_for_insights})
             if not result:
@@ -262,7 +260,7 @@ class ScoutAgent:
 
             return {
                 "isData": True,
-                "insights": [f"Generated insights: {insights}"],
+                "insights": [f"{insights}"],
                 "recommendations": ["Review trends and identify upcoming technologies."],
                 "relevant_trends": trend_with_scores,  # Include trends with scores
                 "cypher_query_by_llm": cypher_query_by_llm,

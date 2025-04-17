@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatBot Agent - API Console</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="page-container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-code"></i>
+                <h1>API Agent Console</h1>
+            </div>
+            <nav>
+                <button class="back-button" onclick="navigateTo('/')">
+                    <i class="fas fa-arrow-left"></i> Back to Agents
+                </button>
+            </nav>
+        </header>
+
+        <main class="agent-page">
+            <div class="agent-header">
+                <div class="agent-icon large">
+                    <i class="fas fa-comments"></i>
+                </div>
+                <div class="agent-title">
+                    <h2>ChatBot Agent</h2>
+                    <p>Natural language interaction with AI</p>
+                </div>
+            </div>
+
+            <div class="agent-interface">
+                <div class="input-section">
+                    <div class="form-group">
+                        <label for="chat-query">Query</label>
+                        <input type="text" id="chat-query" placeholder="What would you like to know?">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="chat-summary">
+                            Summary (Optional)
+                            <span class="tooltip" data-tooltip="Provide context for your query">
+                                <i class="fas fa-info-circle"></i>
+                            </span>
+                        </label>
+                        <textarea id="chat-summary" rows="3" placeholder="Add additional context if needed"></textarea>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button id="send-button" class="primary-button" onclick="sendChatQuery()">
+                            <i class="fas fa-paper-plane"></i> Send Query
+                        </button>
+                        <button class="secondary-button" onclick="clearForm()">
+                            <i class="fas fa-eraser"></i> Clear
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="response-section">
+                    <div class="response-header">
+                        <h3>Response</h3>
+                        <div class="controls">
+                            <button class="icon-button" onclick="copyResponse()" title="Copy to clipboard">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="loading" class="loading hidden">
+                        <div class="spinner"></div>
+                        <p>Processing request...</p>
+                    </div>
+                    
+                    <div id="chat-response" class="response-content">
+                        <div class="placeholder-message">
+                            <i class="fas fa-comments"></i>
+                            <p>Enter a query and click Send to see the response</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+    </div>
+
+    <script>
+        const apiUrl = 'http://localhost:5000';
+        
+        function navigateTo(page) {
+            window.location.href = page;
+        }
+        
+        function clearForm() {
+            document.getElementById('chat-query').value = '';
+            document.getElementById('chat-summary').value = '';
+        }
+        
+        function copyResponse() {
+            const responseText = document.getElementById('chat-response').innerText;
+            if (!responseText.includes('Enter a query')) {
+                navigator.clipboard.writeText(responseText)
+                    .then(() => {
+                        showToast('Response copied to clipboard');
+                    })
+                    .catch(err => {
+                        showToast('Failed to copy: ' + err);
+                    });
+            }
+        }
+        
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 10);
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    document.body.removeChild(toast);
+                }, 300);
+            }, 3000);
+        }
+        
+        function sendChatQuery() {
+            const query = document.getElementById('chat-query').value;
+            const summary = document.getElementById('chat-summary').value;
+            
+            if (!query) {
+                showToast('Please enter a query');
+                return;
+            }
+            
+            // Show loading spinner
+            document.getElementById('loading').classList.remove('hidden');
+            document.getElementById('chat-response').innerHTML = '';
+            
+            fetch(`${apiUrl}/agent/chat`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ query, summary })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Hide loading spinner
+                document.getElementById('loading').classList.add('hidden');
+                
+                // Format the JSON response nicely
+                const formattedResponse = formatJsonResponse(data);
+                document.getElementById('chat-response').innerHTML = formattedResponse;
+            })
+            .catch(error => {
+                // Hide loading spinner
+                document.getElementById('loading').classList.add('hidden');
+                
+                // Show error message
+                document.getElementById('chat-response').innerHTML = `
+                    <div class="error-message">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <p>Error: ${error}</p>
+                    </div>
+                `;
+            });
+        }
+        
+        function formatJsonResponse(data) {
+            const jsonString = JSON.stringify(data, null, 2);
+            return `<pre class="json-response">${syntaxHighlight(jsonString)}</pre>`;
+        }
+        
+        function syntaxHighlight(json) {
+            json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+                let cls = 'json-number';
+                if (/^"/.test(match)) {
+                    if (/:$/.test(match)) {
+                        cls = 'json-key';
+                    } else {
+                        cls = 'json-string';
+                    }
+                } else if (/true|false/.test(match)) {
+                    cls = 'json-boolean';
+                } else if (/null/.test(match)) {
+                    cls = 'json-null';
+                }
+                return '<span class="' + cls + '">' + match + '</span>';
+            });
+        }
+    </script>
+</body>
+</html>

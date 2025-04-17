@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Agent Console</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="page-container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-code"></i>
+                <h1>API Agent Console</h1>
+            </div>
+            <p class="subtitle">Select an agent to begin</p>
+        </header>
+
+        <main class="agent-grid">
+            <!-- Active Agents -->
+            <div class="agent-card active" onclick="navigateTo('chatbot')">
+                <div class="agent-icon">
+                    <i class="fas fa-comments"></i>
+                </div>
+                <div class="agent-info">
+                    <h2>ChatBot Agent</h2>
+                    <p>Natural language interaction with AI</p>
+                    <span class="status active">Active</span>
+                </div>
+            </div>
+
+            <div class="agent-card active" onclick="navigateTo('scoutagent')">
+                <div class="agent-icon">
+                    <i class="fas fa-database"></i>
+                </div>
+                <div class="agent-info">
+                    <h2>Scout Agent</h2>
+                    <p>Explore and retrieve information</p>
+                    <span class="status active">Active</span>
+                </div>
+            </div>
+
+            <!-- Disabled Agents -->
+            <div class="agent-card disabled">
+                <div class="agent-icon">
+                    <i class="fas fa-search"></i>
+                </div>
+                <div class="agent-info">
+                    <h2>Process Agent</h2>
+                    <p>Process and analyze datasets</p>
+                    <span class="status">Coming Soon</span>
+                </div>
+            </div>
+
+            <div class="agent-card disabled">
+                <div class="agent-icon">
+                    <i class="fas fa-code"></i>
+                </div>
+                <div class="agent-info">
+                    <h2>Code Agent</h2>
+                    <p>Generate and analyze code</p>
+                    <span class="status">Coming Soon</span>
+                </div>
+            </div>
+
+            <div class="agent-card disabled">
+                <div class="agent-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="agent-info">
+                    <h2>Analytics Agent</h2>
+                    <p>Advanced data visualization</p>
+                    <span class="status">Coming Soon</span>
+                </div>
+            </div>
+        </main>
+
+    </div>
+
+    <script>
+        function navigateTo(page) {
+            window.location.href = page;
+        }
+    </script>
+</body>
+</html>

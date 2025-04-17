@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from crews.scout_agent import ScoutAgent
 from crews.chatbot import ChatBot
 from dotenv import load_dotenv
@@ -26,11 +26,13 @@ def run_chat():
 
     result = chatbot.run_chat(query, summary)
     return jsonify(result)
-
-#___________________SCOUT AGENT____________________
+#___________________SCOUT AGENT ENDPOINTS____________________
 
 @app.route("/agent/scout/query", methods=["POST"])
 def run_scout_query():
+    """
+    Accepts a user prompt, generates a Cypher query, runs it, and returns insights.
+    """
     data = request.get_json()
     user_prompt = data.get("prompt")
 
@@ -54,55 +56,85 @@ def run_scout_query():
         return jsonify({"error": f"Failed to run query: {str(e)}"}), 500
 
     # Step 4: Generate insights from the data and trends
-    insights_output = scout.convert_data_to_insights(data_from_neo, generated_query, user_prompt)
-
+    try:
+        insights_output = scout.convert_data_to_insights(
+            data_from_neo,
+            generated_query,
+            user_prompt
+        )
+    except Exception as e:
+        return jsonify({"error": f"Failed to generate insights: {str(e)}"}), 500
+    
     return jsonify(insights_output), 200
+
 
 @app.route('/agent/scout/generate-query', methods=['POST'])
 def scout_generate_query():
-    data = request.json
+    """
+    Generates a Cypher query from user prompt.
+    """
+    data = request.get_json()
     prompt = data.get('prompt')
 
     if not prompt:
         return jsonify({'error': 'Prompt is required'}), 400
 
-    cypher_query = scout.generate_query_for_neo(prompt)
-    return jsonify({'cypher_query': cypher_query})
+    try:
+        cypher_query = scout.generate_query_for_neo(prompt)
+        return jsonify({'cypher_query': cypher_query})
+    except Exception as e:
+        return jsonify({'error': f"Failed to generate query: {str(e)}"}), 500
 
-@app.route('/agent/scout/run', methods=['POST'])
-def scout_run_query():
-    data = request.json
-    prompt = data.get('prompt')
-
-    if not prompt:
-        return jsonify({'error': 'Prompt is required'}), 400
-
-    cypher_query = scout.generate_query_for_neo(prompt)
-    if isinstance(cypher_query, dict) and 'error' in cypher_query:
-        return jsonify(cypher_query), 500
-
-    is_valid, message = scout.is_valid_cypher(cypher_query)
-    if not is_valid:
-        return jsonify({'error': message}), 400
-
-    results = scout.run_neo4j_query(cypher_query)
-    insights = scout.convert_data_to_insights(results, cypher_query)
-    return jsonify(insights)
 
 @app.route('/agent/scout/summary', methods=['GET'])
 def scout_summary():
-    summary = scout._gather_database_info(query_type="technology_trends")
-    return jsonify(summary)
+    """
+    Returns a summary of technology trends from the database.
+    """
+    try:
+        summary = scout._gather_database_info(query_type="technology_trends")
+        return jsonify(summary)
+    except Exception as e:
+        return jsonify({"error": f"Failed to fetch summary: {str(e)}"}), 500
+
 
 @app.route('/agent/scout/inventors', methods=['GET'])
 def scout_top_inventors():
-    summary = scout._gather_database_info(query_type="inventor_analysis")
-    return jsonify(summary)
+    """
+    Returns an inventor-centric analysis summary.
+    """
+    try:
+        summary = scout._gather_database_info(query_type="inventor_analysis")
+        return jsonify(summary)
+    except Exception as e:
+        return jsonify({"error": f"Failed to fetch inventor analysis: {str(e)}"}), 500
+
 
 @app.route('/agent/scout/close', methods=['POST'])
 def close_scout():
-    scout.close()
-    return jsonify({'message': 'Neo4j connection closed successfully.'})
+    """
+    Closes Neo4j connection.
+    """
+    try:
+        scout.close()
+        return jsonify({'message': 'Neo4j connection closed successfully.'})
+    except Exception as e:
+        return jsonify({'error': f'Failed to close Neo4j connection: {str(e)}'}), 500
+
+
+#___________________TEST ROUTES FOR FRONTEND____________________
+
+@app.route('/chatbot')
+def chatbot_page():
+    return render_template('chatbot.html')
+
+@app.route('/scoutagent')
+def scoutagent_page():
+    return render_template('scoutagent.html')
+
+@app.route('/')
+def home():
+    return render_template('index.html')
 
 
 if __name__ == '__main__':

@@ -27,11 +27,11 @@ datasets = {
         "path": "datasets/trends.csv",
         "format_row": lambda row: (
             f"Title: {row['title']} — "
-            f"Summary: {row.get('summary_text', '')} "
-            f"Keywords: {row.get('keywords', '')} "
-            f"Domain: {row.get('domain', '')}, Subdomains: {row.get('sub_domains', '')} "
-            f"Technology Stack: {row.get('technology_stack', '')} "
-            f"Relevance Score: {row.get('relevance_score', '')}"
+            f"Summary: {row.get('summary_text', 'No summary available')} "
+            f"Keywords: {row.get('keywords', 'No keywords available')} "
+            f"Domain: {row.get('domain', 'No domain available')}, Subdomains: {row.get('sub_domains', 'No subdomains')} "
+            f"Technology Stack: {row.get('technology_stack', 'No technology stack')} "
+            f"Relevance Score: {row.get('relevance_score', 'No relevance score')}"
         )
     }
 }
@@ -47,6 +47,18 @@ dataframes = {}
 def populate_embeddings(name, path, formatter, batch_size: int = 100):
     print(f"\n📄 Loading dataset: {name}")
     df = pd.read_csv(path, dtype=str, on_bad_lines='skip')
+
+    # Handle NaN/None values by replacing them with appropriate defaults
+    df.fillna({
+        'title': 'Unknown Title',
+        'summary_text': 'No summary available',
+        'keywords': 'No keywords available',
+        'domain': 'No domain available',
+        'sub_domains': 'No subdomains',
+        'technology_stack': 'No technology stack',
+        'relevance_score': 'No relevance score'
+    }, inplace=True)
+
     dataframes[name] = df
 
     df["row_id"] = df.index.astype(str)
@@ -106,18 +118,30 @@ def chroma_query(dataset_name: str, prompt: str, top_k: int = 5):
 def get_or_load_dataframe(name):
     if name not in dataframes:
         df = pd.read_csv(datasets[name]["path"], dtype=str, on_bad_lines='skip')
+        
+        # Handle NaN/None values by replacing them with appropriate defaults
+        df.fillna({
+            'title': 'Unknown Title',
+            'summary_text': 'No summary available',
+            'keywords': 'No keywords available',
+            'domain': 'No domain available',
+            'sub_domains': 'No subdomains',
+            'technology_stack': 'No technology stack',
+            'relevance_score': 'No relevance score'
+        }, inplace=True)
+
         df["row_id"] = df.index.astype(str)
         dataframes[name] = df
     return dataframes[name]
 
-def similarity_search_with_score(query, top_k=5):
+def similarity_search_with_score(query, dataset="trends", top_k=5):
     try:
         query_embedding = generate_embeddings([query])[0]
     except Exception as e:
         print(f"❌ Error generating embedding for query: {query}")
         return []
 
-    collection = chroma_client.get_collection(name="trends", embedding_function=embedding_fn)
+    collection = chroma_client.get_collection(name=dataset, embedding_function=embedding_fn)
     results = collection.query(query_embeddings=[query_embedding], n_results=top_k)
 
     if 'ids' in results and 'distances' in results:
@@ -125,7 +149,7 @@ def similarity_search_with_score(query, top_k=5):
         distances = results["distances"][0]
 
         row_indices = list(map(int, ids))
-        matched_rows = get_or_load_dataframe("trends").iloc[row_indices]
+        matched_rows = get_or_load_dataframe(dataset).iloc[row_indices]
 
         enriched_results = []
         for i, row in enumerate(matched_rows.itertuples(index=False)):
@@ -138,16 +162,3 @@ def similarity_search_with_score(query, top_k=5):
     else:
         print("⚠️ Unexpected response structure:", results)
         return []
-# -----------------------------
-# Shortcut for Trends Dataset
-# -----------------------------
-def chroma_trends(prompt: str, top_k: int = 5):
-    return chroma_query("trends", prompt, top_k)
-
-# Example Usage
-# trends = chroma_trends("AI trends in 2025")
-# print(trends)
-
-# query = "AI trends in 2025"
-# scored_results = similarity_search_with_score(query)
-# print(scored_results)
