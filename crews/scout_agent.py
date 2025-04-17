@@ -23,11 +23,11 @@ class ScoutAgent:
         self.property_keys = ["country", "data_quality_score"]
 
         self.agent = Agent(
-            role="Neo4j Database Scout",
-            goal="Extract valuable insights from the Neo4j patent database",
+            role="Database Scout",
+            goal="Extract valuable insights from the database",
             backstory=(
                 "You're a specialized agent designed to scout and analyze patent "
-                "and knowledge data stored in a Neo4j graph database. Your expertise lies in "
+                "and knowledge data stored in a graph database. Your expertise lies in "
                 "discovering patterns, trends, and valuable insights from complex patent data "
                 "relationships across inventors, technologies, classifications, and domains."
             ),
@@ -52,15 +52,14 @@ class ScoutAgent:
 
     def get_relevant_trend_context(self, prompt):
         """
-        Use ChromaDB trend vectors to return relevant trend documents based on user prompt.
+        Use ChromaDB trend vectors to return relevant trend documents + scores based on user prompt.
         """
         try:
-            results =similarity_search_with_score(prompt, k=5)
-            trends = [doc.page_content for doc, score in results]
-            return "\n\n".join(trends)
+            results = similarity_search_with_score(prompt, k=5)
+            return results  # Each result is (doc, score)
         except Exception as e:
             print(f"Error fetching trend context: {e}")
-            return ""
+            return []
 
     def _gather_database_info(self, query_type):
         info = {}
@@ -121,6 +120,9 @@ class ScoutAgent:
 
         schema_description = (
             "You are an expert in Cypher queries for a Neo4j database.\n\n"
+            "Your task is to analyze the graph data and generate Cypher queries that extract paths between nodes.\n"
+            "These paths should be represented in the following format:\n\n"
+            "MATCH p = (from)-[relationship if needed]->(to) RETURN p;\n\n"
             "ONLY use the following node labels:\n"
             f"{', '.join(self.node_labels)}\n\n"
             "ONLY use the following relationship types:\n"
@@ -128,7 +130,8 @@ class ScoutAgent:
             "You MAY use these property keys if relevant:\n"
             f"{', '.join(self.property_keys)}\n\n"
             "**DO NOT** invent any new labels or relationships (e.g., 'Patent', 'RELATED_TO'). "
-            "Use only what's listed. Return a Cypher query with correct structure and strict adherence to the schema."
+            "Use only what's listed. Your goal is to generate a valid Cypher query that extracts paths in the graph "
+            "using the correct labels, relationships, and properties."
         )
 
         # Updated prompt with concatenation to avoid issues with triple quotes
@@ -175,7 +178,7 @@ class ScoutAgent:
 
     def convert_data_to_insights(self, data, cypher_query_by_llm, prompt):
         """
-        Convert Neo4j + Chroma trend data into structured insights.
+        Convert combined Neo4j + Chroma trend data into structured insights.
         """
         if not data:
             return {
@@ -185,49 +188,79 @@ class ScoutAgent:
                 "relevant_trends": [],
                 "cypher_query_by_llm": cypher_query_by_llm,
                 "message": "No relevant data found in the database.",
-                "data_from_neo": data,
+                "data_from_source": data,
             }
 
-        # 1. Get trend matches using Chroma
-        try:
-            trend_matches = similarity_search_with_score(prompt, top_k=5)
-            trend_with_scores = [
-                {
-                    "trend": match["data"].get("title", "No title"),
-                    "summary": match["data"].get("summary_text") or "No summary available",
-                    "score": match["similarity_score"]
-                }
-                for match in trend_matches
-            ]
-            trend_with_scores.sort(key=lambda x: x["score"], reverse=True)
-        except Exception as e:
-            trend_with_scores = []
-            print(f"Error fetching trends: {e}")
+        neo_data = []
+        chroma_data = []
 
-        # 2. Gather keys from Neo4j data
+        # Separate Neo4j and Chroma data
+        for item in data:
+            if isinstance(item, dict) and item.get("fallback") and "chroma_data" in item:
+                chroma_data.append(item["chroma_data"])
+            else:
+                neo_data.append(item)
+
+        # Extract trend info from Chroma data (optional - can also pass externally)
+        trend_with_scores = []
+        try:
+            for item in chroma_data:
+                # Ensure 'score' exists in the item or calculate it from the result if not available
+                # If you get the scores directly from `similarity_search_with_score`, this can be extracted from the `item`
+                trend_with_scores.append({
+                    "trend": item.get("title", "No title"),
+                    "summary": item.get("summary_text", "No summary available"),
+                    "score": item.get("similarity_score", 0.00)
+                })
+            trend_with_scores.sort(key=lambda x: x["score"], reverse=True)  # Sort by score in descending order
+        except Exception as e:
+            print(f"Error parsing trend data from Chroma: {e}")
+            trend_with_scores = []
+
+
+        # Collect all keys and domains
         all_fields = set()
         domains = set()
-        for item in data:
-            for obj in item.values():
-                if isinstance(obj, dict):
-                    all_fields.update(obj.keys())
-                    if "domain" in obj:
-                        domains.add(obj["domain"])
+        for obj in (neo_data + chroma_data):
+            if isinstance(obj, dict):
+                all_fields.update(obj.keys())
+                if "domain" in obj:
+                    domains.add(obj["domain"])
 
         crew_inputs = {
             "fields": list(all_fields),
-            "domains": list(domains) if domains else "No domain data detected.",
+            "domains": list(domains) or ["No domain data detected"],
             "num_records": len(data),
-            "trend_matches": trend_with_scores  # Include trend scores
+            "trend_matches": trend_with_scores
         }
 
-        # 3. Generate insights with combined prompt
-        agent_task = Task(
-            description="Generate insights from Neo4j + trend vector data",
-            expected_output="Combined insights and recommendations from both sources.",
-            agent=self.agent
+        # Generate insights prompt
+        trend_summary = "\n".join([
+            f"- {t['trend']} (Score: {t['score']:.4f})\n  Summary: {t['summary']}"
+            for t in trend_with_scores[:3]
+        ])
+
+        prompt_for_insights = (
+            f"Analyze the provided data thoroughly and generate actionable insights. Consider every data point, trend, and domain in your analysis.\n\n"
+            f"Data Overview:\n"
+            f"  - Fields: {crew_inputs['fields']}\n"
+            f"  - Domains: {crew_inputs['domains']}\n"
+            f"  - Total Records: {crew_inputs['num_records']}\n\n"
+            f"Relevant Trends:\n"
+            f"{trend_summary}\n\n"
+            "From this data and trend summary, your task is to:\n"
+            "1. Identify key trends and patterns in the data.\n"
+            "2. Provide strategic insights based on these trends and data points.\n"
+            "3. Offer clear, actionable recommendations to leverage these insights effectively.\n"
+            "Focus on providing insights that are both valuable and relevant to the business context."
         )
 
+        # Run the Crew agent task
+        agent_task = Task(
+            description="Generate insights from given data",
+            expected_output="Detailed insights and actionable recommendations.",
+            agent=self.agent
+        )
         crew = Crew(
             agents=[self.agent],
             tasks=[agent_task],
@@ -235,43 +268,37 @@ class ScoutAgent:
             verbose=True
         )
 
-        # Pre-format the trend matches into a string
-        trend_summary = "\n".join([
-            f"- {t['trend']} (Score: {t['score']:.4f})\n  Summary: {t.get('summary', 'No summary available') or 'No summary available'}"
-            for t in trend_with_scores[:3]
-        ])
-
-        # Build the prompt using the formatted string
-        prompt_for_insights = (
-            f"You are analyzing both Neo4j patent graph data and vector-matched trend information.\n\n"
-            f"Neo4j Fields: {crew_inputs['fields']}\n"
-            f"Domains: {crew_inputs['domains']}\n"
-            f"Total Records: {crew_inputs['num_records']}\n\n"
-            f"Relevant Trends (from vector search):\n{trend_summary}\n\n"
-            "Based on this, provide detailed insights, trends, and recommendations."
-        )
-
         try:
             result = crew.kickoff(inputs={"prompt": prompt_for_insights})
             if not result:
-                insights = "No insights generated"
+                insights = "No insights generated."
             else:
                 insights = str(result).strip()
 
+            print("[CHROMA DATA]",chroma_data)
+            print("[NEO DATA]",neo_data)
+
             return {
                 "isData": True,
-                "insights": [f"{insights}"],
-                "recommendations": ["Review trends and identify upcoming technologies."],
-                "relevant_trends": trend_with_scores,  # Include trends with scores
+                "insights": [insights],
+                "recommendations": ["Explore upcoming trends and assess relevance to your domain."],
+                "relevant_trends": trend_with_scores,
                 "cypher_query_by_llm": cypher_query_by_llm,
-                "message": "Insights and recommendations based on Neo4j data and trends.",
-                "data_from_neo": data,
+                "message": "Insights and recommendations based on Neo4j and Chroma trend data.",
+                # HAS NULL VALUES SO DONT SEND IT AS RESPONSE TILL FIX
+                # "data_from_neo": neo_data,
+                # "data_from_chroma": chroma_data
             }
 
         except Exception as e:
+            print("[CHROMA DATA]",chroma_data)
+            print("[NEO DATA]",neo_data)
             return {
                 "error": f"Failed to generate insights: {str(e)}",
-                "raw_output": str(result)
+                "raw_output": str(result),
+                # HAS NULL VALUES SO DONT SEND IT AS RESPONSE TILL FIX
+                # "data_from_neo": neo_data,
+                # "data_from_chroma": chroma_data
             }
 
     def close(self):

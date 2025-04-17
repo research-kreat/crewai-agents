@@ -218,8 +218,11 @@
           data.cypher_query_by_llm || "No Cypher query available";
 
         // Handle message or provide fallback message
-        document.getElementById("message").textContent =
-          data.message || "No message available";
+        document.getElementById("message").textContent = isValidValue(
+          data.message
+        )
+          ? data.message
+          : "No message available";
 
         // Check if data exists
         document.getElementById("isData").textContent = data.isData
@@ -229,7 +232,7 @@
         // Insights section (as plain text)
         const insightsContainer = document.getElementById("insights");
         insightsContainer.textContent =
-          data.insights && data.insights.length > 0
+          isValidValue(data.insights) && data.insights.length > 0
             ? data.insights.join(", ")
             : "No insights available";
 
@@ -237,25 +240,32 @@
         const recommendationsContainer =
           document.getElementById("recommendations");
         recommendationsContainer.textContent =
-          data.recommendations && data.recommendations.length > 0
+          isValidValue(data.recommendations) && data.recommendations.length > 0
             ? data.recommendations.join(", ")
             : "No recommendations available";
 
         // Relevant trends section (as bullet points with detail)
         const trendsContainer = document.getElementById("relevant-trends");
-        if (data.relevant_trends && data.relevant_trends.length > 0) {
+        if (
+          isValidValue(data.relevant_trends) &&
+          data.relevant_trends.length > 0
+        ) {
           trendsContainer.innerHTML =
             "<ul>" +
             data.relevant_trends
               .map(
                 (trend) =>
                   `<li>
-              <strong>Trend:</strong> ${trend.trend || "No trend available"}<br>
-              <strong>Summary:</strong> ${
-                trend.summary || "No summary available"
-              }<br>
-              <strong>Score:</strong> ${trend.score || "No score available"}
-            </li>`
+          <strong>Trend:</strong> ${
+            isValidValue(trend.trend) ? trend.trend : "No trend available"
+          }<br>
+          <strong>Summary:</strong> ${
+            isValidValue(trend.summary) ? trend.summary : "No summary available"
+          }<br>
+          <strong>Score:</strong> ${
+            isValidValue(trend.score) ? trend.score : "No score available"
+          }
+        </li>`
               )
               .join("") +
             "</ul>";
@@ -263,6 +273,16 @@
           trendsContainer.innerHTML =
             "<ul><li>No relevant trends available</li></ul>";
         }
+      }
+
+      // Helper function to check for valid values (not null, NaN, or empty)
+      function isValidValue(value) {
+        return (
+          value !== null &&
+          value !== undefined &&
+          value !== "NaN" &&
+          value !== ""
+        );
       }
 
       function formatJsonResponse(data) {

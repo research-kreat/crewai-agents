@@ -2,9 +2,24 @@ import os
 import chromadb
 import pandas as pd
 from tqdm import tqdm
-from typing import List
+from typing import List, Dict, Any
 from chromadb.api.types import EmbeddingFunction
-from helpers.llm import generate_embeddings  # Assuming this function is properly defined
+from helpers.llm import generate_embeddings  # Ensure this returns List[List[float]]
+
+# -----------------------------
+# Constants & Configuration
+# -----------------------------
+CHROMA_PATH = ".chroma"
+DEFAULT_VALUES = {
+    'title': 'Unknown Title',
+    'summary_text': 'No summary available',
+    'keywords': 'No keywords available',
+    'domain': 'No domain available',
+    'sub_domains': 'No subdomains',
+    'technology_stack': 'No technology stack',
+    'relevance_score': 'No relevance score'
+}
+BATCH_SIZE = 100
 
 # -----------------------------
 # Embedding Function Wrapper
@@ -16,7 +31,7 @@ class CustomEmbeddingFunction(EmbeddingFunction):
 # -----------------------------
 # Initialize ChromaDB Client
 # -----------------------------
-chroma_client = chromadb.PersistentClient(path=".chroma")
+chroma_client = chromadb.PersistentClient(path=CHROMA_PATH)
 embedding_fn = CustomEmbeddingFunction()
 
 # -----------------------------
@@ -27,74 +42,72 @@ datasets = {
         "path": "datasets/trends.csv",
         "format_row": lambda row: (
             f"Title: {row['title']} — "
-            f"Summary: {row.get('summary_text', 'No summary available')} "
-            f"Keywords: {row.get('keywords', 'No keywords available')} "
-            f"Domain: {row.get('domain', 'No domain available')}, Subdomains: {row.get('sub_domains', 'No subdomains')} "
-            f"Technology Stack: {row.get('technology_stack', 'No technology stack')} "
-            f"Relevance Score: {row.get('relevance_score', 'No relevance score')}"
+            f"Summary: {row['summary_text']} "
+            f"Keywords: {row['keywords']} "
+            f"Domain: {row['domain']}, Subdomains: {row['sub_domains']} "
+            f"Technology Stack: {row['technology_stack']} "
+            f"Relevance Score: {row['relevance_score']}"
         )
     }
 }
 
+# Cache loaded DataFrames
+dataframes: Dict[str, pd.DataFrame] = {}
+
 # -----------------------------
-# Cache for DataFrames
+# Utility Functions
 # -----------------------------
-dataframes = {}
+def load_dataframe(name: str) -> pd.DataFrame:
+    """Loads and caches the dataset as a pandas DataFrame."""
+    if name not in dataframes:
+        df = pd.read_csv(datasets[name]["path"], dtype=str, on_bad_lines='skip')
+        df.fillna(DEFAULT_VALUES, inplace=True)
+        df["row_id"] = df.index.astype(str)
+        dataframes[name] = df
+    return dataframes[name]
 
 # -----------------------------
 # Embedding Population
 # -----------------------------
-def populate_embeddings(name, path, formatter, batch_size: int = 100):
+def populate_embeddings(name: str, path: str, formatter, batch_size: int = BATCH_SIZE):
     print(f"\n📄 Loading dataset: {name}")
-    df = pd.read_csv(path, dtype=str, on_bad_lines='skip')
-
-    # Handle NaN/None values by replacing them with appropriate defaults
-    df.fillna({
-        'title': 'Unknown Title',
-        'summary_text': 'No summary available',
-        'keywords': 'No keywords available',
-        'domain': 'No domain available',
-        'sub_domains': 'No subdomains',
-        'technology_stack': 'No technology stack',
-        'relevance_score': 'No relevance score'
-    }, inplace=True)
-
-    dataframes[name] = df
-
-    df["row_id"] = df.index.astype(str)
+    df = load_dataframe(name)
     collection = chroma_client.get_or_create_collection(name=name, embedding_function=embedding_fn)
 
-    existing_ids = set(collection.get()["ids"])
-    new_rows = df[~df["row_id"].isin(existing_ids)]
+    try:
+        existing_ids = set(collection.get(ids=None)["ids"])
+    except Exception:
+        existing_ids = set()
 
+    new_rows = df[~df["row_id"].isin(existing_ids)]
     if new_rows.empty:
-        print(f"⚠️ No new data to embed for '{name}'. Already up to date.")
+        print(f"✅ '{name}' is already up to date.")
         return
 
-    print(f"🧠 Found {len(new_rows)} new rows to embed and store in batches of {batch_size}.")
+    print(f"🧠 Embedding {len(new_rows)} new rows...")
 
     documents = new_rows.apply(formatter, axis=1).tolist()
     ids = new_rows["row_id"].tolist()
 
-    for i in tqdm(range(0, len(documents), batch_size), desc=f"📦 Batching '{name}'"):
+    for i in tqdm(range(0, len(documents), batch_size), desc=f"📦 Embedding '{name}'"):
         batch_docs = documents[i:i + batch_size]
         batch_ids = ids[i:i + batch_size]
 
         try:
             embeddings = generate_embeddings(batch_docs)
-            if len(embeddings) == len(batch_docs):
-                collection.add(documents=batch_docs, embeddings=embeddings, ids=batch_ids)
-                tqdm.write(f"✅ Stored batch {i}–{i + len(batch_docs) - 1}")
-            else:
-                tqdm.write(f"⚠️ Skipped batch {i} due to embedding mismatch or error.")
+            if len(embeddings) != len(batch_docs):
+                tqdm.write(f"⚠️ Mismatch in embedding count. Skipping batch {i}.")
+                continue
+
+            collection.add(documents=batch_docs, embeddings=embeddings, ids=batch_ids)
+            tqdm.write(f"✅ Stored batch {i}-{i + len(batch_docs) - 1}")
         except Exception as e:
             tqdm.write(f"❌ Error in batch {i}: {e}")
-            continue  # Skip the current batch and proceed with the next one
 
-    print(f"🎉 Done embedding and storing dataset '{name}'")
+    print(f"🎉 Completed embedding for dataset '{name}'")
 
 # -----------------------------
-# Initialize All Datasets
+# Initialize All Collections
 # -----------------------------
 def init_all_collections():
     for name, config in datasets.items():
@@ -103,62 +116,52 @@ def init_all_collections():
 # -----------------------------
 # Query Functions
 # -----------------------------
-def chroma_query(dataset_name: str, prompt: str, top_k: int = 5):
-    collection = chroma_client.get_collection(name=dataset_name, embedding_function=embedding_fn)
-    
-    # Perform the query with the prompt
-    results = collection.query(query_texts=[prompt], n_results=top_k)
-    
-    # Extract the indices of the top K results
-    indices = [int(id) for id in results["ids"][0]]
-    
-    # Return the data for the corresponding rows
-    return dataframes[dataset_name].iloc[indices].to_dict(orient="records")
-
-def get_or_load_dataframe(name):
-    if name not in dataframes:
-        df = pd.read_csv(datasets[name]["path"], dtype=str, on_bad_lines='skip')
-        
-        # Handle NaN/None values by replacing them with appropriate defaults
-        df.fillna({
-            'title': 'Unknown Title',
-            'summary_text': 'No summary available',
-            'keywords': 'No keywords available',
-            'domain': 'No domain available',
-            'sub_domains': 'No subdomains',
-            'technology_stack': 'No technology stack',
-            'relevance_score': 'No relevance score'
-        }, inplace=True)
-
-        df["row_id"] = df.index.astype(str)
-        dataframes[name] = df
-    return dataframes[name]
-
-def similarity_search_with_score(query, dataset="trends", top_k=5):
+def similarity_search_with_score(query: str, dataset: str = "trends", top_k: int = 5) -> List[Dict[str, Any]]:
+    """Returns top-k similar documents with similarity scores scaled to 0–100."""
     try:
         query_embedding = generate_embeddings([query])[0]
     except Exception as e:
-        print(f"❌ Error generating embedding for query: {query}")
+        print(f"❌ Failed to generate embedding for query: {query} — {e}")
         return []
 
+    # Fetch the collection
     collection = chroma_client.get_collection(name=dataset, embedding_function=embedding_fn)
-    results = collection.query(query_embeddings=[query_embedding], n_results=top_k)
 
-    if 'ids' in results and 'distances' in results:
-        ids = results["ids"][0]
-        distances = results["distances"][0]
-
-        row_indices = list(map(int, ids))
-        matched_rows = get_or_load_dataframe(dataset).iloc[row_indices]
-
-        enriched_results = []
-        for i, row in enumerate(matched_rows.itertuples(index=False)):
-            enriched_results.append({
-                "similarity_score": distances[i],
-                "data": row._asdict()
-            })
-
-        return enriched_results
-    else:
-        print("⚠️ Unexpected response structure:", results)
+    # Query ChromaDB
+    try:
+        results = collection.query(query_embeddings=[query_embedding], n_results=top_k)
+    except Exception as e:
+        print(f"❌ Failed to query ChromaDB: {e}")
         return []
+
+    if 'ids' not in results or 'distances' not in results:
+        print("⚠️ Unexpected ChromaDB response.")
+        return []
+
+    ids = results["ids"][0]
+    distances = results["distances"][0]
+    similarities = [1 - d for d in distances]
+
+    # Scale similarities to 0–100
+    min_sim = min(similarities)
+    max_sim = max(similarities)
+    if max_sim == min_sim:
+        scaled_scores = [100.0 for _ in similarities]  # If all scores are same
+    else:
+        scaled_scores = [
+            round((sim - min_sim) / (max_sim - min_sim) * 100, 2)
+            for sim in similarities
+        ]
+
+    df = load_dataframe(dataset)
+    indices = [int(idx) for idx in ids]
+
+    enriched = []
+    for i, idx in enumerate(indices):
+        row = df.iloc[idx].to_dict()
+        enriched.append({
+            "similarity_score": scaled_scores[i],
+            "data": row
+        })
+
+    return enriched
