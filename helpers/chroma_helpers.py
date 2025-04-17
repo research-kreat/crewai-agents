@@ -11,8 +11,8 @@ from helpers.llm import generate_embeddings  # Ensure this returns List[List[flo
 # -----------------------------
 CHROMA_PATH = ".chroma"
 DEFAULT_VALUES = {
-    'title': 'Unknown Title',
-    'summary_text': 'No summary available',
+    'title': 'No title listed',
+    'summary_text': 'No summary_text',
     'keywords': 'No keywords available',
     'domain': 'No domain available',
     'sub_domains': 'No subdomains',
@@ -61,8 +61,12 @@ def load_dataframe(name: str) -> pd.DataFrame:
     """Loads and caches the dataset as a pandas DataFrame."""
     if name not in dataframes:
         df = pd.read_csv(datasets[name]["path"], dtype=str, on_bad_lines='skip')
-        df.fillna(DEFAULT_VALUES, inplace=True)
+        df.fillna(value=DEFAULT_VALUES, inplace=True)  # ✅ Consistent fallback values
         df["row_id"] = df.index.astype(str)
+
+        # ✅ Optional: Check column names
+        # print("🔍 CSV Columns:", df.columns)
+
         dataframes[name] = df
     return dataframes[name]
 
@@ -116,7 +120,7 @@ def init_all_collections():
 # -----------------------------
 # Query Functions
 # -----------------------------
-def similarity_search_with_score(query: str, dataset: str = "trends", top_k: int = 5) -> List[Dict[str, Any]]:
+def similarity_search_with_score(query: str, dataset: str = "trends", k: int = 5) -> List[Dict[str, Any]]:
     """Returns top-k similar documents with similarity scores scaled to 0–100."""
     try:
         query_embedding = generate_embeddings([query])[0]
@@ -129,7 +133,7 @@ def similarity_search_with_score(query: str, dataset: str = "trends", top_k: int
 
     # Query ChromaDB
     try:
-        results = collection.query(query_embeddings=[query_embedding], n_results=top_k)
+        results = collection.query(query_embeddings=[query_embedding], n_results=k)
     except Exception as e:
         print(f"❌ Failed to query ChromaDB: {e}")
         return []
@@ -146,7 +150,7 @@ def similarity_search_with_score(query: str, dataset: str = "trends", top_k: int
     min_sim = min(similarities)
     max_sim = max(similarities)
     if max_sim == min_sim:
-        scaled_scores = [100.0 for _ in similarities]  # If all scores are same
+        scaled_scores = [100.0 for _ in similarities]
     else:
         scaled_scores = [
             round((sim - min_sim) / (max_sim - min_sim) * 100, 2)
@@ -159,9 +163,14 @@ def similarity_search_with_score(query: str, dataset: str = "trends", top_k: int
     enriched = []
     for i, idx in enumerate(indices):
         row = df.iloc[idx].to_dict()
-        enriched.append({
+        result = {
             "similarity_score": scaled_scores[i],
-            "data": row
-        })
+            "title": row.get("title", DEFAULT_VALUES["title"]),
+            "summary_text": row.get("summary_text", DEFAULT_VALUES["summary_text"]),
+            "data": row  # full original row if needed
+        }
+        # ✅ Optional debug print
+        print(f"✅ Found: {result['title']} | Score: {result['similarity_score']}")
+        enriched.append(result)
 
     return enriched
