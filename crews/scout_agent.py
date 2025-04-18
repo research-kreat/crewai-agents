@@ -5,8 +5,12 @@ import os
 from dotenv import load_dotenv
 import json
 from collections import Counter
+from nltk.corpus import stopwords
 
 load_dotenv()
+
+# import nltk
+# nltk.download('stopwords')
 
 # Neo4j connection parameters
 NEO4J_URI = os.getenv("NEO4J_URI")
@@ -47,31 +51,22 @@ class ScoutAgent:
 
     def _extract_keywords(self, prompt):
         """Extract relevant keywords from prompt for search purposes"""
-        # Remove common stop words and punctuation
-        stop_words = set(['the', 'a', 'an', 'and', 'or', 'but', 'is', 'are', 'was', 'were', 
-                         'be', 'been', 'being', 'in', 'on', 'at', 'to', 'for', 'with', 
-                         'by', 'about', 'like', 'through', 'over', 'before', 'after',
-                         'between', 'under', 'above', 'of', 'during', 'since', 'throughout',
-                         'this', 'that', 'these', 'those', 'my', 'your', 'his', 'her', 'its',
-                         'our', 'their', 'what', 'which', 'who', 'whom', 'whose', 'when',
-                         'where', 'why', 'how', 'all', 'any', 'both', 'each', 'few', 'more',
-                         'most', 'some', 'such', 'no', 'nor', 'not', 'only', 'own', 'same',
-                         'so', 'than', 'too', 'very', 'can', 'will', 'just', 'should', 
-                         'now', 'id', 'also', 'from'])
-        
+        # Use NLTK's English stop words
+        stop_words = set(stopwords.words('english'))
+
         # Basic cleaning
         prompt = prompt.lower()
         prompt = re.sub(r'[^\w\s]', ' ', prompt)  # Replace punctuation with space
         words = prompt.split()
-        
+
         # Remove stop words and keep only words of length > 2
         keywords = [word for word in words if word not in stop_words and len(word) > 2]
-        
+
         print("[KEYWORDS]", keywords)
-        
+
         # Count frequencies
         word_counts = Counter(keywords)
-        
+
         # Return the most common keywords, up to 10
         most_common = word_counts.most_common(10)
         return [word for word, count in most_common]
