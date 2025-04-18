@@ -288,39 +288,25 @@
           data.relevant_trends.length > 0
         ) {
           trendsContainer.innerHTML =
-            "<ul>" +
-            data.relevant_trends
-              .map(
-                (trend) => `
-                  <li>
-                    <strong>Title:</strong> ${
-                      isValidValue(trend.title) ? trend.title : "No title available"
-                    }<br>
-                    <strong>Summary:</strong> ${
-                      isValidValue(trend.summary_text)
-                        ? trend.summary_text
-                        : "No summary available"
-                    }<br>
-                    <strong>Similarity Score:</strong> ${
-                      isValidValue(trend.similarity_score)
-                        ? trend.similarity_score
-                        : "No score available"
-                    }<br>
-                    <strong>Domain:</strong> ${
-                      isValidValue(trend.domain) ? trend.domain : "No domain specified"
-                    }<br>
-                    <strong>Knowledge Type:</strong> ${
-                      isValidValue(trend.knowledge_type)
-                        ? trend.knowledge_type
-                        : "No knowledge type"
-                    }<br>
-                    <strong>ID:</strong> ${
-                      isValidValue(trend.id) ? trend.id : "No id available"
-                    }
-                  </li>`
-              )
-              .join("") +
-            "</ul>";
+          "<ul>" +
+          data.relevant_trends
+            .map(
+              (trend) => `
+                <li>
+                  <strong>Title:</strong> ${isValidValue(trend.title) ? trend.title : "No title available"}<br>
+                  <strong>Summary:</strong> ${isValidValue(trend.summary_text) ? trend.summary_text : "No summary available"}<br>
+                  <strong>Similarity Score:</strong> ${isValidValue(trend.similarity_score) ? trend.similarity_score : "No score available"}<br>
+                  <strong>Domain:</strong> ${isValidValue(trend.domain) ? trend.domain : "No domain specified"}<br>
+                  <strong>Knowledge Type:</strong> ${isValidValue(trend.knowledge_type) ? trend.knowledge_type : "No knowledge type"}<br>
+                  <strong>Publication Date:</strong> ${isValidValue(trend.publication_date) ? trend.publication_date : "No publication date"}<br>
+                  <strong>Country:</strong> ${isValidValue(trend.country) ? trend.country : "No country info"}<br>
+                  <strong>Data Quality Score:</strong> ${isValidValue(trend.data_quality_score) ? trend.data_quality_score : "No score"}<br>
+                  <strong>ID:</strong> ${isValidValue(trend.id) ? trend.id : "No id available"}
+                </li>`
+            )
+            .join("") +
+          "</ul>";
+
         } else {
           trendsContainer.innerHTML =
             "<ul><li>No relevant trends available</li></ul>";
