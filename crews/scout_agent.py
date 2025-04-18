@@ -61,13 +61,52 @@ class ScoutAgent:
             print(f"⚠️ Error running Neo4j query: {e}")
             return []
 
+    def _extract_keywords(self, text):
+        """Extract relevant keywords from text for search purposes"""
+        # Remove common stop words and punctuation
+        stop_words = set(['the', 'a', 'an', 'and', 'or', 'but', 'is', 'are', 'was', 'were', 
+                         'be', 'been', 'being', 'in', 'on', 'at', 'to', 'for', 'with', 
+                         'by', 'about', 'like', 'through', 'over', 'before', 'after',
+                         'between', 'under', 'above', 'of', 'during', 'since', 'throughout',
+                         'this', 'that', 'these', 'those', 'my', 'your', 'his', 'her', 'its',
+                         'our', 'their', 'what', 'which', 'who', 'whom', 'whose', 'when',
+                         'where', 'why', 'how', 'all', 'any', 'both', 'each', 'few', 'more',
+                         'most', 'some', 'such', 'no', 'nor', 'not', 'only', 'own', 'same',
+                         'so', 'than', 'too', 'very', 'can', 'will', 'just', 'should', 
+                         'now', 'id', 'also', 'from'])
+        
+        # Basic cleaning
+        text = text.lower()
+        text = re.sub(r'[^\w\s]', ' ', text)  # Replace punctuation with space
+        words = text.split()
+        
+        # Remove stop words and keep only words of length > 2
+        keywords = [word for word in words if word not in stop_words and len(word) > 2]
+        
+        # Count frequencies
+        word_counts = Counter(keywords)
+        
+        # Return the most common keywords, up to 10
+        most_common = word_counts.most_common(10)
+        return [word for word, count in most_common]
+
+    def sanitize_data(self, data):
+        """Recursively sanitize data to handle None values or NaNs."""
+        if isinstance(data, dict):
+            return {k: self.sanitize_data(v) for k, v in data.items()}
+        elif isinstance(data, list):
+            return [self.sanitize_data(v) for v in data]
+        elif isinstance(data, float) and math.isnan(data):
+            return None
+        return data
+
     def keyword_search_neo4j(self, prompt, limit=5):
         """
         Performs keyword-based search in Neo4j instead of vector search.
         Extracts keywords from prompt and finds Knowledge nodes with matching properties.
         """
         try:
-            # Extract keywords from prompt (simple implementation)
+            # Extract keywords from prompt
             keywords = self._extract_keywords(prompt)
             if not keywords:
                 print("⚠️ No keywords extracted from prompt")
@@ -127,52 +166,16 @@ class ScoutAgent:
         except Exception as e:
             print(f"⚠️ Error performing keyword search in Neo4j: {e}")
             return []
-    
-    def _extract_keywords(self, text):
-        """Extract relevant keywords from text for search purposes"""
-        # For now, a very simple keyword extraction
-        # Remove common stop words and punctuation
-        stop_words = set(['the', 'a', 'an', 'and', 'or', 'but', 'is', 'are', 'was', 'were', 
-                         'be', 'been', 'being', 'in', 'on', 'at', 'to', 'for', 'with', 
-                         'by', 'about', 'like', 'through', 'over', 'before', 'after',
-                         'between', 'under', 'above', 'of', 'during', 'since', 'throughout',
-                         'this', 'that', 'these', 'those', 'my', 'your', 'his', 'her', 'its',
-                         'our', 'their', 'what', 'which', 'who', 'whom', 'whose', 'when',
-                         'where', 'why', 'how', 'all', 'any', 'both', 'each', 'few', 'more',
-                         'most', 'some', 'such', 'no', 'nor', 'not', 'only', 'own', 'same',
-                         'so', 'than', 'too', 'very', 'can', 'will', 'just', 'should', 
-                         'now', 'id', 'also', 'from'])
-        
-        # Basic cleaning
-        text = text.lower()
-        text = re.sub(r'[^\w\s]', ' ', text)  # Replace punctuation with space
-        words = text.split()
-        
-        # Remove stop words and keep only words of length > 2
-        keywords = [word for word in words if word not in stop_words and len(word) > 2]
-        
-        # Count frequencies
-        word_counts = Counter(keywords)
-        
-        # Return the most common keywords, up to 10
-        most_common = word_counts.most_common(10)
-        return [word for word, count in most_common]
 
-    def sanitize_data(self, data):
-        """Recursively sanitize data to handle None values or NaNs."""
-        if isinstance(data, dict):
-            return {k: self.sanitize_data(v) for k, v in data.items()}
-        elif isinstance(data, list):
-            return [self.sanitize_data(v) for v in data]
-        elif isinstance(data, float) and math.isnan(data):
-            return None
-        return data
-
-    def perform_three_chain_extraction(self, prompt):
+    def perform_three_chain_extraction(self, prompt, visited_nodes=None):
         """
-        Performs a 3-chain data extraction from Neo4j.
+        Performs a 3-chain data extraction from Neo4j with deduplication.
         This implements a chain of 3 connected node queries to find deeper relationships.
         """
+        # Initialize visited nodes set if not provided
+        if visited_nodes is None:
+            visited_nodes = set()
+            
         # First, find the most relevant Knowledge nodes using keyword search
         similar_items = self.keyword_search_neo4j(prompt, limit=5)
         
@@ -182,10 +185,15 @@ class ScoutAgent:
         # Extract the IDs of the most relevant Knowledge nodes
         knowledge_ids = [item.get('_id') for item in similar_items if item.get('_id')]
         
+        # Keep track of already seen nodes
+        for item in similar_items:
+            if '_id' in item:
+                visited_nodes.add(item['_id'])
+                
         if not knowledge_ids:
-            return {"vector_results": similar_items, "chain_results": []}  # Return just the search results if no IDs found
+            return {"vector_results": similar_items, "chain_results": []}
             
-        # Build a 3-chain query to find deeper connections
+        # Build a 3-chain query with deduplication built in
         three_chain_query = """
         // Start from the relevant Knowledge nodes
         MATCH (k:Knowledge)
@@ -193,12 +201,15 @@ class ScoutAgent:
         
         // First chain: Find related entities directly connected to Knowledge
         MATCH p1 = (k)-[r1]->(level1)
+        WHERE NOT id(level1) = id(k)  // Avoid self-loops
         
         // Second chain: Find entities connected to the first level entities
         OPTIONAL MATCH p2 = (level1)-[r2]->(level2)
+        WHERE NOT id(level2) = id(level1) AND NOT id(level2) = id(k)  // Avoid loops
         
         // Third chain: Find entities connected to the second level entities
         OPTIONAL MATCH p3 = (level2)-[r3]->(level3)
+        WHERE NOT id(level3) = id(level2) AND NOT id(level3) = id(level1) AND NOT id(level3) = id(k)  // Avoid loops
         
         // Return complete paths with their relationships
         RETURN 
@@ -207,30 +218,62 @@ class ScoutAgent:
             type(r1) AS relation1,
             labels(level1) AS level1_labels,
             COALESCE(level1.title, level1.name, "Unknown") AS level1_title,
+            COALESCE(level1.id, toString(id(level1))) AS level1_id,
             type(r2) AS relation2,
             labels(level2) AS level2_labels,
             COALESCE(level2.title, level2.name, "Unknown") AS level2_title,
+            COALESCE(level2.id, toString(id(level2))) AS level2_id,
             type(r3) AS relation3,
             labels(level3) AS level3_labels,
             COALESCE(level3.title, level3.name, "Unknown") AS level3_title,
+            COALESCE(level3.id, toString(id(level3))) AS level3_id,
             // Include property details for all nodes
             properties(k) AS source_properties,
             properties(level1) AS level1_properties,
             properties(level2) AS level2_properties,
             properties(level3) AS level3_properties
-        LIMIT 20
+        LIMIT 10
         """
         
         # Execute the 3-chain query
         chain_results = self.run_neo4j_query(three_chain_query, {"knowledge_ids": knowledge_ids})
         
-        # Combine the initial search results with the chain results
+        # Post-process to deduplicate the results
+        deduplicated_chain_results = self.deduplicate_chain_results(chain_results, visited_nodes)
+        
+        # Combine the initial search results with the deduplicated chain results
         combined_results = {
             "vector_results": similar_items,
-            "chain_results": chain_results
+            "chain_results": deduplicated_chain_results
         }
         
         return combined_results
+
+    def deduplicate_chain_results(self, chain_results, visited_nodes):
+        """
+        Deduplicate chain results to avoid revisiting the same nodes.
+        """
+        deduplicated_results = []
+        
+        for result in chain_results:
+            # Extract all node IDs from this chain
+            node_ids = []
+            for level_suffix in ['source_id', 'level1_id', 'level2_id', 'level3_id']:
+                if level_suffix in result and result[level_suffix]:
+                    node_ids.append(result[level_suffix])
+            
+            # Check if any node in this chain has been visited
+            is_new_chain = False
+            for node_id in node_ids:
+                if node_id and node_id not in visited_nodes:
+                    is_new_chain = True
+                    visited_nodes.add(node_id)
+            
+            # If this chain has at least one new node, add it to results
+            if is_new_chain:
+                deduplicated_results.append(result)
+        
+        return deduplicated_results
 
     def generate_query_for_neo(self, prompt):
         # Get keyword search results from Neo4j
@@ -297,11 +340,14 @@ class ScoutAgent:
                 'raw_output': str(locals().get('result', 'N/A'))
             }
 
-    def find_relevant_knowledge(self, prompt):
+    def find_relevant_knowledge(self, prompt, visited_nodes=None):
         """
         Find the most relevant knowledge in the database based on keyword matching.
         This is an alternative approach to vector search.
         """
+        if visited_nodes is None:
+            visited_nodes = set()
+            
         keywords = self._extract_keywords(prompt)
         keyword_string = " ".join(keywords)
         print(f"Extracted keywords: {keyword_string}")
@@ -329,6 +375,15 @@ class ScoutAgent:
         # Simple scoring function based on keyword presence
         scored_results = []
         for result in results:
+            # Skip nodes we've already seen
+            node_id = result.get('_id')
+            if node_id in visited_nodes:
+                continue
+                
+            # Mark this node as visited
+            if node_id:
+                visited_nodes.add(node_id)
+                
             score = 0
             # Check title for keyword matches
             if result.get('title'):
@@ -364,29 +419,36 @@ class ScoutAgent:
         if not user_prompt:
             return {"error": "Missing 'prompt' in request"}, 400
 
+        # Keep track of visited nodes across all queries
+        visited_nodes = set()
+
         # Generate a Cypher query based on the user prompt
         generated_query = self.generate_query_for_neo(user_prompt)
         if isinstance(generated_query, dict) and "error" in generated_query:
             return {"error": "Query generation failed", "details": generated_query}, 500
 
-        # Execute the 3-chain extraction
+        # Execute the 3-chain extraction with deduplication
         try:
-            chain_data = self.perform_three_chain_extraction(user_prompt)
+            chain_data = self.perform_three_chain_extraction(user_prompt, visited_nodes)
             
             # If chain extraction failed, try the generated query as a fallback
             if not chain_data:
                 data_from_neo = self.run_neo4j_query(generated_query)
+                # Deduplicate the generated query results
+                data_from_neo = self.deduplicate_results(data_from_neo, visited_nodes)
             else:
-                # Use both the chain data and the generated query results
+                # Use the chain data with deduplication already applied
                 data_from_neo = chain_data
-                # Optionally run the generated query as well
+                
+                # Optionally run the generated query as well with deduplication
                 generated_query_results = self.run_neo4j_query(generated_query)
                 if generated_query_results:
-                    data_from_neo["generated_query_results"] = generated_query_results
+                    deduped_generated_results = self.deduplicate_results(generated_query_results, visited_nodes)
+                    data_from_neo["generated_query_results"] = deduped_generated_results
                 
         except Exception as e:
             print(f"⚠️ Neo4j query failed: {e}")
-            fallback_knowledge = self.find_relevant_knowledge(user_prompt)
+            fallback_knowledge = self.find_relevant_knowledge(user_prompt, visited_nodes)
             if not fallback_knowledge:
                 return {
                     "error": f"Neo4j query execution failed and fallback search failed: {str(e)}",
@@ -400,22 +462,64 @@ class ScoutAgent:
                 "cypher_query_by_llm": generated_query
             }, 404
 
-        # Get trend information directly from keyword search
-        trend_data = self.keyword_search_neo4j(user_prompt)
-
         # Convert the data to insights
         insights_output = self.convert_data_to_insights(
             data_from_neo,
             generated_query,
-            user_prompt,
-            trend_data
+            user_prompt
         )
 
         insights_output["source"] = "neo4j"
 
         return insights_output, 200
+        
+    def deduplicate_results(self, results, visited_nodes):
+        """
+        Deduplicate Neo4j query results based on node IDs.
+        Works with both array-based results and dictionary-based results.
+        """
+        if not results:
+            return results
+            
+        # Handle array of results
+        if isinstance(results, list):
+            deduplicated = []
+            for item in results:
+                # Skip if no ID field
+                if not isinstance(item, dict):
+                    continue
+                    
+                # Try to find an ID field (different naming conventions)
+                node_id = None
+                for id_field in ['_id', 'id', 'nodeId']:
+                    if id_field in item and item[id_field]:
+                        node_id = item[id_field]
+                        break
+                        
+                # If no ID found or already visited, skip
+                if not node_id or node_id in visited_nodes:
+                    continue
+                    
+                # Add to visited set and deduplicated results
+                visited_nodes.add(node_id)
+                deduplicated.append(item)
+                
+            return deduplicated
+            
+        # Handle dictionary with nested arrays
+        elif isinstance(results, dict):
+            deduplicated_dict = {}
+            for key, value in results.items():
+                if isinstance(value, list):
+                    deduplicated_dict[key] = self.deduplicate_results(value, visited_nodes)
+                else:
+                    deduplicated_dict[key] = value
+            return deduplicated_dict
+            
+        # Return unchanged if not a list or dict
+        return results
 
-    def convert_data_to_insights(self, data, cypher_query_by_llm, prompt, trend_data=None):
+    def convert_data_to_insights(self, data, cypher_query_by_llm, prompt):
         """
         Convert Neo4j data into structured insights.
         """
@@ -432,8 +536,8 @@ class ScoutAgent:
 
         # Format trend data for display
         trend_with_scores = []
-        if trend_data:
-            for item in trend_data:
+        if isinstance(data, dict) and 'vector_results' in data:
+            for item in data['vector_results']:
                 trend_with_scores.append({
                     "_id": item.get("_id", "No _id"),
                     "summary_text": item.get("summary_text", "No summary_text"),
