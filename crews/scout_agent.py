@@ -3,7 +3,6 @@ from neo4j import GraphDatabase
 import re, math
 import os
 from dotenv import load_dotenv
-from helpers.chroma_helpers import similarity_search_with_score
 
 load_dotenv()
 
@@ -58,22 +57,44 @@ class ScoutAgent:
             print(f"⚠️ Error running Neo4j query: {e}")
             return []
 
-    def get_relevant_trend_context(self, prompt):
-        """Fetches relevant trend context using ChromaDB similarity search."""
+    def vector_search_neo4j(self, prompt, k=5):
+        """
+        Performs vector similarity search directly in Neo4j instead of using ChromaDB.
+        Assumes embeddings are stored in Neo4j and the database has vector capabilities enabled.
+        """
         try:
-            trend_results = similarity_search_with_score(prompt, k=5)
-            relevant_trends = []
-            for trend in trend_results:
-                trend_info = {
-                    "_id":trend.get("_id","No _id Found"),
-                    "summary_text": trend.get("summary_text", "No summary_text"),
-                    "title": trend.get("title", "No title listed"),
-                    "similarity_score": trend.get("similarity_score", 0.00),
-                }
-                relevant_trends.append(trend_info)
-            return relevant_trends
+            # This assumes you have a function to convert the prompt to embeddings
+            # For this example, we'll assume the embeddings are already in Neo4j
+            
+            # Vector search query using Neo4j's vector capabilities
+            query = """
+            // Step 1: Generate embedding for the search query (this would normally be done client-side)
+            WITH $prompt AS searchText
+            
+            // Step 2: Find similar nodes using vector similarity
+            MATCH (k:Knowledge)
+            WHERE k.embedding IS NOT NULL
+            WITH k, gds.similarity.cosine(k.embedding, apoc.text.embedding($prompt)) AS similarity
+            WHERE similarity > 0.7
+            RETURN k._id AS _id, 
+                   k.summary_text AS summary_text, 
+                   k.title AS title, 
+                   similarity AS similarity_score
+            ORDER BY similarity_score DESC
+            LIMIT $limit
+            """
+            
+            with self.driver.session() as session:
+                results = session.run(query, prompt=prompt, limit=k).data()
+                
+                if not results:
+                    print("⚠️ No similar trends found in Neo4j vector search")
+                    return []
+                    
+                return results
+                
         except Exception as e:
-            print(f"⚠️ Error fetching trend context from ChromaDB: {e}")
+            print(f"⚠️ Error performing vector search in Neo4j: {e}")
             return []
 
     def sanitize_data(self, data):
@@ -86,8 +107,73 @@ class ScoutAgent:
             return None
         return data
 
+    def perform_three_chain_extraction(self, prompt):
+        """
+        Performs a 3-chain data extraction from Neo4j.
+        This implements a chain of 3 connected node queries to find deeper relationships.
+        """
+        # First, find the most relevant Knowledge nodes using vector similarity
+        similar_items = self.vector_search_neo4j(prompt, k=3)
+        
+        if not similar_items:
+            return []
+            
+        # Extract the IDs of the most relevant Knowledge nodes
+        knowledge_ids = [item.get('_id') for item in similar_items if item.get('_id')]
+        
+        if not knowledge_ids:
+            return similar_items  # Return the vector search results if no IDs found
+            
+        # Build a 3-chain query to find deeper connections
+        three_chain_query = """
+        // Start from the relevant Knowledge nodes
+        MATCH (k:Knowledge)
+        WHERE k._id IN $knowledge_ids
+        
+        // First chain: Find related entities directly connected to Knowledge
+        MATCH p1 = (k)-[r1]->(level1)
+        
+        // Second chain: Find entities connected to the first level entities
+        MATCH p2 = (level1)-[r2]->(level2)
+        
+        // Third chain: Find entities connected to the second level entities
+        MATCH p3 = (level2)-[r3]->(level3)
+        
+        // Return complete paths with their relationships
+        RETURN 
+            k._id AS source_id,
+            k.title AS source_title,
+            type(r1) AS relation1,
+            labels(level1) AS level1_labels,
+            level1.title AS level1_title,
+            type(r2) AS relation2,
+            labels(level2) AS level2_labels,
+            level2.title AS level2_title,
+            type(r3) AS relation3,
+            labels(level3) AS level3_labels,
+            level3.title AS level3_title,
+            // Include property details for all nodes
+            properties(k) AS source_properties,
+            properties(level1) AS level1_properties,
+            properties(level2) AS level2_properties,
+            properties(level3) AS level3_properties
+        LIMIT 20
+        """
+        
+        # Execute the 3-chain query
+        chain_results = self.run_neo4j_query(three_chain_query)
+        
+        # Combine the initial vector results with the chain results
+        combined_results = {
+            "vector_results": similar_items,
+            "chain_results": chain_results
+        }
+        
+        return combined_results
+
     def generate_query_for_neo(self, prompt):
-        trend_results = self.get_relevant_trend_context(prompt)
+        # Instead of getting context from ChromaDB, we use Neo4j vector search
+        trend_results = self.vector_search_neo4j(prompt)
         if not trend_results:
             return {'error': 'No relevant trends found', 'raw_output': trend_results}
 
@@ -151,47 +237,62 @@ class ScoutAgent:
             }
 
     def process_scout_query(self, data):
-        """Processes the scout query by integrating Neo4j and ChromaDB results."""
+        """Processes the scout query using only Neo4j for data extraction."""
         user_prompt = data.get("prompt")
         if not user_prompt:
             return {"error": "Missing 'prompt' in request"}, 400
 
+        # Generate a Cypher query based on the user prompt
         generated_query = self.generate_query_for_neo(user_prompt)
         if isinstance(generated_query, dict) and "error" in generated_query:
             return {"error": "Query generation failed", "details": generated_query}, 500
 
+        # Execute the 3-chain extraction
         try:
-            data_from_neo = self.run_neo4j_query(generated_query)
+            chain_data = self.perform_three_chain_extraction(user_prompt)
+            
+            # If chain extraction failed, try the generated query as a fallback
+            if not chain_data:
+                data_from_neo = self.run_neo4j_query(generated_query)
+            else:
+                # Use both the chain data and the generated query results
+                data_from_neo = chain_data
+                # Optionally run the generated query as well
+                generated_query_results = self.run_neo4j_query(generated_query)
+                if generated_query_results:
+                    data_from_neo["generated_query_results"] = generated_query_results
+                
         except Exception as e:
             print(f"⚠️ Neo4j query failed: {e}")
-            data_from_neo = []
-
-        data_from_chroma = self.get_relevant_trend_context(user_prompt)
-
-        if not data_from_neo and not data_from_chroma:
             return {
-                "error": "No data found from either Neo4j or ChromaDB",
+                "error": f"Neo4j query execution failed: {str(e)}",
+                "cypher_query_by_llm": generated_query
+            }, 500
+
+        if not data_from_neo:
+            return {
+                "error": "No data found from Neo4j",
                 "cypher_query_by_llm": generated_query
             }, 404
 
-        combined_data = data_from_neo + [{"chroma_data": c} for c in data_from_chroma]
+        # Get trend information directly from Neo4j vector search
+        trend_data = self.vector_search_neo4j(user_prompt)
+
+        # Convert the data to insights
         insights_output = self.convert_data_to_insights(
-            combined_data,
+            data_from_neo,
             generated_query,
-            user_prompt
+            user_prompt,
+            trend_data
         )
 
-        insights_output["source"] = (
-            "neo4j+chroma" if data_from_neo and data_from_chroma else
-            "neo4j" if data_from_neo else
-            "chroma"
-        )
+        insights_output["source"] = "neo4j"
 
         return insights_output, 200
 
-    def convert_data_to_insights(self, data, cypher_query_by_llm, prompt):
+    def convert_data_to_insights(self, data, cypher_query_by_llm, prompt, trend_data=None):
         """
-        Convert combined Neo4j + Chroma trend data into structured insights.
+        Convert Neo4j data into structured insights.
         """
         if not data:
             return {
@@ -204,43 +305,52 @@ class ScoutAgent:
                 "data_from_source": data,
             }
 
-        neo_data = []
-        chroma_data = []
-
-        # Separate Neo4j data and Chroma data
-        for item in data:
-            if isinstance(item, dict) and "chroma_data" in item:
-                chroma_data.append({
-                    "_id": item["chroma_data"].get("_id", "No _id Found"),
-                    "similarity_score": item["chroma_data"].get("similarity_score", 0.00),
-                    "summary_text": item["chroma_data"].get("summary_text", "No summary_text"),
-                    "title": item["chroma_data"].get("title", "No title listed")
-                })
-            else:
-                neo_data.append(item)
-
+        # Format trend data for display
         trend_with_scores = []
-        for item in chroma_data:
-            trend_with_scores.append({
-                "_id": item.get("_id", "No _id"),
-                "summary_text": item.get("summary_text", "No summary_text"),
-                "title": item.get("title", "No title listed"),
-                "similarity_score": item.get("similarity_score", 0.00)
-            })
-        trend_with_scores.sort(key=lambda x: x["similarity_score"], reverse=True)
+        if trend_data:
+            for item in trend_data:
+                trend_with_scores.append({
+                    "_id": item.get("_id", "No _id"),
+                    "summary_text": item.get("summary_text", "No summary_text"),
+                    "title": item.get("title", "No title listed"),
+                    "similarity_score": item.get("similarity_score", 0.00)
+                })
+            trend_with_scores.sort(key=lambda x: x["similarity_score"], reverse=True)
 
+        # Extract all fields and domains from the data
         all_fields = set()
         domains = set()
-        for obj in (neo_data + chroma_data):
-            if isinstance(obj, dict):
-                all_fields.update(obj.keys())
-                if "domain" in obj:
-                    domains.add(obj["domain"])
+        
+        # Handle different data structures (chain results have a different structure)
+        if 'vector_results' in data and 'chain_results' in data:
+            # Handle chain results structure
+            for obj in data['vector_results']:
+                if isinstance(obj, dict):
+                    all_fields.update(obj.keys())
+                    if "domain" in obj:
+                        domains.add(obj["domain"])
+                    
+            for chain_result in data['chain_results']:
+                if isinstance(chain_result, dict):
+                    all_fields.update(chain_result.keys())
+                    
+                    # Extract domains from all levels of the chain
+                    for prop_key in ['source_properties', 'level1_properties', 'level2_properties', 'level3_properties']:
+                        props = chain_result.get(prop_key, {})
+                        if isinstance(props, dict) and "domain" in props:
+                            domains.add(props["domain"])
+        else:
+            # Handle simple results
+            for obj in data:
+                if isinstance(obj, dict):
+                    all_fields.update(obj.keys())
+                    if "domain" in obj:
+                        domains.add(obj["domain"])
 
         crew_inputs = {
             "fields": list(all_fields),
             "domains": list(domains) or ["No domain data detected"],
-            "num_records": len(data),
+            "num_records": len(data['chain_results'] if isinstance(data, dict) and 'chain_results' in data else data),
             "trend_matches": trend_with_scores 
         }
 
@@ -248,12 +358,22 @@ class ScoutAgent:
             f"- ID: {t['_id']} | Title: {t['title']} | Score: {t['similarity_score']:.4f} | Summary: {t['summary_text']}"
             for t in trend_with_scores[:5]
         ])
+        
+        # Include chain results information in the prompt if available
+        chain_info = ""
+        if isinstance(data, dict) and 'chain_results' in data and data['chain_results']:
+            chain_sample = data['chain_results'][:3]  
+            chain_info = "3-Chain relationship examples found:\n"
+            for i, chain in enumerate(chain_sample):
+                chain_info += f"Chain {i+1}: {chain.get('source_title', 'Unknown')} -> {chain.get('level1_title', 'Unknown')} -> {chain.get('level2_title', 'Unknown')} -> {chain.get('level3_title', 'Unknown')}\n"
 
+        print("chain_info",chain_info)
         prompt_for_insights = (
             "You are a data strategy expert helping analyze research and patent trends.\n\n"
             f"There are {crew_inputs['num_records']} total matched data records.\n"
             f"Detected domains: {', '.join(crew_inputs['domains'])}\n"
             f"Detected fields/attributes: {', '.join(crew_inputs['fields'])}\n\n"
+            f"{chain_info}\n\n"
             "Here are the top relevant trend matches from vector search:\n"
             f"{trend_summary_for_prompt}\n\n"
             "Based on the above trends and metadata, perform the following:\n"
@@ -309,8 +429,8 @@ class ScoutAgent:
                 "trend_summary": trend_summary_for_prompt,
                 "cypher_query_by_llm": cypher_query_by_llm,
                 "message": "Insights successfully generated.",
-                "data_from_source": chroma_data + neo_data,  # Merge the cleaned data
-                "source": "neo+chroma"  # Specify the data source type
+                "data_from_source": data,
+                "source": "neo4j"
             }
 
         except Exception as e:
@@ -323,5 +443,5 @@ class ScoutAgent:
                 "cypher_query_by_llm": cypher_query_by_llm,
                 "message": f"Failed to generate insights: {str(e)}",
                 "data_from_source": data,
-                "source": "neo+chroma"  # Specify the data source type
+                "source": "neo4j"
             }
