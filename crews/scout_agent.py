@@ -25,7 +25,7 @@ class ScoutAgent:
             "ASSIGNED_TO", "HAS_CPC", "HAS_IPC", "HAS_KEYWORD", "IN_SUBDOMAIN",
             "INVENTED_BY", "PUBLISHED_BY", "USES_TECH", "WRITTEN_BY"
         ]
-        self.property_keys = ["country", "data_quality_score"]
+        self.property_keys = ["id", "country", "data_quality_score", "domain", "knowledge_type", "publication_date", "title", "relevance_score"]
 
         self.agent = Agent(
             role="Database Scout",
@@ -41,14 +41,12 @@ class ScoutAgent:
         )
 
     def is_valid_cypher(self, query):
-        """ Validates the Cypher query to ensure only allowed labels and relationships are used. """
-        for label in re.findall(r'\((?:\w*):(\w+)\)', query):
-            if label not in self.node_labels:
-                return False, f"Invalid node label: {label}"
-        for rel in re.findall(r'-\[:(\w+)\]', query):
-            if rel not in self.rel_types:
-                return False, f"Invalid relationship: {rel}"
-        return True, "Valid Cypher query"
+        node_labels = re.findall(r"(?<!\[):(\w+)", query)
+        invalid_labels = [label for label in node_labels if label not in self.node_labels]
+
+        if invalid_labels:
+            return False, f"Invalid node label(s): {', '.join(invalid_labels)}"
+        return True, "Query is valid"
 
     def run_neo4j_query(self, query, parameters=None):
         """ Runs the given Cypher query on the Neo4j database. """
@@ -114,32 +112,31 @@ class ScoutAgent:
                 
             # Build a keyword-based query
             query = """
-            // Find Knowledge nodes that match keywords in title, summary, or other relevant properties
+            // Find Knowledge nodes that match keywords in title, abstract, or domain
             MATCH (k:Knowledge)
             WHERE 
               ANY(keyword IN $keywords WHERE toLower(k.title) CONTAINS toLower(keyword))
-              OR ANY(keyword IN $keywords WHERE k.summary_text IS NOT NULL AND toLower(k.summary_text) CONTAINS toLower(keyword))
+              OR ANY(keyword IN $keywords WHERE k.abstract IS NOT NULL AND toLower(k.abstract) CONTAINS toLower(keyword))
               OR ANY(keyword IN $keywords WHERE k.domain IS NOT NULL AND toLower(k.domain) CONTAINS toLower(keyword))
             WITH k, 
-                 // Calculate a simple relevance score based on how many keywords match
                  size([keyword IN $keywords WHERE 
                      toLower(k.title) CONTAINS toLower(keyword) OR 
-                     (k.summary_text IS NOT NULL AND toLower(k.summary_text) CONTAINS toLower(keyword)) OR
+                     (k.abstract IS NOT NULL AND toLower(k.abstract) CONTAINS toLower(keyword)) OR
                      (k.domain IS NOT NULL AND toLower(k.domain) CONTAINS toLower(keyword))
                  ]) AS matches,
                  size($keywords) AS total_keywords
             WITH k, (1.0 * matches / total_keywords) AS relevance_score
             WHERE relevance_score > 0.2
             RETURN 
-                COALESCE(k.id, k._id, toString(id(k))) AS _id, 
-                COALESCE(k.summary_text, k.abstract, "No summary available") AS summary_text, 
-                k.title AS title, 
+                k.title AS title,
+                COALESCE(k.abstract, "No summary available") AS summary_text,
                 relevance_score AS similarity_score,
                 k.domain AS domain,
                 k.knowledge_type AS knowledge_type
             ORDER BY relevance_score DESC
             LIMIT $limit
             """
+
             
             with self.driver.session() as session:
                 results = session.run(query, keywords=keywords, limit=limit).data()
@@ -150,15 +147,16 @@ class ScoutAgent:
                     fallback_query = """
                     MATCH (k:Knowledge)
                     RETURN 
-                        COALESCE(k.id, k._id, toString(id(k))) AS _id, 
-                        COALESCE(k.summary_text, k.abstract, "No summary available") AS summary_text, 
-                        k.title AS title, 
+                        COALESCE(k.id, toString(k.id)) AS id,
+                        "No summary available" AS summary_text,
+                        k.title AS title,
                         0.5 AS similarity_score,
                         k.domain AS domain,
                         k.knowledge_type AS knowledge_type
                     ORDER BY k.data_quality_score DESC
                     LIMIT 5
                     """
+
                     results = session.run(fallback_query).data()
                     
                 return results
@@ -183,12 +181,12 @@ class ScoutAgent:
             return []
             
         # Extract the IDs of the most relevant Knowledge nodes
-        knowledge_ids = [item.get('_id') for item in similar_items if item.get('_id')]
+        knowledge_ids = [item.get('id') for item in similar_items if item.get('id')]
         
         # Keep track of already seen nodes
         for item in similar_items:
-            if '_id' in item:
-                visited_nodes.add(item['_id'])
+            if 'id' in item:
+                visited_nodes.add(item['id'])
                 
         if not knowledge_ids:
             return {"vector_results": similar_items, "chain_results": []}
@@ -197,36 +195,36 @@ class ScoutAgent:
         three_chain_query = """
         // Start from the relevant Knowledge nodes
         MATCH (k:Knowledge)
-        WHERE k.id IN $knowledge_ids OR toString(id(k)) IN $knowledge_ids
+        WHERE k.id IN $knowledge_ids OR toString(k.id) IN $knowledge_ids
         
         // First chain: Find related entities directly connected to Knowledge
         MATCH p1 = (k)-[r1]->(level1)
-        WHERE NOT id(level1) = id(k)  // Avoid self-loops
+        WHERE NOT level1.id = k.id  // Avoid self-loops
         
         // Second chain: Find entities connected to the first level entities
         OPTIONAL MATCH p2 = (level1)-[r2]->(level2)
-        WHERE NOT id(level2) = id(level1) AND NOT id(level2) = id(k)  // Avoid loops
+        WHERE NOT level2.id = level1.id AND NOT level2.id = k.id  // Avoid loops
         
         // Third chain: Find entities connected to the second level entities
         OPTIONAL MATCH p3 = (level2)-[r3]->(level3)
-        WHERE NOT id(level3) = id(level2) AND NOT id(level3) = id(level1) AND NOT id(level3) = id(k)  // Avoid loops
+        WHERE NOT level3.id = level2.id AND NOT level3.id = level1.id AND NOT level3.id = k.id  // Avoid loops
         
         // Return complete paths with their relationships
         RETURN 
-            COALESCE(k.id, toString(id(k))) AS source_id,
+            COALESCE(k.id, toString(k.id)) AS source_id,
             k.title AS source_title,
             type(r1) AS relation1,
             labels(level1) AS level1_labels,
             COALESCE(level1.title, level1.name, "Unknown") AS level1_title,
-            COALESCE(level1.id, toString(id(level1))) AS level1_id,
+            COALESCE(level1.id, toString(level1.id)) AS level1_id,
             type(r2) AS relation2,
             labels(level2) AS level2_labels,
             COALESCE(level2.title, level2.name, "Unknown") AS level2_title,
-            COALESCE(level2.id, toString(id(level2))) AS level2_id,
+            COALESCE(level2.id, toString(level2.id)) AS level2_id,
             type(r3) AS relation3,
             labels(level3) AS level3_labels,
             COALESCE(level3.title, level3.name, "Unknown") AS level3_title,
-            COALESCE(level3.id, toString(id(level3))) AS level3_id,
+            COALESCE(level3.id, toString(level3.id)) AS level3_id,
             // Include property details for all nodes
             properties(k) AS source_properties,
             properties(level1) AS level1_properties,
@@ -289,15 +287,15 @@ class ScoutAgent:
         ])
 
         schema_description = (
-            "Generate a Cypher query using only these node labels:\n"
+            "Generate a Cypher query using strictly ONLY these Node labels:\n"
             f"{', '.join(self.node_labels)}\n"
-            "And only these relationships:\n"
-            f"{', '.join(self.rel_types)}\n"
-            "Your task is to generate Cypher queries that extract paths between nodes.\n"
-            "These paths should be represented in the following format:\n\n"
-            "MATCH p = (from)-[relationship if needed]->(to) RETURN p;\n\n"
-            "Optional property keys: country, data_quality_score\n"
-            "Do NOT use other labels or relationships."
+            "Relationships allowed:\n"
+            f"{', '.join(self.rel_types)}\n\n"
+            "Allowed properties:\n"
+            f"{', '.join(self.property_keys)}\n\n"
+            "Only use valid labels, relationships, and properties provided. Avoid any labels that is not explicitly listed.\n"
+            "Only output the Cypher query. Do not include explanations or formatting like markdown.\n\n"
+            "Format: MATCH p = (from)-[RELATION]->(to) RETURN p;"
         )
 
         full_prompt = (
@@ -329,9 +327,14 @@ class ScoutAgent:
             query = re.sub(r'^```(?:cypher)?\s*', '', query)
             query = re.sub(r'\s*```$', '', query)
 
+            # Validate the Cypher query using the provided node labels and relationships
             is_valid, message = self.is_valid_cypher(query)
             if not is_valid:
                 return {'error': f'Invalid Cypher query: {message}', 'raw_output': query}
+
+            # Fix common issues like invalid labels or relationships
+            # Ensure all labels and relationships are in the allowed lists
+            query = self.fix_invalid_labels_and_relations(query)
 
             return query
         except Exception as e:
@@ -339,6 +342,18 @@ class ScoutAgent:
                 'error': f'Failed to generate or parse query: {str(e)}',
                 'raw_output': str(locals().get('result', 'N/A'))
             }
+
+    def fix_invalid_labels_and_relations(self, query):
+        # Replace or remove invalid node labels or relationships
+        for label in self.node_labels:
+            # Ensure any invalid node labels are replaced or removed from the query
+            if label not in query:
+                query = re.sub(r'\b' + re.escape(label) + r'\b', '', query)
+        for rel in self.rel_types:
+            # Ensure invalid relationships are replaced or removed
+            if rel not in query:
+                query = re.sub(r'\b' + re.escape(rel) + r'\b', '', query)
+        return query
 
     def find_relevant_knowledge(self, prompt, visited_nodes=None):
         """
@@ -359,7 +374,7 @@ class ScoutAgent:
             k.title IS NOT NULL AND
             k.knowledge_type IS NOT NULL
         RETURN 
-            COALESCE(k.id, toString(id(k))) AS _id,
+            COALESCE(k.id, toString(k.id)) AS id,
             k.title AS title,
             k.domain AS domain,
             k.knowledge_type AS knowledge_type,
@@ -376,7 +391,7 @@ class ScoutAgent:
         scored_results = []
         for result in results:
             # Skip nodes we've already seen
-            node_id = result.get('_id')
+            node_id = result.get('id')
             if node_id in visited_nodes:
                 continue
                 
@@ -413,66 +428,6 @@ class ScoutAgent:
         # Return only results with some relevance
         return [r for r in scored_results if r.get('similarity_score', 0) > 0.1]
 
-    def process_scout_query(self, data):
-        """Processes the scout query using only Neo4j for data extraction."""
-        user_prompt = data.get("prompt")
-        if not user_prompt:
-            return {"error": "Missing 'prompt' in request"}, 400
-
-        # Keep track of visited nodes across all queries
-        visited_nodes = set()
-
-        # Generate a Cypher query based on the user prompt
-        generated_query = self.generate_query_for_neo(user_prompt)
-        if isinstance(generated_query, dict) and "error" in generated_query:
-            return {"error": "Query generation failed", "details": generated_query}, 500
-
-        # Execute the 3-chain extraction with deduplication
-        try:
-            chain_data = self.perform_three_chain_extraction(user_prompt, visited_nodes)
-            
-            # If chain extraction failed, try the generated query as a fallback
-            if not chain_data:
-                data_from_neo = self.run_neo4j_query(generated_query)
-                # Deduplicate the generated query results
-                data_from_neo = self.deduplicate_results(data_from_neo, visited_nodes)
-            else:
-                # Use the chain data with deduplication already applied
-                data_from_neo = chain_data
-                
-                # Optionally run the generated query as well with deduplication
-                generated_query_results = self.run_neo4j_query(generated_query)
-                if generated_query_results:
-                    deduped_generated_results = self.deduplicate_results(generated_query_results, visited_nodes)
-                    data_from_neo["generated_query_results"] = deduped_generated_results
-                
-        except Exception as e:
-            print(f"⚠️ Neo4j query failed: {e}")
-            fallback_knowledge = self.find_relevant_knowledge(user_prompt, visited_nodes)
-            if not fallback_knowledge:
-                return {
-                    "error": f"Neo4j query execution failed and fallback search failed: {str(e)}",
-                    "cypher_query_by_llm": generated_query
-                }, 500
-            data_from_neo = {"vector_results": fallback_knowledge, "chain_results": []}
-
-        if not data_from_neo:
-            return {
-                "error": "No data found from Neo4j",
-                "cypher_query_by_llm": generated_query
-            }, 404
-
-        # Convert the data to insights
-        insights_output = self.convert_data_to_insights(
-            data_from_neo,
-            generated_query,
-            user_prompt
-        )
-
-        insights_output["source"] = "neo4j"
-
-        return insights_output, 200
-        
     def deduplicate_results(self, results, visited_nodes):
         """
         Deduplicate Neo4j query results based on node IDs.
@@ -491,7 +446,7 @@ class ScoutAgent:
                     
                 # Try to find an ID field (different naming conventions)
                 node_id = None
-                for id_field in ['_id', 'id', 'nodeId']:
+                for id_field in ['id', 'nodeId']:
                     if id_field in item and item[id_field]:
                         node_id = item[id_field]
                         break
@@ -536,15 +491,22 @@ class ScoutAgent:
 
         # Format trend data for display
         trend_with_scores = []
+
         if isinstance(data, dict) and 'vector_results' in data:
+            print("data: ", data)
             for item in data['vector_results']:
                 trend_with_scores.append({
-                    "_id": item.get("_id", "No _id"),
-                    "summary_text": item.get("summary_text", "No summary_text"),
+                    "id": item.get("id", "No id"),
                     "title": item.get("title", "No title listed"),
-                    "similarity_score": item.get("similarity_score", 0.00)
+                    "summary_text": item.get("summary_text", "No summary available"),
+                    "similarity_score": round(item.get("similarity_score", 0.0), 4),
+                    "domain": item.get("domain", "No domain specified"),
+                    "knowledge_type": item.get("knowledge_type", "No knowledge type")
                 })
+
+            # Sort by similarity score (highest first)
             trend_with_scores.sort(key=lambda x: x["similarity_score"], reverse=True)
+
 
         # Extract all fields and domains from the data
         all_fields = set()
@@ -584,7 +546,7 @@ class ScoutAgent:
         }
 
         trend_summary_for_prompt = "\n".join([
-            f"- ID: {t['_id']} | Title: {t['title']} | Score: {round(t['similarity_score'], 3)})" 
+            f"- ID: {t['id']} | Title: {t['title']} | Score: {round(t['similarity_score'], 3)})" 
             for t in trend_with_scores[:5]
         ])
         
@@ -672,3 +634,87 @@ class ScoutAgent:
                 "data_from_source": data,
                 "source": "neo4j"
             }
+
+    def replace_none_with_default(self, data, default_value="N/A"):
+        """Recursively replace None values with a default value in nested structures."""
+        if isinstance(data, dict):
+            return {key: self.replace_none_with_default(value, default_value) for key, value in data.items()}
+        elif isinstance(data, list):
+            return [self.replace_none_with_default(item, default_value) for item in data]
+        elif data is None:
+            return default_value
+        return data
+
+    def process_scout_query(self, data):
+        """Processes the scout query using only Neo4j for data extraction."""
+        user_prompt = data.get("prompt")
+        if not user_prompt:
+            return {"error": "Missing 'prompt' in request"}, 400
+
+        # Keep track of visited nodes across all queries
+        visited_nodes = set()
+
+        # Generate a Cypher query based on the user prompt
+        generated_query = self.generate_query_for_neo(user_prompt)
+        if isinstance(generated_query, dict) and "error" in generated_query:
+            return {"error": "Query generation failed", "details": generated_query}, 500
+
+        if not generated_query:  # Check if generated_query is None or empty
+            return {"error": "Generated query is empty or None"}, 500
+
+        # Execute the 3-chain extraction with deduplication
+        try:
+            chain_data = self.perform_three_chain_extraction(user_prompt, visited_nodes)
+
+            if chain_data is None:
+                chain_data = {}  # Ensure chain_data is not None
+
+            # If chain extraction failed, try the generated query as a fallback
+            if not chain_data:
+                data_from_neo = self.run_neo4j_query(generated_query)
+                if data_from_neo is None:
+                    data_from_neo = {}  # Ensure it's not None
+                else:
+                    data_from_neo = self.deduplicate_results(data_from_neo, visited_nodes)
+            else:
+                # Use the chain data with deduplication already applied
+                data_from_neo = chain_data
+
+                # Optionally run the generated query as well with deduplication
+                generated_query_results = self.run_neo4j_query(generated_query)
+                if generated_query_results:
+                    deduped_generated_results = self.deduplicate_results(generated_query_results, visited_nodes)
+                    data_from_neo["generated_query_results"] = deduped_generated_results
+
+        except Exception as e:
+            print(f"⚠️ Neo4j query failed: {e}")
+            fallback_knowledge = self.find_relevant_knowledge(user_prompt, visited_nodes)
+            if not fallback_knowledge:
+                return {
+                    "error": f"Neo4j query execution failed and fallback search failed: {str(e)}",
+                    "cypher_query_by_llm": generated_query
+                }, 500
+            data_from_neo = {"vector_results": fallback_knowledge, "chain_results": []}
+
+        if not data_from_neo:
+            return {
+                "error": "No data found from Neo4j",
+                "cypher_query_by_llm": generated_query
+            }, 404
+
+        # Replace any None values in the data from Neo4j
+        data_from_neo = self.replace_none_with_default(data_from_neo, default_value="N/A")
+
+        # Convert the data to insights
+        insights_output = self.convert_data_to_insights(
+            data_from_neo,
+            generated_query,
+            user_prompt
+        )
+
+        # Replace any None values in the insights data as well
+        insights_output = self.replace_none_with_default(insights_output, default_value="N/A")
+
+        insights_output["source"] = "neo4j"
+
+        return insights_output, 200
