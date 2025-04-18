@@ -2,12 +2,9 @@ from flask import Flask, request, jsonify, render_template
 from crews.scout_agent import ScoutAgent
 from crews.chatbot import ChatBot
 from dotenv import load_dotenv
-from helpers.chroma_helpers import init_all_collections, similarity_search_with_score
 
 app = Flask(__name__)
 load_dotenv()
-
-init_all_collections()
 
 # Initialize both agents
 chatbot = ChatBot()

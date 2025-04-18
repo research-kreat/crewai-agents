@@ -3,6 +3,8 @@ from neo4j import GraphDatabase
 import re, math
 import os
 from dotenv import load_dotenv
+import json
+from collections import Counter
 
 load_dotenv()
 
@@ -48,54 +50,113 @@ class ScoutAgent:
                 return False, f"Invalid relationship: {rel}"
         return True, "Valid Cypher query"
 
-    def run_neo4j_query(self, query):
+    def run_neo4j_query(self, query, parameters=None):
         """ Runs the given Cypher query on the Neo4j database. """
         try:
             with self.driver.session() as session:
+                if parameters:
+                    return session.run(query, parameters).data()
                 return session.run(query).data()
         except Exception as e:
             print(f"⚠️ Error running Neo4j query: {e}")
             return []
 
-    def vector_search_neo4j(self, prompt, k=5):
+    def keyword_search_neo4j(self, prompt, limit=5):
         """
-        Performs vector similarity search directly in Neo4j instead of using ChromaDB.
-        Assumes embeddings are stored in Neo4j and the database has vector capabilities enabled.
+        Performs keyword-based search in Neo4j instead of vector search.
+        Extracts keywords from prompt and finds Knowledge nodes with matching properties.
         """
         try:
-            # This assumes you have a function to convert the prompt to embeddings
-            # For this example, we'll assume the embeddings are already in Neo4j
-            
-            # Vector search query using Neo4j's vector capabilities
+            # Extract keywords from prompt (simple implementation)
+            keywords = self._extract_keywords(prompt)
+            if not keywords:
+                print("⚠️ No keywords extracted from prompt")
+                return []
+                
+            # Build a keyword-based query
             query = """
-            // Step 1: Generate embedding for the search query (this would normally be done client-side)
-            WITH $prompt AS searchText
-            
-            // Step 2: Find similar nodes using vector similarity
+            // Find Knowledge nodes that match keywords in title, summary, or other relevant properties
             MATCH (k:Knowledge)
-            WHERE k.embedding IS NOT NULL
-            WITH k, gds.similarity.cosine(k.embedding, apoc.text.embedding($prompt)) AS similarity
-            WHERE similarity > 0.7
-            RETURN k._id AS _id, 
-                   k.summary_text AS summary_text, 
-                   k.title AS title, 
-                   similarity AS similarity_score
-            ORDER BY similarity_score DESC
+            WHERE 
+              ANY(keyword IN $keywords WHERE toLower(k.title) CONTAINS toLower(keyword))
+              OR ANY(keyword IN $keywords WHERE k.summary_text IS NOT NULL AND toLower(k.summary_text) CONTAINS toLower(keyword))
+              OR ANY(keyword IN $keywords WHERE k.domain IS NOT NULL AND toLower(k.domain) CONTAINS toLower(keyword))
+            WITH k, 
+                 // Calculate a simple relevance score based on how many keywords match
+                 size([keyword IN $keywords WHERE 
+                     toLower(k.title) CONTAINS toLower(keyword) OR 
+                     (k.summary_text IS NOT NULL AND toLower(k.summary_text) CONTAINS toLower(keyword)) OR
+                     (k.domain IS NOT NULL AND toLower(k.domain) CONTAINS toLower(keyword))
+                 ]) AS matches,
+                 size($keywords) AS total_keywords
+            WITH k, (1.0 * matches / total_keywords) AS relevance_score
+            WHERE relevance_score > 0.2
+            RETURN 
+                COALESCE(k.id, k._id, toString(id(k))) AS _id, 
+                COALESCE(k.summary_text, k.abstract, "No summary available") AS summary_text, 
+                k.title AS title, 
+                relevance_score AS similarity_score,
+                k.domain AS domain,
+                k.knowledge_type AS knowledge_type
+            ORDER BY relevance_score DESC
             LIMIT $limit
             """
             
             with self.driver.session() as session:
-                results = session.run(query, prompt=prompt, limit=k).data()
+                results = session.run(query, keywords=keywords, limit=limit).data()
                 
                 if not results:
-                    print("⚠️ No similar trends found in Neo4j vector search")
-                    return []
+                    print("⚠️ No similar trends found in Neo4j keyword search")
+                    # Fallback to get some Knowledge nodes if no keyword matches
+                    fallback_query = """
+                    MATCH (k:Knowledge)
+                    RETURN 
+                        COALESCE(k.id, k._id, toString(id(k))) AS _id, 
+                        COALESCE(k.summary_text, k.abstract, "No summary available") AS summary_text, 
+                        k.title AS title, 
+                        0.5 AS similarity_score,
+                        k.domain AS domain,
+                        k.knowledge_type AS knowledge_type
+                    ORDER BY k.data_quality_score DESC
+                    LIMIT 5
+                    """
+                    results = session.run(fallback_query).data()
                     
                 return results
                 
         except Exception as e:
-            print(f"⚠️ Error performing vector search in Neo4j: {e}")
+            print(f"⚠️ Error performing keyword search in Neo4j: {e}")
             return []
+    
+    def _extract_keywords(self, text):
+        """Extract relevant keywords from text for search purposes"""
+        # For now, a very simple keyword extraction
+        # Remove common stop words and punctuation
+        stop_words = set(['the', 'a', 'an', 'and', 'or', 'but', 'is', 'are', 'was', 'were', 
+                         'be', 'been', 'being', 'in', 'on', 'at', 'to', 'for', 'with', 
+                         'by', 'about', 'like', 'through', 'over', 'before', 'after',
+                         'between', 'under', 'above', 'of', 'during', 'since', 'throughout',
+                         'this', 'that', 'these', 'those', 'my', 'your', 'his', 'her', 'its',
+                         'our', 'their', 'what', 'which', 'who', 'whom', 'whose', 'when',
+                         'where', 'why', 'how', 'all', 'any', 'both', 'each', 'few', 'more',
+                         'most', 'some', 'such', 'no', 'nor', 'not', 'only', 'own', 'same',
+                         'so', 'than', 'too', 'very', 'can', 'will', 'just', 'should', 
+                         'now', 'id', 'also', 'from'])
+        
+        # Basic cleaning
+        text = text.lower()
+        text = re.sub(r'[^\w\s]', ' ', text)  # Replace punctuation with space
+        words = text.split()
+        
+        # Remove stop words and keep only words of length > 2
+        keywords = [word for word in words if word not in stop_words and len(word) > 2]
+        
+        # Count frequencies
+        word_counts = Counter(keywords)
+        
+        # Return the most common keywords, up to 10
+        most_common = word_counts.most_common(10)
+        return [word for word, count in most_common]
 
     def sanitize_data(self, data):
         """Recursively sanitize data to handle None values or NaNs."""
@@ -112,8 +173,8 @@ class ScoutAgent:
         Performs a 3-chain data extraction from Neo4j.
         This implements a chain of 3 connected node queries to find deeper relationships.
         """
-        # First, find the most relevant Knowledge nodes using vector similarity
-        similar_items = self.vector_search_neo4j(prompt, k=3)
+        # First, find the most relevant Knowledge nodes using keyword search
+        similar_items = self.keyword_search_neo4j(prompt, limit=5)
         
         if not similar_items:
             return []
@@ -122,36 +183,36 @@ class ScoutAgent:
         knowledge_ids = [item.get('_id') for item in similar_items if item.get('_id')]
         
         if not knowledge_ids:
-            return similar_items  # Return the vector search results if no IDs found
+            return {"vector_results": similar_items, "chain_results": []}  # Return just the search results if no IDs found
             
         # Build a 3-chain query to find deeper connections
         three_chain_query = """
         // Start from the relevant Knowledge nodes
         MATCH (k:Knowledge)
-        WHERE k._id IN $knowledge_ids
+        WHERE k.id IN $knowledge_ids OR toString(id(k)) IN $knowledge_ids
         
         // First chain: Find related entities directly connected to Knowledge
         MATCH p1 = (k)-[r1]->(level1)
         
         // Second chain: Find entities connected to the first level entities
-        MATCH p2 = (level1)-[r2]->(level2)
+        OPTIONAL MATCH p2 = (level1)-[r2]->(level2)
         
         // Third chain: Find entities connected to the second level entities
-        MATCH p3 = (level2)-[r3]->(level3)
+        OPTIONAL MATCH p3 = (level2)-[r3]->(level3)
         
         // Return complete paths with their relationships
         RETURN 
-            k._id AS source_id,
+            COALESCE(k.id, toString(id(k))) AS source_id,
             k.title AS source_title,
             type(r1) AS relation1,
             labels(level1) AS level1_labels,
-            level1.title AS level1_title,
+            COALESCE(level1.title, level1.name, "Unknown") AS level1_title,
             type(r2) AS relation2,
             labels(level2) AS level2_labels,
-            level2.title AS level2_title,
+            COALESCE(level2.title, level2.name, "Unknown") AS level2_title,
             type(r3) AS relation3,
             labels(level3) AS level3_labels,
-            level3.title AS level3_title,
+            COALESCE(level3.title, level3.name, "Unknown") AS level3_title,
             // Include property details for all nodes
             properties(k) AS source_properties,
             properties(level1) AS level1_properties,
@@ -161,9 +222,9 @@ class ScoutAgent:
         """
         
         # Execute the 3-chain query
-        chain_results = self.run_neo4j_query(three_chain_query)
+        chain_results = self.run_neo4j_query(three_chain_query, {"knowledge_ids": knowledge_ids})
         
-        # Combine the initial vector results with the chain results
+        # Combine the initial search results with the chain results
         combined_results = {
             "vector_results": similar_items,
             "chain_results": chain_results
@@ -172,8 +233,8 @@ class ScoutAgent:
         return combined_results
 
     def generate_query_for_neo(self, prompt):
-        # Instead of getting context from ChromaDB, we use Neo4j vector search
-        trend_results = self.vector_search_neo4j(prompt)
+        # Get keyword search results from Neo4j
+        trend_results = self.keyword_search_neo4j(prompt)
         if not trend_results:
             return {'error': 'No relevant trends found', 'raw_output': trend_results}
 
@@ -236,6 +297,67 @@ class ScoutAgent:
                 'raw_output': str(locals().get('result', 'N/A'))
             }
 
+    def find_relevant_knowledge(self, prompt):
+        """
+        Find the most relevant knowledge in the database based on keyword matching.
+        This is an alternative approach to vector search.
+        """
+        keywords = self._extract_keywords(prompt)
+        keyword_string = " ".join(keywords)
+        print(f"Extracted keywords: {keyword_string}")
+        
+        # Try to find Knowledge nodes with similar keywords
+        query = """
+        MATCH (k:Knowledge)
+        WHERE 
+            k.title IS NOT NULL AND
+            k.knowledge_type IS NOT NULL
+        RETURN 
+            COALESCE(k.id, toString(id(k))) AS _id,
+            k.title AS title,
+            k.domain AS domain,
+            k.knowledge_type AS knowledge_type,
+            k.publication_date AS publication_date,
+            k.country AS country,
+            COALESCE(k.summary_text, k.abstract) AS summary_text
+        ORDER BY k.data_quality_score DESC
+        LIMIT 10
+        """
+        
+        results = self.run_neo4j_query(query)
+        
+        # Simple scoring function based on keyword presence
+        scored_results = []
+        for result in results:
+            score = 0
+            # Check title for keyword matches
+            if result.get('title'):
+                for keyword in keywords:
+                    if keyword.lower() in result['title'].lower():
+                        score += 2  # Title matches are more important
+            
+            # Check summary for keyword matches
+            if result.get('summary_text'):
+                for keyword in keywords:
+                    if keyword.lower() in result['summary_text'].lower():
+                        score += 1
+                        
+            # Check domain for keyword matches
+            if result.get('domain'):
+                for keyword in keywords:
+                    if keyword.lower() in result['domain'].lower():
+                        score += 1.5  # Domain matches are quite relevant
+            
+            # Add normalized score
+            result['similarity_score'] = score / max(1, len(keywords) * 4)  # Normalize to 0-1 range
+            scored_results.append(result)
+        
+        # Sort by score
+        scored_results.sort(key=lambda x: x.get('similarity_score', 0), reverse=True)
+        
+        # Return only results with some relevance
+        return [r for r in scored_results if r.get('similarity_score', 0) > 0.1]
+
     def process_scout_query(self, data):
         """Processes the scout query using only Neo4j for data extraction."""
         user_prompt = data.get("prompt")
@@ -264,10 +386,13 @@ class ScoutAgent:
                 
         except Exception as e:
             print(f"⚠️ Neo4j query failed: {e}")
-            return {
-                "error": f"Neo4j query execution failed: {str(e)}",
-                "cypher_query_by_llm": generated_query
-            }, 500
+            fallback_knowledge = self.find_relevant_knowledge(user_prompt)
+            if not fallback_knowledge:
+                return {
+                    "error": f"Neo4j query execution failed and fallback search failed: {str(e)}",
+                    "cypher_query_by_llm": generated_query
+                }, 500
+            data_from_neo = {"vector_results": fallback_knowledge, "chain_results": []}
 
         if not data_from_neo:
             return {
@@ -275,8 +400,8 @@ class ScoutAgent:
                 "cypher_query_by_llm": generated_query
             }, 404
 
-        # Get trend information directly from Neo4j vector search
-        trend_data = self.vector_search_neo4j(user_prompt)
+        # Get trend information directly from keyword search
+        trend_data = self.keyword_search_neo4j(user_prompt)
 
         # Convert the data to insights
         insights_output = self.convert_data_to_insights(
@@ -322,7 +447,7 @@ class ScoutAgent:
         domains = set()
         
         # Handle different data structures (chain results have a different structure)
-        if 'vector_results' in data and 'chain_results' in data:
+        if isinstance(data, dict) and 'vector_results' in data and 'chain_results' in data:
             # Handle chain results structure
             for obj in data['vector_results']:
                 if isinstance(obj, dict):
@@ -355,7 +480,7 @@ class ScoutAgent:
         }
 
         trend_summary_for_prompt = "\n".join([
-            f"- ID: {t['_id']} | Title: {t['title']} | Score: {t['similarity_score']:.4f} | Summary: {t['summary_text']}"
+            f"- ID: {t['_id']} | Title: {t['title']} | Score: {round(t['similarity_score'], 3)})" 
             for t in trend_with_scores[:5]
         ])
         
@@ -367,14 +492,13 @@ class ScoutAgent:
             for i, chain in enumerate(chain_sample):
                 chain_info += f"Chain {i+1}: {chain.get('source_title', 'Unknown')} -> {chain.get('level1_title', 'Unknown')} -> {chain.get('level2_title', 'Unknown')} -> {chain.get('level3_title', 'Unknown')}\n"
 
-        print("chain_info",chain_info)
         prompt_for_insights = (
             "You are a data strategy expert helping analyze research and patent trends.\n\n"
             f"There are {crew_inputs['num_records']} total matched data records.\n"
             f"Detected domains: {', '.join(crew_inputs['domains'])}\n"
             f"Detected fields/attributes: {', '.join(crew_inputs['fields'])}\n\n"
             f"{chain_info}\n\n"
-            "Here are the top relevant trend matches from vector search:\n"
+            "Here are the top relevant trend matches from keyword search:\n"
             f"{trend_summary_for_prompt}\n\n"
             "Based on the above trends and metadata, perform the following:\n"
             "1. Extract 5 or more **insights** that show interesting patterns, relationships, or trends.\n"
@@ -411,7 +535,6 @@ class ScoutAgent:
 
             output_str = str(result).strip()
             try:
-                import json
                 if output_str.startswith("{") and output_str.endswith("}"):
                     parsed_output = json.loads(output_str)
                 else:
