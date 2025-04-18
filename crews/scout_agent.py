@@ -59,8 +59,8 @@ class ScoutAgent:
             print(f"⚠️ Error running Neo4j query: {e}")
             return []
 
-    def _extract_keywords(self, text):
-        """Extract relevant keywords from text for search purposes"""
+    def _extract_keywords(self, prompt):
+        """Extract relevant keywords from prompt for search purposes"""
         # Remove common stop words and punctuation
         stop_words = set(['the', 'a', 'an', 'and', 'or', 'but', 'is', 'are', 'was', 'were', 
                          'be', 'been', 'being', 'in', 'on', 'at', 'to', 'for', 'with', 
@@ -74,12 +74,14 @@ class ScoutAgent:
                          'now', 'id', 'also', 'from'])
         
         # Basic cleaning
-        text = text.lower()
-        text = re.sub(r'[^\w\s]', ' ', text)  # Replace punctuation with space
-        words = text.split()
+        prompt = prompt.lower()
+        prompt = re.sub(r'[^\w\s]', ' ', prompt)  # Replace punctuation with space
+        words = prompt.split()
         
         # Remove stop words and keep only words of length > 2
         keywords = [word for word in words if word not in stop_words and len(word) > 2]
+
+        print("[KEYWORDS]", keywords)
         
         # Count frequencies
         word_counts = Counter(keywords)
@@ -546,12 +548,13 @@ class ScoutAgent:
         }
 
         trend_summary_for_prompt = "\n".join([
-            f"- ID: {t['id']} | Title: {t['title']} | Score: {round(t['similarity_score'], 3)})" 
+            f"- ID: {t['id']} | Title: {t['title']} | Domain: {t['domain']} | Knowledge Type: {t['knowledge_type']} | "
+            f"Score: {round(t['similarity_score'], 4)}"
             for t in trend_with_scores[:5]
         ])
-        
+
         # Include chain results information in the prompt if available
-        chain_info = ""
+        chain_info = "" 
         if isinstance(data, dict) and 'chain_results' in data and data['chain_results']:
             chain_sample = data['chain_results'][:3]  
             chain_info = "3-Chain relationship examples found:\n"
@@ -559,17 +562,17 @@ class ScoutAgent:
                 chain_info += f"Chain {i+1}: {chain.get('source_title', 'Unknown')} -> {chain.get('level1_title', 'Unknown')} -> {chain.get('level2_title', 'Unknown')} -> {chain.get('level3_title', 'Unknown')}\n"
 
         prompt_for_insights = (
-            "You are a data strategy expert helping analyze research and patent trends.\n\n"
-            f"There are {crew_inputs['num_records']} total matched data records.\n"
-            f"Detected domains: {', '.join(crew_inputs['domains'])}\n"
-            f"Detected fields/attributes: {', '.join(crew_inputs['fields'])}\n\n"
-            f"{chain_info}\n\n"
-            "Here are the top relevant trend matches from keyword search:\n"
+            "You are a data strategy expert analyzing research and patent trends.\n\n"
+            f"{crew_inputs['num_records']} matched records found.\n"
+            f"Domains: {', '.join(crew_inputs['domains'])}\n"
+            f"Fields: {', '.join(crew_inputs['fields'])}\n\n"
+            "Relevant trends from keyword search:\n"
             f"{trend_summary_for_prompt}\n\n"
-            "Based on the above trends and metadata, perform the following:\n"
-            "1. Extract 5 or more **insights** that show interesting patterns, relationships, or trends.\n"
-            "2. Suggest 3 or more **recommendations** based on these insights.\n"
-            "3. Summarize the **overall trend landscape** in a short paragraph."
+            f"Using above data only fetch relevant to user's prompt: {prompt}\n"
+            "Based on these trends, do the following:\n"
+            "1. Extract few **insights** with key patterns or relationships.\n"
+            "2. Suggest few **recommendations** based on insights.\n"
+            "3. Summarize the **overall trend landscape** concisely.\n"
         )
 
         insight_task = Task(
