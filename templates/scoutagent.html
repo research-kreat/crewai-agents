@@ -103,8 +103,11 @@
           </div>
 
           <section id="response-box" class="response-box">
-            <h4>Cypher Query:</h4>
-            <p id="cypher-query"></p>
+            <h4>Response to user prompt:</h4>
+            <p id="response_to_user_prompt"></p>
+
+            <h4>Notes:</h4>
+            <p id="notes"></p>
 
             <h4>Message:</h4>
             <p id="message"></p>
@@ -225,10 +228,6 @@
         const responseBox = document.getElementById("response-box");
         responseBox.style.display = "block";
 
-        // Cypher Query
-        document.getElementById("cypher-query").textContent =
-          data.cypher_query_by_llm || "No Cypher query available";
-
         // Message
         document.getElementById("message").textContent = isValidValue(
           data.message
@@ -280,6 +279,16 @@
                 .join("") +
               "</ul>"
             : "<ul><li>No recommendations available</li></ul>";
+
+          // Notes
+          document.getElementById("notes").textContent = isValidValue(data.notes)
+            ? data.notes
+            : "No strategic note available";
+
+          // Response to User Prompt
+          document.getElementById("response_to_user_prompt").textContent = isValidValue(data.response_to_user_prompt)
+            ? data.response_to_user_prompt
+            : "No direct response available";
 
         // Relevant Trends - show structured bullet points
         const trendsContainer = document.getElementById("relevant-trends");

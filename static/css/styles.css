@@ -642,7 +642,9 @@ ul li strong {
 #cypher-query,
 #message,
 #trend_summary,
-#isData {
+#isData,
+#response_to_user_prompt,
+#notes {
     padding: 0.75rem 1rem;
     border-left: 4px solid #6c5ce7;
     border-bottom: 2px solid #6c5ce7; 
