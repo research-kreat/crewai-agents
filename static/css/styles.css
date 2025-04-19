@@ -672,3 +672,127 @@ ul li strong {
     border-left-width: 4px;
     border-bottom: 2px solid #f39c12;
 }
+
+/* Console Log Panel Styles */
+.console-log-panel {
+  margin-top: 20px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background-color: #1e1e1e;
+  color: #f0f0f0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  font-family: "Consolas", "Monaco", monospace;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.console-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background-color: #333;
+  border-bottom: 1px solid #555;
+}
+
+.console-header h3 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  display: flex;
+  align-items: center;
+}
+
+.console-header h3::before {
+  content: ">";
+  margin-right: 6px;
+  color: #64d8cb;
+  font-weight: bold;
+}
+
+.log-clear-btn {
+  background: transparent;
+  color: #bbb;
+  border: none;
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+}
+
+.log-clear-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.log-clear-btn::before {
+  content: "×";
+  margin-right: 4px;
+  font-size: 14px;
+}
+
+.console-log {
+  height: 200px;
+  overflow-y: auto;
+  padding: 8px 0;
+  background-color: #1e1e1e;
+  scrollbar-width: thin;
+  scrollbar-color: #666 #1e1e1e;
+}
+
+.console-log::-webkit-scrollbar {
+  width: 8px;
+}
+
+.console-log::-webkit-scrollbar-track {
+  background: #1e1e1e;
+}
+
+.console-log::-webkit-scrollbar-thumb {
+  background-color: #666;
+  border-radius: 10px;
+  border: 2px solid #1e1e1e;
+}
+
+.log-message {
+  padding: 2px 12px;
+  margin: 0;
+  border-left: 3px solid transparent;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.log-message:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.log-timestamp {
+  color: #888;
+  margin-right: 8px;
+  font-size: 11px;
+  user-select: none;
+}
+
+.log-message.info {
+  border-left-color: #4caf50;
+}
+
+.log-message.warning {
+  border-left-color: #ff9800;
+  color: #ffc107;
+}
+
+.log-message.error {
+  border-left-color: #f44336;
+  color: #ff5252;
+}
+
+.log-message.system {
+  border-left-color: #2196f3;
+  color: #90caf9;
+}
