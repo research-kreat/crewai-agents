@@ -351,6 +351,7 @@ class ScoutAgent:
             if t['keywords']:
                 trend_summary_for_prompt += f"  Keywords: {', '.join(t['keywords'])}\n"
 
+        # combines all related_titles into single no duped titles list
         if 'related_titles' in t and t['related_titles']:
             unique_titles = list(dict.fromkeys(t['related_titles']))  # removes dupes while keeping order
             trend_summary_for_prompt += f"  Related_titles: {', '.join(unique_titles)}\n"
