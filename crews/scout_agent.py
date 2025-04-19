@@ -104,7 +104,7 @@ class ScoutAgent:
             print(f"⚠️ Exception while getting embeddings: {str(e)}")
             return None
 
-    def vector_knowledge_search(self, prompt, similarity_threshold=0.45):
+    def vector_knowledge_search(self, prompt, similarity_threshold=0.55):
         """
         Performs a vector-based search in Neo4j using embeddings from the knowledge_embedding index.
         """
