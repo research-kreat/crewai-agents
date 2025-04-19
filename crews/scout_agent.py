@@ -9,6 +9,8 @@ from nltk.corpus import stopwords
 import numpy as np
 import requests
 from nltk.tokenize import word_tokenize
+import time
+from flask_socketio import SocketIO
 
 # import nltk
 # nltk.download('punkt_tab')
@@ -16,8 +18,14 @@ from nltk.tokenize import word_tokenize
 
 load_dotenv()
 
+# Initialize Flask-SocketIO - this will be passed from app.py
+socketio = None
+
 class ScoutAgent:
-    def __init__(self):
+    def __init__(self, socket_instance=None):
+        global socketio
+        socketio = socket_instance
+        
         self.driver = GraphDatabase.driver(
             os.getenv("NEO4J_URI"), 
             auth=(os.getenv("NEO4J_USERNAME"), os.getenv("NEO4J_PASSWORD"))
@@ -28,6 +36,12 @@ class ScoutAgent:
         self.azure_api_key = os.getenv("AZURE_API_KEY")
         self.azure_api_version = os.getenv("AZURE_API_VERSION")
         self.embedding_deployment = os.getenv("AZURE_OPENAI_EMBEDDING_DEPLOYMENT_NAME")
+
+        # Vector search config
+        self.vector_index_name = os.getenv("VECTOR_INDEX_NAME", "knowledge_embedding")
+        
+        # KEEP THIS TO "60" TO GET ALL 6O DATAS WE HAVE
+        self.num_neighbors = int(os.getenv("NUM_NEIGHBORS", "10"))  # Default to 10 if not specified
 
         self.node_labels = [
             "Assignee", "Author", "CPC", "Inventor", "IPC", "Keyword",
@@ -57,10 +71,18 @@ class ScoutAgent:
             verbose=True
         )
 
+    def emit_log(self, message):
+        """Emits a log message to the client via socket.io"""
+        print(f"LOG: {message}")
+        if socketio:
+            socketio.emit('scout_log', {'message': message})
+        
     def _preprocess_text(self, text):
         """
         Preprocess text by removing stopwords and special characters
         """
+        self.emit_log("Preprocessing text input...")
+        
         # Use NLTK's English stop words
         stop_words = set(stopwords.words('english'))
 
@@ -75,13 +97,14 @@ class ScoutAgent:
         # Join tokens back into a single string
         preprocessed_text = ' '.join(filtered_tokens)
         
-        print(f"[PREPROCESSED TEXT] {preprocessed_text}")
+        self.emit_log("Text preprocessing complete")
         return preprocessed_text
 
     def _get_embeddings(self, text):
         """
         Get embeddings from Azure OpenAI API
         """
+        self.emit_log("Generating embeddings for the query...")
         try:
             url = f"{self.azure_api_base}/openai/deployments/{self.embedding_deployment}/embeddings?api-version={self.azure_api_version}"
             headers = {
@@ -96,12 +119,17 @@ class ScoutAgent:
             response = requests.post(url, headers=headers, json=data)
             if response.status_code == 200:
                 embedding_data = response.json()
+                self.emit_log("Embeddings generated successfully")
                 return embedding_data["data"][0]["embedding"]
             else:
-                print(f"⚠️ Error getting embeddings: {response.status_code} - {response.text}")
+                error_msg = f"Error getting embeddings: {response.status_code} - {response.text}"
+                self.emit_log(f"⚠️ {error_msg}")
+                print(f"⚠️ {error_msg}")
                 return None
         except Exception as e:
-            print(f"⚠️ Exception while getting embeddings: {str(e)}")
+            error_msg = f"Exception while getting embeddings: {str(e)}"
+            self.emit_log(f"⚠️ {error_msg}")
+            print(f"⚠️ {error_msg}")
             return None
 
     def vector_knowledge_search(self, prompt, similarity_threshold=0.55):
@@ -116,17 +144,20 @@ class ScoutAgent:
             query_embedding = self._get_embeddings(preprocessed_prompt)
             
             if not query_embedding:
+                self.emit_log("⚠️ Failed to get embeddings for the query")
                 print("⚠️ Failed to get embeddings for the query")
                 return []
             
             # Convert to list for Neo4j
             query_embedding_list = list(query_embedding)
-            print("[query_embedding]",query_embedding_list)
             
-            # Neo4j vector search query
+            self.emit_log(f"Querying Neo4j database for relevant knowledge using {self.vector_index_name} index...")
+            self.emit_log(f"Searching for nearest neighbors...")
+            
+            # Neo4j vector search query with correct parameter count
             query = """
             // STEP 1: Perform vector search to find relevant Knowledge nodes
-            CALL db.index.vector.queryNodes('knowledge_embedding', 60, $embedding)
+            CALL db.index.vector.queryNodes($index_name, $num_neighbors, $embedding)
             YIELD node, score
             WHERE score >= $threshold
             
@@ -173,11 +204,14 @@ class ScoutAgent:
             with self.driver.session() as session:
                 results = session.run(
                     query, 
-                    embedding=query_embedding_list, 
+                    index_name=self.vector_index_name,
+                    num_neighbors=self.num_neighbors,
+                    embedding=query_embedding_list,
                     threshold=similarity_threshold
                 ).data()
 
                 if not results:
+                    self.emit_log("⚠️ No similar results found, trying fallback query...")
                     print("⚠️ No similar results found in Neo4j vector search")
                     # Fallback query to retrieve some Knowledge nodes if no matches found
                     fallback_query = """
@@ -215,8 +249,9 @@ class ScoutAgent:
                         COLLECT(DISTINCT subdomain.name) AS subdomains,
                         COLLECT(DISTINCT technology.name) AS technologies
                     ORDER BY k.data_quality_score DESC
+                    LIMIT $num_neighbors
                     """
-                    results = session.run(fallback_query).data()
+                    results = session.run(fallback_query, num_neighbors=self.num_neighbors).data()
 
                 # Filter out empty arrays and format the results
                 formatted_results = []
@@ -228,39 +263,51 @@ class ScoutAgent:
                     
                     formatted_results.append(result)
                 
+                self.emit_log(f"Retrieved relevant knowledge items from database")
                 return formatted_results
 
         except Exception as e:
-            print(f"⚠️ Error performing vector knowledge search in Neo4j: {e}")
+            error_msg = f"Error performing vector knowledge search in Neo4j: {e}"
+            self.emit_log(f"⚠️ {error_msg}")
+            print(f"⚠️ {error_msg}")
             return []
 
     def process_scout_query(self, data):
         """
         Processes a scout query using vector search with embeddings
         """
+        self.emit_log("Starting Scout Agent query processing...")
+        
         user_prompt = data.get("prompt")
         if not user_prompt:
+            self.emit_log("⚠️ Error: Missing prompt in request")
             return {"error": "Missing 'prompt' in request"}, 400
 
         # Perform vector-based search
+        self.emit_log("Initiating vector knowledge search...")
         trend_data = self.vector_knowledge_search(user_prompt)
 
         if not trend_data:
+            error_msg = "No relevant patent or research data was found for your query."
+            self.emit_log(f"⚠️ {error_msg}")
             return {
                 "error": "No relevant data found",
-                "message": "No relevant patent or research data was found for your query."
+                "message": error_msg
             }, 404
 
         # Replace any None values in the data
+        self.emit_log("Processing data results...")
         trend_data = self.replace_none_with_default(trend_data, default_value="N/A")
 
         # Generate insights from the trend data
+        self.emit_log("Generating insights from trend data...")
         insights_output = self.convert_data_to_insights(trend_data, user_prompt)
 
         # Replace any None values in the insights data
         insights_output = self.replace_none_with_default(insights_output, default_value="N/A")
         insights_output["source"] = "neo4j"
-
+        
+        self.emit_log("Query processing complete! Sending response...")
         return insights_output, 200
     
     def replace_none_with_default(self, data, default_value="N/A"):
@@ -277,7 +324,10 @@ class ScoutAgent:
         """
         Convert trend data into structured insights using CrewAI.
         """
+        self.emit_log("Starting insight generation from trend data...")
+        
         if not trend_data:
+            self.emit_log("No data found for generating insights")
             return {
                 "isData": False,
                 "insights": [],
@@ -288,6 +338,7 @@ class ScoutAgent:
             }
 
         # Format trend data for display
+        self.emit_log("Formatting trend data for analysis...")
         trend_with_scores = []
         
         for item in trend_data:
@@ -315,7 +366,6 @@ class ScoutAgent:
 
         # Sort by similarity score (highest first)
         trend_with_scores.sort(key=lambda x: x["similarity_score"], reverse=True)
-        print("[trend_with_scores]", trend_with_scores)
 
         # Extract all domains from the data
         domains = set()
@@ -331,6 +381,7 @@ class ScoutAgent:
         }
 
         # Create a detailed trend summary for the prompt
+        self.emit_log("Creating trend summary for analysis...")
         trend_summary_for_prompt = ""
         for t in trend_with_scores:
             trend_summary_for_prompt += (
@@ -355,11 +406,9 @@ class ScoutAgent:
         if 'related_titles' in t and t['related_titles']:
             unique_titles = list(dict.fromkeys(t['related_titles']))  # removes dupes while keeping order
             trend_summary_for_prompt += f"  Related_titles: {', '.join(unique_titles)}\n"
-            
-
-        print("[trend_summary_for_prompt]: ", trend_summary_for_prompt)
 
         # Create the prompt for generating insights
+        self.emit_log("Preparing prompt for LLM analysis...")
         prompt_for_insights = (
             "Act as a data strategy analyst.\n\n"
             f"Records matched: {crew_inputs['num_records']}\n"
@@ -387,18 +436,27 @@ class ScoutAgent:
                 "'notes' (string), "
                 "'response_to_user_prompt' (string)."
             ),
-            agent=self.agent,
+            agent=self.agent
         )
 
         # Set up the crew for this task
         self.crew = Crew(
             tasks=[insight_task],
+            process=Process.sequential,
+            verbose=True
         )
 
         try:
             # Execute the task
+            self.emit_log("Running CrewAI analysis...")
+            self.emit_log("Waiting for LLM to analyze the data (this might take a moment)...")
+            
             result = self.crew.kickoff(inputs={"prompt": prompt})
+            
+            self.emit_log("LLM analysis completed")
+            
             if not result:
+                self.emit_log("⚠️ LLM did not return any structured output")
                 return {
                     "isData": True,
                     "insights": [],
@@ -410,6 +468,7 @@ class ScoutAgent:
                 }
 
             # Parse the output from the LLM
+            self.emit_log("Parsing LLM output and formatting response...")
             output_str = str(result).strip()
             try:
                 if output_str.startswith("{") and output_str.endswith("}"):
@@ -418,31 +477,37 @@ class ScoutAgent:
                     match = re.search(r"({.*})", output_str, re.DOTALL)
                     parsed_output = json.loads(match.group(1)) if match else {}
             except Exception as e:
-                print(f"Error parsing LLM output as JSON: {e}")
+                error_msg = f"Error parsing LLM output as JSON: {e}"
+                self.emit_log(f"⚠️ {error_msg}")
+                print(f"⚠️ {error_msg}")
                 parsed_output = {}
 
             # Return the structured insights
+            self.emit_log("Analysis complete - returning structured insights")
             return {
                 "isData": True,
                 "insights": parsed_output.get("insights", []),
                 "recommendations": parsed_output.get("recommendations", []),
                 "notes": parsed_output.get("notes", ""),
+                "trend_summary": parsed_output.get("trend_summary", ""),
                 "response_to_user_prompt": parsed_output.get("response_to_user_prompt", ""),
                 "relevant_trends": trend_with_scores,
-                "trend_summary": trend_summary_for_prompt,
-                "message": "Successfully generated.",
+                "trend_summary_raw": trend_summary_for_prompt,
+                "message": "Successfully generated insights.",
                 "data_from_source": trend_data,
                 "source": "neo4j"
             }
 
         except Exception as e:
+            error_msg = f"Failed to generate insights: {str(e)}"
+            self.emit_log(f"⚠️ {error_msg}")
             return {
                 "isData": True,
                 "insights": [],
                 "recommendations": [],
                 "relevant_trends": trend_with_scores,
                 "trend_summary": trend_summary_for_prompt,
-                "message": f"Failed to generate insights: {str(e)}",
+                "message": error_msg,
                 "data_from_source": trend_data,
                 "source": "neo4j"
             }

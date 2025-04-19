@@ -16,6 +16,132 @@
       rel="stylesheet"
       href="{{ url_for('static', filename='css/styles.css') }}"
     />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
+    <style>
+      /* Console Log Panel Styles */
+      .console-log-panel {
+        margin-top: 20px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        background-color: #1e1e1e;
+        color: #f0f0f0;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        font-family: "Consolas", "Monaco", monospace;
+        font-size: 13px;
+        line-height: 1.5;
+      }
+
+      .console-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 12px;
+        background-color: #333;
+        border-bottom: 1px solid #555;
+      }
+
+      .console-header h3 {
+        margin: 0;
+        font-size: 14px;
+        font-weight: 600;
+        color: #fff;
+        display: flex;
+        align-items: center;
+      }
+
+      .console-header h3::before {
+        content: ">";
+        margin-right: 6px;
+        color: #64d8cb;
+        font-weight: bold;
+      }
+
+      .log-clear-btn {
+        background: transparent;
+        color: #bbb;
+        border: none;
+        font-size: 12px;
+        padding: 2px 8px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+      }
+
+      .log-clear-btn:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: #fff;
+      }
+
+      .log-clear-btn::before {
+        content: "×";
+        margin-right: 4px;
+        font-size: 14px;
+      }
+
+      .console-log {
+        height: 200px;
+        overflow-y: auto;
+        padding: 8px 0;
+        background-color: #1e1e1e;
+        scrollbar-width: thin;
+        scrollbar-color: #666 #1e1e1e;
+      }
+
+      .console-log::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      .console-log::-webkit-scrollbar-track {
+        background: #1e1e1e;
+      }
+
+      .console-log::-webkit-scrollbar-thumb {
+        background-color: #666;
+        border-radius: 10px;
+        border: 2px solid #1e1e1e;
+      }
+
+      .log-message {
+        padding: 2px 12px;
+        margin: 0;
+        border-left: 3px solid transparent;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+
+      .log-message:hover {
+        background-color: rgba(255, 255, 255, 0.05);
+      }
+
+      .log-timestamp {
+        color: #888;
+        margin-right: 8px;
+        font-size: 11px;
+        user-select: none;
+      }
+
+      .log-message.info {
+        border-left-color: #4caf50;
+      }
+
+      .log-message.warning {
+        border-left-color: #ff9800;
+        color: #ffc107;
+      }
+
+      .log-message.error {
+        border-left-color: #f44336;
+        color: #ff5252;
+      }
+
+      .log-message.system {
+        border-left-color: #2196f3;
+        color: #90caf9;
+      }
+    </style>
   </head>
   <body>
     <div class="page-container">
@@ -72,6 +198,20 @@
               <button class="secondary-button" onclick="clearForm()">
                 <i class="fas fa-eraser"></i> Clear
               </button>
+            </div>
+
+            <!-- Console Log Panel -->
+            <div class="console-log-panel">
+              <div class="console-header">
+                <h3>Process Log</h3>
+                <button class="log-clear-btn" onclick="clearLogs()">
+                  Clear Logs
+                </button>
+              </div>
+              <div id="console-log" class="console-log">
+                <div class="log-message system" style="margin: 0px;"><span class="log-timestamp">System</span> Scout Agent ready to process queries
+                </div>
+              </div>
             </div>
           </div>
 
@@ -133,6 +273,52 @@
 
     <script>
       const apiUrl = "http://localhost:5000";
+      let socket = null;
+
+      // Connect to Socket.IO server
+      function connectSocket() {
+        socket = io.connect(apiUrl);
+
+        socket.on("connect", function () {
+          logToConsole("Connected to server", "system");
+        });
+
+        socket.on("disconnect", function () {
+          logToConsole("Disconnected from server", "warning");
+        });
+
+        socket.on("scout_log", function (data) {
+          logToConsole(
+            data.message,
+            data.message.includes("⚠️") ? "warning" : "info"
+          );
+        });
+
+        socket.on("status", function (data) {
+          logToConsole(`Status: ${data.message}`, "system");
+        });
+      }
+
+      // Log messages to the console with timestamp
+      function logToConsole(message, type = "info") {
+        const consoleLog = document.getElementById("console-log");
+        const now = new Date();
+        const timestamp = now.toLocaleTimeString();
+
+        const logDiv = document.createElement("div");
+        logDiv.className = `log-message ${type}`;
+        logDiv.innerHTML = `<span class="log-timestamp">${timestamp}</span> ${message}`;
+
+        consoleLog.appendChild(logDiv);
+        consoleLog.scrollTop = consoleLog.scrollHeight; // Auto-scroll to bottom
+      }
+
+      // Clear the console logs
+      function clearLogs() {
+        const consoleLog = document.getElementById("console-log");
+        consoleLog.innerHTML = "";
+        logToConsole("Logs cleared", "system");
+      }
 
       function navigateTo(page) {
         window.location.href = page;
@@ -140,6 +326,7 @@
 
       function clearForm() {
         document.getElementById("scout-prompt").value = "";
+        logToConsole("Form cleared", "info");
       }
 
       function copyResponse() {
@@ -150,9 +337,11 @@
             .writeText(responseText)
             .then(() => {
               showToast("Results copied to clipboard");
+              logToConsole("Response copied to clipboard", "info");
             })
             .catch((err) => {
               showToast("Failed to copy: " + err);
+              logToConsole(`Failed to copy: ${err}`, "error");
             });
         }
       }
@@ -180,11 +369,26 @@
 
         if (!prompt) {
           showToast("Please enter a prompt");
+          logToConsole("Error: Empty prompt", "error");
           return;
         }
 
         document.getElementById("loading").classList.remove("hidden");
         document.getElementById("scout-response").innerHTML = "";
+
+        // Disable run button
+        const runButton = document.getElementById("run-button");
+        runButton.disabled = true;
+        runButton.style.cursor = "not-allowed";
+        runButton.innerHTML =
+          '<i class="fas fa-circle-notch fa-spin"></i> Processing...';
+
+        logToConsole(
+          `Sending query: "${prompt.substring(0, 50)}${
+            prompt.length > 50 ? "..." : ""
+          }"`,
+          "info"
+        );
 
         fetch(`${apiUrl}/agent/scout/query`, {
           method: "POST",
@@ -196,22 +400,33 @@
           .then((response) => response.json())
           .then((data) => {
             document.getElementById("loading").classList.add("hidden");
+            logToConsole("Response received, processing results...", "info");
 
             const formattedResponse = formatJsonResponse(data);
             document.getElementById("scout-response").innerHTML =
               formattedResponse;
 
             displayStructuredData(data);
+            logToConsole("Results displayed successfully", "system");
+
+            // Re-enable run button
+            runButton.disabled = false;
+            runButton.innerHTML = '<i class="fas fa-play"></i> Run Query';
           })
           .catch((error) => {
             document.getElementById("loading").classList.add("hidden");
+            logToConsole(`Error in request: ${error}`, "error");
 
             document.getElementById("scout-response").innerHTML = `
-      <div class="error-message">
-        <i class="fas fa-exclamation-circle"></i>
-        <p>Error: ${error}</p>
-      </div>
-    `;
+              <div class="error-message">
+                <i class="fas fa-exclamation-circle"></i>
+                <p>Error: ${error}</p>
+              </div>
+            `;
+
+            // Re-enable run button
+            runButton.disabled = false;
+            runButton.innerHTML = '<i class="fas fa-play"></i> Run Query';
           });
       }
 
@@ -280,13 +495,14 @@
               "</ul>"
             : "<ul><li>No recommendations available</li></ul>";
 
-          // Notes
-          document.getElementById("notes").textContent = isValidValue(data.notes)
-            ? data.notes
-            : "No strategic note available";
+        // Notes
+        document.getElementById("notes").textContent = isValidValue(data.notes)
+          ? data.notes
+          : "No strategic note available";
 
-          // Response to User Prompt
-          document.getElementById("response_to_user_prompt").textContent = isValidValue(data.response_to_user_prompt)
+        // Response to User Prompt
+        document.getElementById("response_to_user_prompt").textContent =
+          isValidValue(data.response_to_user_prompt)
             ? data.response_to_user_prompt
             : "No direct response available";
 
@@ -297,25 +513,58 @@
           data.relevant_trends.length > 0
         ) {
           trendsContainer.innerHTML =
-          "<ul>" +
-          data.relevant_trends
-            .map(
-              (trend) => `
+            "<ul>" +
+            data.relevant_trends
+              .map(
+                (trend) => `
                 <li>
-                  <strong>Title:</strong> ${isValidValue(trend.title) ? trend.title : "No title available"}<br>
-                  <strong>Summary:</strong> ${isValidValue(trend.summary_text) ? trend.summary_text : "No summary available"}<br>
-                  <strong>Similarity Score:</strong> ${isValidValue(trend.similarity_score) ? trend.similarity_score : "No score available"}<br>
-                  <strong>Domain:</strong> ${isValidValue(trend.domain) ? trend.domain : "No domain specified"}<br>
-                  <strong>Knowledge Type:</strong> ${isValidValue(trend.knowledge_type) ? trend.knowledge_type : "No knowledge type"}<br>
-                  <strong>Publication Date:</strong> ${isValidValue(trend.publication_date) ? trend.publication_date : "No publication date"}<br>
-                  <strong>Country:</strong> ${isValidValue(trend.country) ? trend.country : "No country info"}<br>
-                  <strong>Data Quality Score:</strong> ${isValidValue(trend.data_quality_score) ? trend.data_quality_score : "No score"}<br>
-                  <strong>ID:</strong> ${isValidValue(trend.id) ? trend.id : "No id available"}
+                  <strong>Title:</strong> ${
+                    isValidValue(trend.title)
+                      ? trend.title
+                      : "No title available"
+                  }<br>
+                  <strong>Summary:</strong> ${
+                    isValidValue(trend.summary_text)
+                      ? trend.summary_text
+                      : "No summary available"
+                  }<br>
+                  <strong>Similarity Score:</strong> ${
+                    isValidValue(trend.similarity_score)
+                      ? trend.similarity_score
+                      : "No score available"
+                  }<br>
+                  <strong>Domain:</strong> ${
+                    isValidValue(trend.domain)
+                      ? trend.domain
+                      : "No domain specified"
+                  }<br>
+                  <strong>Knowledge Type:</strong> ${
+                    isValidValue(trend.knowledge_type)
+                      ? trend.knowledge_type
+                      : "No knowledge type"
+                  }<br>
+                  <strong>Publication Date:</strong> ${
+                    isValidValue(trend.publication_date)
+                      ? trend.publication_date
+                      : "No publication date"
+                  }<br>
+                  <strong>Country:</strong> ${
+                    isValidValue(trend.country)
+                      ? trend.country
+                      : "No country info"
+                  }<br>
+                  <strong>Data Quality Score:</strong> ${
+                    isValidValue(trend.data_quality_score)
+                      ? trend.data_quality_score
+                      : "No score"
+                  }<br>
+                  <strong>ID:</strong> ${
+                    isValidValue(trend.id) ? trend.id : "No id available"
+                  }
                 </li>`
-            )
-            .join("") +
-          "</ul>";
-
+              )
+              .join("") +
+            "</ul>";
         } else {
           trendsContainer.innerHTML =
             "<ul><li>No relevant trends available</li></ul>";
@@ -353,6 +602,14 @@
           }
         );
       }
+
+      // Initialize when page loads
+      document.addEventListener("DOMContentLoaded", function () {
+        connectSocket();
+        logToConsole("Scout Agent interface initialized", "system");
+        // Hide the response box until we have data
+        document.getElementById("response-box").style.display = "none";
+      });
     </script>
   </body>
 </html>
