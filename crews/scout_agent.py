@@ -104,7 +104,7 @@ class ScoutAgent:
             print(f"⚠️ Exception while getting embeddings: {str(e)}")
             return None
 
-    def vector_knowledge_search(self, prompt, similarity_threshold=0.55):
+    def vector_knowledge_search(self, prompt, limit=5, similarity_threshold=0.45):
         """
         Performs a vector-based search in Neo4j using embeddings from the knowledge_embedding index.
         """
@@ -126,7 +126,7 @@ class ScoutAgent:
             # Neo4j vector search query
             query = """
             // STEP 1: Perform vector search to find relevant Knowledge nodes
-            CALL db.index.vector.queryNodes('knowledge_embedding', 60, $embedding)
+            CALL db.index.vector.queryNodes('knowledge_embedding', $limit, $embedding)
             YIELD node, score
             WHERE score >= $threshold
             
@@ -168,12 +168,14 @@ class ScoutAgent:
                 COLLECT(DISTINCT technology.name) AS technologies,
                 COLLECT(DISTINCT related.title) AS related_titles
             ORDER BY similarity_score DESC
+            LIMIT $limit
             """
             
             with self.driver.session() as session:
                 results = session.run(
                     query, 
                     embedding=query_embedding_list, 
+                    limit=limit,
                     threshold=similarity_threshold
                 ).data()
 
@@ -215,6 +217,7 @@ class ScoutAgent:
                         COLLECT(DISTINCT subdomain.name) AS subdomains,
                         COLLECT(DISTINCT technology.name) AS technologies
                     ORDER BY k.data_quality_score DESC
+                    LIMIT 5
                     """
                     results = session.run(fallback_query).data()
 
@@ -243,7 +246,7 @@ class ScoutAgent:
             return {"error": "Missing 'prompt' in request"}, 400
 
         # Perform vector-based search
-        trend_data = self.vector_knowledge_search(user_prompt)
+        trend_data = self.vector_knowledge_search(user_prompt, limit=10)
 
         if not trend_data:
             return {
@@ -332,7 +335,7 @@ class ScoutAgent:
 
         # Create a detailed trend summary for the prompt
         trend_summary_for_prompt = ""
-        for t in trend_with_scores:
+        for t in trend_with_scores[:5]:
             trend_summary_for_prompt += (
                 f"- ID: {t['id']} | Title: {t['title']} | Domain: {t['domain']} | Knowledge Type: {t['knowledge_type']} | "
                 f"Publication Date: {t.get('publication_date', 'N/A')} | Quality Score: {t.get('data_quality_score', 'N/A')} | "
@@ -341,19 +344,19 @@ class ScoutAgent:
             
             # Add related entities to the summary
             if t['assignees']:
-                trend_summary_for_prompt += f"  Assignees: {', '.join(t['assignees'])}\n"
+                trend_summary_for_prompt += f"  Assignees: {', '.join(t['assignees'][:5])}\n"
             if t['inventors']:
-                trend_summary_for_prompt += f"  Inventors: {', '.join(t['inventors'])}\n"
+                trend_summary_for_prompt += f"  Inventors: {', '.join(t['inventors'][:5])}\n"
             if t['technologies']:
-                trend_summary_for_prompt += f"  Technologies: {', '.join(t['technologies'])}\n"
+                trend_summary_for_prompt += f"  Technologies: {', '.join(t['technologies'][:5])}\n"
             if t['subdomains']:
-                trend_summary_for_prompt += f"  Subdomains: {', '.join(t['subdomains'])}\n"
+                trend_summary_for_prompt += f"  Subdomains: {', '.join(t['subdomains'][:5])}\n"
             if t['keywords']:
-                trend_summary_for_prompt += f"  Keywords: {', '.join(t['keywords'])}\n"
+                trend_summary_for_prompt += f"  Keywords: {', '.join(t['keywords'][:5])}\n"
 
         if 'related_titles' in t and t['related_titles']:
             unique_titles = list(dict.fromkeys(t['related_titles']))  # removes dupes while keeping order
-            trend_summary_for_prompt += f"  Related_titles: {', '.join(unique_titles)}\n"
+            trend_summary_for_prompt += f"  Related_titles: {', '.join(unique_titles[:5])}\n"
             
 
         print("[trend_summary_for_prompt]: ", trend_summary_for_prompt)
