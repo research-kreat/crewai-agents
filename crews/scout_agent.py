@@ -85,25 +85,30 @@ class ScoutAgent:
                 
             # Build a keyword-based query that also retrieves all connected nodes
             query = """
-            // Find Knowledge nodes that match keywords in title, abstract, or domain
+            WITH $keywords AS keywords
+
+            // STEP 1: Match nodes with any keyword in important fields
             MATCH (k:Knowledge)
-            WHERE 
-            ANY(keyword IN $keywords WHERE toLower(k.title) CONTAINS toLower(keyword))
-            OR ANY(keyword IN $keywords WHERE k.abstract IS NOT NULL AND toLower(k.abstract) CONTAINS toLower(keyword))
-            OR ANY(keyword IN $keywords WHERE k.domain IS NOT NULL AND toLower(k.domain) CONTAINS toLower(keyword))
-            
-            // Calculate similarity_score
-            WITH k, 
-                size([keyword IN $keywords WHERE 
-                    toLower(k.title) CONTAINS toLower(keyword) OR 
-                    (k.abstract IS NOT NULL AND toLower(k.abstract) CONTAINS toLower(keyword)) OR
-                    (k.domain IS NOT NULL AND toLower(k.domain) CONTAINS toLower(keyword))
-                ]) AS matches,
-                size($keywords) AS total_keywords
-            WITH k, (1.0 * matches / total_keywords) AS similarity_score
-            WHERE similarity_score > 0.2
-            
-            // Find all connected nodes with a single pattern
+            WHERE ANY(kw IN keywords WHERE 
+                toLower(k.title) CONTAINS toLower(kw) OR
+                (k.abstract IS NOT NULL AND toLower(k.abstract) CONTAINS toLower(kw)) OR
+                (k.domain IS NOT NULL AND toLower(k.domain) CONTAINS toLower(kw))
+            )
+
+            // STEP 2: Score based on how many fields the keyword appears in
+            WITH k, keywords,
+                [kw IN keywords WHERE 
+                    toLower(k.title) CONTAINS toLower(kw) OR
+                    (k.abstract IS NOT NULL AND toLower(k.abstract) CONTAINS toLower(kw)) OR
+                    (k.domain IS NOT NULL AND toLower(k.domain) CONTAINS toLower(kw))
+                ] AS matched_keywords
+            WITH k, matched_keywords, size(matched_keywords) * 1.0 / size(keywords) AS similarity_score
+            WHERE similarity_score >= 0.2
+
+            // STEP 3: Traverse up to 3 hops away to gather related knowledge
+            OPTIONAL MATCH path = (k)-[*1..3]-(related:Knowledge)
+
+            // STEP 4: Match additional connected entities
             OPTIONAL MATCH (k)-[:ASSIGNED_TO]->(assignee:Assignee)
             OPTIONAL MATCH (k)-[:WRITTEN_BY]->(author:Author)
             OPTIONAL MATCH (k)-[:HAS_CPC]->(cpc:CPC)
@@ -113,19 +118,18 @@ class ScoutAgent:
             OPTIONAL MATCH (k)-[:PUBLISHED_BY]->(publisher:Publisher)
             OPTIONAL MATCH (k)-[:IN_SUBDOMAIN]->(subdomain:Subdomain)
             OPTIONAL MATCH (k)-[:USES_TECH]->(technology:Technology)
-            
-            // Return all node data
+
+            // STEP 5: Return everything
             RETURN 
                 k.id AS id,
                 k.title AS title,
                 COALESCE(k.abstract, "No summary available") AS summary_text,
-                similarity_score AS similarity_score,
+                similarity_score,
                 k.domain AS domain,
                 k.knowledge_type AS knowledge_type,
                 k.publication_date AS publication_date,
                 k.country AS country,
                 k.data_quality_score AS data_quality_score,
-                // Return connected node names as arrays
                 COLLECT(DISTINCT assignee.name) AS assignees,
                 COLLECT(DISTINCT author.name) AS authors,
                 COLLECT(DISTINCT cpc.name) AS cpcs,
@@ -134,7 +138,8 @@ class ScoutAgent:
                 COLLECT(DISTINCT keyword.name) AS keywords,
                 COLLECT(DISTINCT publisher.name) AS publishers,
                 COLLECT(DISTINCT subdomain.name) AS subdomains,
-                COLLECT(DISTINCT technology.name) AS technologies
+                COLLECT(DISTINCT technology.name) AS technologies,
+                COLLECT(DISTINCT related.title) AS related_titles
             ORDER BY similarity_score DESC
             LIMIT $limit
             """
@@ -148,6 +153,9 @@ class ScoutAgent:
                     fallback_query = """
                     MATCH (k:Knowledge)
                     
+                    // Retrieve some related knowledge nodes (up to 2 hops away)
+                    OPTIONAL MATCH path = (k)-[*1..2]-(related:Knowledge)
+                    
                     // Retrieve all connected entities
                     OPTIONAL MATCH (k)-[:ASSIGNED_TO]->(assignee:Assignee)
                     OPTIONAL MATCH (k)-[:WRITTEN_BY]->(author:Author)
@@ -158,18 +166,17 @@ class ScoutAgent:
                     OPTIONAL MATCH (k)-[:PUBLISHED_BY]->(publisher:Publisher)
                     OPTIONAL MATCH (k)-[:IN_SUBDOMAIN]->(subdomain:Subdomain)
                     OPTIONAL MATCH (k)-[:USES_TECH]->(technology:Technology)
-                    
+
                     RETURN 
                         COALESCE(k.id, toString(k.id)) AS id,
                         k.title AS title,
-                        "No summary available" AS summary_text,
-                        0.5 AS similarity_score,
+                        COALESCE(k.abstract, "No summary available") AS summary_text,
+                        0.5 AS similarity_score, // fallback confidence
                         k.domain AS domain,
                         k.knowledge_type AS knowledge_type,
                         k.publication_date AS publication_date,
                         k.country AS country,
                         k.data_quality_score AS data_quality_score,
-                        // Return connected node names as arrays
                         COLLECT(DISTINCT assignee.name) AS assignees,
                         COLLECT(DISTINCT author.name) AS authors,
                         COLLECT(DISTINCT cpc.name) AS cpcs,
@@ -178,10 +185,11 @@ class ScoutAgent:
                         COLLECT(DISTINCT keyword.name) AS keywords,
                         COLLECT(DISTINCT publisher.name) AS publishers,
                         COLLECT(DISTINCT subdomain.name) AS subdomains,
-                        COLLECT(DISTINCT technology.name) AS technologies
+                        COLLECT(DISTINCT technology.name) AS technologies,
+                        COLLECT(DISTINCT related.title) AS related_titles
                     ORDER BY k.data_quality_score DESC
                     LIMIT 5
-                    """
+                """
 
                     results = session.run(fallback_query).data()
                     
@@ -247,7 +255,8 @@ class ScoutAgent:
                 "keywords": item.get("keywords", []),
                 "publishers": item.get("publishers", []),
                 "subdomains": item.get("subdomains", []),
-                "technologies": item.get("technologies", [])
+                "technologies": item.get("technologies", []),
+                "related_titles": item.get("related_titles", [])
             })
 
         # Sort by similarity score (highest first)
@@ -287,6 +296,10 @@ class ScoutAgent:
                 trend_summary_for_prompt += f"  Subdomains: {', '.join(t['subdomains'][:5])}\n"
             if t['keywords']:
                 trend_summary_for_prompt += f"  Keywords: {', '.join(t['keywords'][:5])}\n"
+            if t['related_titles']:
+                unique_titles = list(dict.fromkeys(t['related_titles']))  # removes dupes while keeping order
+                trend_summary_for_prompt += f"  Related_titles: {', '.join(unique_titles[:5])}\n"
+
             
             trend_summary_for_prompt += "\n"
 
