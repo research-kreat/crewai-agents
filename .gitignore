@@ -1,2 +1,4 @@
 .env
 /datasets
+crews/__pycache__/*
+__pycache__
