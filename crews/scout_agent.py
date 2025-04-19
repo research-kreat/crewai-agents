@@ -6,20 +6,28 @@ from dotenv import load_dotenv
 import json
 from collections import Counter
 from nltk.corpus import stopwords
+import numpy as np
+import requests
+from nltk.tokenize import word_tokenize
+
+# import nltk
+# nltk.download('punkt_tab')
+# nltk.download('stopwords')
 
 load_dotenv()
 
-# import nltk
-# nltk.download('stopwords')
-
-# Neo4j connection parameters
-NEO4J_URI = os.getenv("NEO4J_URI")
-NEO4J_USER = os.getenv("NEO4J_USERNAME")
-NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD")
-
 class ScoutAgent:
     def __init__(self):
-        self.driver = GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USER, NEO4J_PASSWORD))
+        self.driver = GraphDatabase.driver(
+            os.getenv("NEO4J_URI"), 
+            auth=(os.getenv("NEO4J_USERNAME"), os.getenv("NEO4J_PASSWORD"))
+        )
+
+        # Azure OpenAI settings for embeddings
+        self.azure_api_base = os.getenv("AZURE_API_BASE")
+        self.azure_api_key = os.getenv("AZURE_API_KEY")
+        self.azure_api_version = os.getenv("AZURE_API_VERSION")
+        self.embedding_deployment = os.getenv("AZURE_OPENAI_EMBEDDING_DEPLOYMENT_NAME")
 
         self.node_labels = [
             "Assignee", "Author", "CPC", "Inventor", "IPC", "Keyword",
@@ -49,66 +57,82 @@ class ScoutAgent:
             verbose=True
         )
 
-    def _extract_keywords(self, prompt):
-        """Extract relevant keywords from prompt for search purposes"""
+    def _preprocess_text(self, text):
+        """
+        Preprocess text by removing stopwords and special characters
+        """
         # Use NLTK's English stop words
         stop_words = set(stopwords.words('english'))
 
         # Basic cleaning
-        prompt = prompt.lower()
-        prompt = re.sub(r'[^\w\s]', ' ', prompt)  # Replace punctuation with space
-        words = prompt.split()
+        text = text.lower()
+        text = re.sub(r'[^\w\s]', ' ', text)  # Replace punctuation with space
+        
+        # Tokenize and remove stop words
+        tokens = word_tokenize(text)
+        filtered_tokens = [word for word in tokens if word not in stop_words and len(word) > 2]
+        
+        # Join tokens back into a single string
+        preprocessed_text = ' '.join(filtered_tokens)
+        
+        print(f"[PREPROCESSED TEXT] {preprocessed_text}")
+        return preprocessed_text
 
-        # Remove stop words and keep only words of length > 2
-        keywords = [word for word in words if word not in stop_words and len(word) > 2]
-
-        print("[KEYWORDS]", keywords)
-
-        # Count frequencies
-        word_counts = Counter(keywords)
-
-        # Return the most common keywords, up to 10
-        most_common = word_counts.most_common(10)
-        return [word for word, count in most_common]
-    
-    def comprehensive_knowledge_search(self, prompt, limit=5):
+    def _get_embeddings(self, text):
         """
-        Performs an enhanced keyword-based search in Neo4j that also retrieves
-        all connected nodes for each Knowledge node found.
+        Get embeddings from Azure OpenAI API
         """
         try:
-            # Extract keywords from prompt
-            keywords = self._extract_keywords(prompt)
-            if not keywords:
-                print("⚠️ No keywords extracted from prompt")
+            url = f"{self.azure_api_base}/openai/deployments/{self.embedding_deployment}/embeddings?api-version={self.azure_api_version}"
+            headers = {
+                "Content-Type": "application/json",
+                "api-key": self.azure_api_key
+            }
+            data = {
+                "input": text,
+                "encoding_format": "float"
+            }
+            
+            response = requests.post(url, headers=headers, json=data)
+            if response.status_code == 200:
+                embedding_data = response.json()
+                return embedding_data["data"][0]["embedding"]
+            else:
+                print(f"⚠️ Error getting embeddings: {response.status_code} - {response.text}")
+                return None
+        except Exception as e:
+            print(f"⚠️ Exception while getting embeddings: {str(e)}")
+            return None
+
+    def vector_knowledge_search(self, prompt, similarity_threshold=0.45):
+        """
+        Performs a vector-based search in Neo4j using embeddings from the knowledge_embedding index.
+        """
+        try:
+            # Preprocess the prompt
+            preprocessed_prompt = self._preprocess_text(prompt)
+            
+            # Get embeddings for the preprocessed prompt
+            query_embedding = self._get_embeddings(preprocessed_prompt)
+            
+            if not query_embedding:
+                print("⚠️ Failed to get embeddings for the query")
                 return []
-                
-            # Build a keyword-based query that also retrieves all connected nodes
+            
+            # Convert to list for Neo4j
+            query_embedding_list = list(query_embedding)
+            print("[query_embedding]",query_embedding_list)
+            
+            # Neo4j vector search query
             query = """
-            WITH $keywords AS keywords
+            // STEP 1: Perform vector search to find relevant Knowledge nodes
+            CALL db.index.vector.queryNodes('knowledge_embedding', 60, $embedding)
+            YIELD node, score
+            WHERE score >= $threshold
+            
+            WITH node as k, score as similarity_score
 
-            // STEP 1: Match nodes with any keyword in important fields
-            MATCH (k:Knowledge)
-            WHERE ANY(kw IN keywords WHERE 
-                toLower(k.title) CONTAINS toLower(kw) OR
-                (k.abstract IS NOT NULL AND toLower(k.abstract) CONTAINS toLower(kw)) OR
-                (k.domain IS NOT NULL AND toLower(k.domain) CONTAINS toLower(kw))
-            )
-
-            // STEP 2: Score based on how many fields the keyword appears in
-            WITH k, keywords,
-                [kw IN keywords WHERE 
-                    toLower(k.title) CONTAINS toLower(kw) OR
-                    (k.abstract IS NOT NULL AND toLower(k.abstract) CONTAINS toLower(kw)) OR
-                    (k.domain IS NOT NULL AND toLower(k.domain) CONTAINS toLower(kw))
-                ] AS matched_keywords
-            WITH k, matched_keywords, size(matched_keywords) * 1.0 / size(keywords) AS similarity_score
-            WHERE similarity_score >= 0.2
-
-            // STEP 3: Traverse up to 3 hops away to gather related knowledge
-            OPTIONAL MATCH path = (k)-[*1..3]-(related:Knowledge)
-
-            // STEP 4: Match additional connected entities
+            // STEP 2: Match connected entities to gather more information
             OPTIONAL MATCH (k)-[:ASSIGNED_TO]->(assignee:Assignee)
             OPTIONAL MATCH (k)-[:WRITTEN_BY]->(author:Author)
             OPTIONAL MATCH (k)-[:HAS_CPC]->(cpc:CPC)
@@ -119,7 +143,10 @@ class ScoutAgent:
             OPTIONAL MATCH (k)-[:IN_SUBDOMAIN]->(subdomain:Subdomain)
             OPTIONAL MATCH (k)-[:USES_TECH]->(technology:Technology)
 
-            // STEP 5: Return everything
+            // STEP 3: Optionally traverse up to 3 hops to find related knowledge nodes
+            OPTIONAL MATCH path = (k)-[*1..3]-(related:Knowledge)
+
+            // STEP 4: Build the final response including related knowledge nodes
             RETURN 
                 k.id AS id,
                 k.title AS title,
@@ -141,20 +168,21 @@ class ScoutAgent:
                 COLLECT(DISTINCT technology.name) AS technologies,
                 COLLECT(DISTINCT related.title) AS related_titles
             ORDER BY similarity_score DESC
-            LIMIT $limit
             """
-
+            
             with self.driver.session() as session:
-                results = session.run(query, keywords=keywords, limit=limit).data()
-                
+                results = session.run(
+                    query, 
+                    embedding=query_embedding_list, 
+                    threshold=similarity_threshold
+                ).data()
+
                 if not results:
-                    print("⚠️ No similar trends found in Neo4j keyword search")
-                    # Fallback to get some Knowledge nodes if no keyword matches
+                    print("⚠️ No similar results found in Neo4j vector search")
+                    # Fallback query to retrieve some Knowledge nodes if no matches found
                     fallback_query = """
                     MATCH (k:Knowledge)
-                    
-                    // Retrieve some related knowledge nodes (up to 2 hops away)
-                    OPTIONAL MATCH path = (k)-[*1..2]-(related:Knowledge)
+                    WHERE k.data_quality_score IS NOT NULL
                     
                     // Retrieve all connected entities
                     OPTIONAL MATCH (k)-[:ASSIGNED_TO]->(assignee:Assignee)
@@ -185,14 +213,11 @@ class ScoutAgent:
                         COLLECT(DISTINCT keyword.name) AS keywords,
                         COLLECT(DISTINCT publisher.name) AS publishers,
                         COLLECT(DISTINCT subdomain.name) AS subdomains,
-                        COLLECT(DISTINCT technology.name) AS technologies,
-                        COLLECT(DISTINCT related.title) AS related_titles
+                        COLLECT(DISTINCT technology.name) AS technologies
                     ORDER BY k.data_quality_score DESC
-                    LIMIT 5
-                """
-
+                    """
                     results = session.run(fallback_query).data()
-                    
+
                 # Filter out empty arrays and format the results
                 formatted_results = []
                 for result in results:
@@ -204,11 +229,40 @@ class ScoutAgent:
                     formatted_results.append(result)
                 
                 return formatted_results
-                
+
         except Exception as e:
-            print(f"⚠️ Error performing comprehensive knowledge search in Neo4j: {e}")
+            print(f"⚠️ Error performing vector knowledge search in Neo4j: {e}")
             return []
 
+    def process_scout_query(self, data):
+        """
+        Processes a scout query using vector search with embeddings
+        """
+        user_prompt = data.get("prompt")
+        if not user_prompt:
+            return {"error": "Missing 'prompt' in request"}, 400
+
+        # Perform vector-based search
+        trend_data = self.vector_knowledge_search(user_prompt)
+
+        if not trend_data:
+            return {
+                "error": "No relevant data found",
+                "message": "No relevant patent or research data was found for your query."
+            }, 404
+
+        # Replace any None values in the data
+        trend_data = self.replace_none_with_default(trend_data, default_value="N/A")
+
+        # Generate insights from the trend data
+        insights_output = self.convert_data_to_insights(trend_data, user_prompt)
+
+        # Replace any None values in the insights data
+        insights_output = self.replace_none_with_default(insights_output, default_value="N/A")
+        insights_output["source"] = "neo4j"
+
+        return insights_output, 200
+    
     def replace_none_with_default(self, data, default_value="N/A"):
         """Recursively replace None values with a default value in nested structures."""
         if isinstance(data, dict):
@@ -256,7 +310,7 @@ class ScoutAgent:
                 "publishers": item.get("publishers", []),
                 "subdomains": item.get("subdomains", []),
                 "technologies": item.get("technologies", []),
-                "related_titles": item.get("related_titles", [])
+                "related_titles": item.get("related_titles", []) 
             })
 
         # Sort by similarity score (highest first)
@@ -278,7 +332,7 @@ class ScoutAgent:
 
         # Create a detailed trend summary for the prompt
         trend_summary_for_prompt = ""
-        for t in trend_with_scores[:5]:
+        for t in trend_with_scores:
             trend_summary_for_prompt += (
                 f"- ID: {t['id']} | Title: {t['title']} | Domain: {t['domain']} | Knowledge Type: {t['knowledge_type']} | "
                 f"Publication Date: {t.get('publication_date', 'N/A')} | Quality Score: {t.get('data_quality_score', 'N/A')} | "
@@ -287,23 +341,22 @@ class ScoutAgent:
             
             # Add related entities to the summary
             if t['assignees']:
-                trend_summary_for_prompt += f"  Assignees: {', '.join(t['assignees'][:5])}\n"
+                trend_summary_for_prompt += f"  Assignees: {', '.join(t['assignees'])}\n"
             if t['inventors']:
-                trend_summary_for_prompt += f"  Inventors: {', '.join(t['inventors'][:5])}\n"
+                trend_summary_for_prompt += f"  Inventors: {', '.join(t['inventors'])}\n"
             if t['technologies']:
-                trend_summary_for_prompt += f"  Technologies: {', '.join(t['technologies'][:5])}\n"
+                trend_summary_for_prompt += f"  Technologies: {', '.join(t['technologies'])}\n"
             if t['subdomains']:
-                trend_summary_for_prompt += f"  Subdomains: {', '.join(t['subdomains'][:5])}\n"
+                trend_summary_for_prompt += f"  Subdomains: {', '.join(t['subdomains'])}\n"
             if t['keywords']:
-                trend_summary_for_prompt += f"  Keywords: {', '.join(t['keywords'][:5])}\n"
-            if t['related_titles']:
-                unique_titles = list(dict.fromkeys(t['related_titles']))  # removes dupes while keeping order
-                trend_summary_for_prompt += f"  Related_titles: {', '.join(unique_titles[:5])}\n"
+                trend_summary_for_prompt += f"  Keywords: {', '.join(t['keywords'])}\n"
 
+        if 'related_titles' in t and t['related_titles']:
+            unique_titles = list(dict.fromkeys(t['related_titles']))  # removes dupes while keeping order
+            trend_summary_for_prompt += f"  Related_titles: {', '.join(unique_titles)}\n"
             
-            trend_summary_for_prompt += "\n"
 
-        print("[trend_summary_for_prompt]: ",trend_summary_for_prompt)
+        print("[trend_summary_for_prompt]: ", trend_summary_for_prompt)
 
         # Create the prompt for generating insights
         prompt_for_insights = (
@@ -392,33 +445,3 @@ class ScoutAgent:
                 "data_from_source": trend_data,
                 "source": "neo4j"
             }
-
-    def process_scout_query(self, data):
-        """
-        Processes a scout query using optimized direct retrieval 
-        of knowledge data with all connected entities.
-        """
-        user_prompt = data.get("prompt")
-        if not user_prompt:
-            return {"error": "Missing 'prompt' in request"}, 400
-
-        # Perform comprehensive search with all connected entities
-        trend_data = self.comprehensive_knowledge_search(user_prompt, limit=10)
-
-        if not trend_data:
-            return {
-                "error": "No relevant data found",
-                "message": "No relevant patent or research data was found for your query."
-            }, 404
-
-        # Replace any None values in the data
-        trend_data = self.replace_none_with_default(trend_data, default_value="N/A")
-
-        # Generate insights from the trend data
-        insights_output = self.convert_data_to_insights(trend_data, user_prompt)
-
-        # Replace any None values in the insights data
-        insights_output = self.replace_none_with_default(insights_output, default_value="N/A")
-        insights_output["source"] = "neo4j"
-
-        return insights_output, 200
