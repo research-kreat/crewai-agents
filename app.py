@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify, render_template
 from crews.scout_agent import ScoutAgent
+from crews.analyst_agent import AnalystAgent
 from crews.chatbot import ChatBot
 from dotenv import load_dotenv
 from flask_socketio import SocketIO
@@ -18,6 +19,7 @@ logger = logging.getLogger(__name__)
 # Initialize both agents with the socketio instance
 chatbot = ChatBot()
 scout = ScoutAgent(socket_instance=socketio)
+analyst = AnalystAgent(socket_instance=socketio)
 
 #________________SOCKET.IO EVENT HANDLERS_________________
 
@@ -51,7 +53,7 @@ def run_chat():
 
 #___________________SCOUT AGENT ENDPOINTS____________________
 
-@app.route("/agent/scout/query", methods=["POST"])
+@app.route("/agent/scout/process", methods=["POST"])
 def run_scout_query():
     try:
         # Get JSON data from the request body
@@ -78,62 +80,31 @@ def run_scout_query():
         logger.error(error_msg)
         socketio.emit('scout_log', {'message': f'⚠️ Error: {error_msg}'})
         return jsonify({"error": error_msg}), 500
+    
+#___________________ANALYST AGENT ENDPOINTS____________________
 
-#___________________STREAMING LLM TEST ENDPOINT________________
-
-@app.route("/agent/scout/stream-test", methods=["POST"])
-def run_stream_test():
-    """Simple endpoint to test LLM streaming without running the full pipeline"""
+@app.route("/agent/analyst/process", methods=["POST"])
+def run_analyst_query():
     try:
-        data = request.get_json()
-        prompt = data.get("prompt", "Tell me about knowledge graphs")
+        # Get Scout data from request
+        scout_data = request.get_json()
         
-        logger.info(f"Testing LLM stream with prompt: {prompt[:50]}...")
-        socketio.emit('scout_log', {'message': 'Starting LLM stream test...'})
+        # Log received data for debugging
+        logger.info(f"Received Scout data: {scout_data}")
+
+        # Process with Analyst Agent
+        result = analyst.process_analyst_query(scout_data)
         
-        # Create a test streaming task
-        from crewai import Agent, Task, Crew, Process
+        # Log result for debugging
+        logger.info(f"Analyst Agent result: {result}")
         
-        agent = Agent(
-            role="Test Agent",
-            goal="Test streaming capabilities",
-            verbose=True,
-            llm="azure/gpt-4o-mini"
-        )
-        
-        # Callback for streaming
-        def on_llm_stream(chunk):
-            chunk_content = chunk.content if hasattr(chunk, 'content') else str(chunk)
-            socketio.emit('llm_stream', {'chunk': chunk_content})
-            return chunk
-        
-        # Create task with streaming
-        task = Task(
-            description=f"Respond to this prompt: {prompt}",
-            agent=agent,
-            callbacks={
-                "on_llm_stream": on_llm_stream
-            }
-        )
-        
-        # Set up and run the crew
-        crew = Crew(
-            tasks=[task],
-            process=Process.sequential,
-            verbose=True
-        )
-        
-        # Run with streaming
-        result = crew.kickoff()
-        
-        # Return final result
-        return jsonify({"result": str(result)}), 200
-        
+        return jsonify(result), 200
     except Exception as e:
-        error_msg = f"Error in stream test: {str(e)}"
-        logger.error(error_msg)
-        socketio.emit('scout_log', {'message': f'⚠️ {error_msg}'})
-        return jsonify({"error": error_msg}), 500
+        logger.error(f"Error in analyst query processing: {str(e)}")
+        return jsonify({
+            "error": str(e),
+            "message": "Failed to process analyst query"
+        }), 500
 
 #___________________TEST ROUTES FOR FRONTEND____________________
 
@@ -141,9 +112,13 @@ def run_stream_test():
 def chatbot_page():
     return render_template('chatbot.html')
 
-@app.route('/scoutagent')
-def scoutagent_page():
-    return render_template('scoutagent.html')
+@app.route('/scout-agent')
+def scout_agent_page():
+    return render_template('scout-agent.html')
+
+@app.route('/analyst-agent')
+def analyst_agent_page():
+    return render_template('analyst-agent.html')
 
 @app.route('/')
 def home():

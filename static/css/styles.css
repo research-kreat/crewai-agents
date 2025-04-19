@@ -713,9 +713,9 @@ ul li strong {
 }
 
 .log-clear-btn {
-  background: transparent;
-  color: #bbb;
-  border: none;
+  background:rgb(37, 37, 109);
+  color: #cec3c3;
+  border: solid 1px #cec3c3;
   font-size: 12px;
   padding: 2px 8px;
   border-radius: 4px;
@@ -726,8 +726,7 @@ ul li strong {
 }
 
 .log-clear-btn:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  color: #fff;
+  background-color: #18446e;
 }
 
 .log-clear-btn::before {

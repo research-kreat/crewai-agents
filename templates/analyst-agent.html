@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Analyst Agent - API Console</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/main.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/styles.css') }}"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+  </head>
+  <body>
+    <div class="page-container">
+      <header>
+        <div class="logo">
+          <i class="fas fa-code"></i>
+          <h1>API Agent Console</h1>
+        </div>
+        <nav>
+          <button class="back-button" onclick="navigateTo('/')">
+            <i class="fas fa-arrow-left"></i> Back to Agents
+          </button>
+        </nav>
+      </header>
+
+      <main class="agent-page">
+        <div class="agent-header">
+          <div class="agent-icon large">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <div class="agent-title">
+            <h2>Analyst Agent</h2>
+            <p>Advanced trend analysis and knowledge mapping</p>
+          </div>
+        </div>
+
+        <div class="analyst-interface">
+          <!-- Input Section for Scout Data -->
+          <div class="input-section">
+            <div class="form-group">
+              <label for="scout-data-input">Scout Agent Data</label>
+              <textarea
+                id="scout-data-input"
+                rows="10"
+                placeholder="Paste JSON output from Scout Agent..."
+              ></textarea>
+            </div>
+
+            <div class="form-actions">
+              <button
+                id="analyze-button"
+                class="primary-button"
+                onclick="processAnalystQuery()"
+              >
+                <i class="fas fa-chart-line"></i> Analyze Trends
+              </button>
+              <button class="secondary-button" onclick="clearForm()">
+                <i class="fas fa-eraser"></i> Clear
+              </button>
+            </div>
+
+            <!-- Console Log Panel -->
+            <div class="console-log-panel">
+              <div class="console-header">
+                <h3>Process Log</h3>
+                <button class="log-clear-btn" onclick="clearLogs()">
+                  Clear Logs
+                </button>
+              </div>
+              <div id="console-log" class="console-log">
+                <div class="log-message system"><span class="log-timestamp">System</span> Analyst Agent ready to process data
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Results Section -->
+          <div class="results-section">
+            <!-- Graph Visualization Container -->
+            <div class="graph-visualization">
+              <div class="visualization-header">
+                <h3>Knowledge Graph</h3>
+                <div class="visualization-controls">
+                  <button
+                    class="icon-button"
+                    onclick="toggleFullscreenGraph()"
+                    title="Toggle Fullscreen"
+                  >
+                    <i class="fas fa-expand"></i>
+                  </button>
+                  <button
+                    class="icon-button"
+                    onclick="downloadGraphImage()"
+                    title="Download Graph"
+                  >
+                    <i class="fas fa-download"></i>
+                  </button>
+                </div>
+              </div>
+              <div id="graph-container" class="graph-container">
+                <div class="placeholder-message">
+                  <i class="fas fa-project-diagram"></i>
+                  <p>Analyze Scout data to generate Knowledge Graph</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Detailed Insights Section -->
+            <div class="insights-section">
+              <div class="insights-header">
+                <h3>Trend Analysis Insights</h3>
+              </div>
+              <div id="insights-container" class="insights-content">
+                <div class="placeholder-message">
+                  <i class="fas fa-lightbulb"></i>
+                  <p>Insights will appear after analysis</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Node Details Modal -->
+        <div id="node-details-modal" class="modal">
+          <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h4 id="node-details-title">Node Details</h4>
+            <div id="node-details-body"></div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      const apiUrl = "http://localhost:5000";
+      let socket = null;
+      let currentGraph = null;
+
+      // Socket Connection
+      function connectSocket() {
+        socket = io.connect(apiUrl);
+
+        socket.on("connect", () => {
+          logToConsole("Connected to server", "system");
+        });
+
+        socket.on("disconnect", () => {
+          logToConsole("Disconnected from server", "warning");
+        });
+
+        socket.on("analyst_log", (data) => {
+          logToConsole(
+            data.message,
+            data.message.includes("⚠️") ? "warning" : "info"
+          );
+        });
+      }
+
+      // Logging Function
+      function logToConsole(message, type = "info") {
+        const consoleLog = document.getElementById("console-log");
+        const now = new Date();
+        const timestamp = now.toLocaleTimeString();
+
+        const logDiv = document.createElement("div");
+        logDiv.className = `log-message ${type}`;
+        logDiv.innerHTML = `<span class="log-timestamp">${timestamp}</span> ${message}`;
+
+        consoleLog.appendChild(logDiv);
+        consoleLog.scrollTop = consoleLog.scrollHeight;
+      }
+
+      // Clear Logs
+      function clearLogs() {
+        const consoleLog = document.getElementById("console-log");
+        consoleLog.innerHTML = "";
+        logToConsole("Logs cleared", "system");
+      }
+
+      // Clear Form
+      function clearForm() {
+        document.getElementById("scout-data-input").value = "";
+        document.getElementById("graph-container").innerHTML = `
+                <div class="placeholder-message">
+                    <i class="fas fa-project-diagram"></i>
+                    <p>Analyze Scout data to generate Knowledge Graph</p>
+                </div>
+            `;
+        document.getElementById("insights-container").innerHTML = `
+                <div class="placeholder-message">
+                    <i class="fas fa-lightbulb"></i>
+                    <p>Insights will appear after analysis</p>
+                </div>
+            `;
+        logToConsole("Form cleared", "info");
+      }
+
+      // Process Analyst Query
+      function processAnalystQuery() {
+        const scoutDataInput =
+          document.getElementById("scout-data-input").value;
+
+        // Validate input
+        if (!scoutDataInput.trim()) {
+          logToConsole("Please enter Scout Agent data", "warning");
+          return;
+        }
+
+        // Parse JSON
+        let scoutData;
+        try {
+          scoutData = JSON.parse(scoutDataInput);
+        } catch (error) {
+          logToConsole("Invalid JSON input", "error");
+          return;
+        }
+
+        // Show loading state
+        document.getElementById("graph-container").innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Generating Knowledge Graph...</p>
+                </div>
+            `;
+
+        // Send to Analyst Agent
+        fetch(`${apiUrl}/agent/analyst/process`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(scoutData),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            logToConsole("Analysis complete", "system");
+
+            // Render Graph
+            renderKnowledgeGraph(data);
+
+            // Render Insights
+            renderInsights(data);
+          })
+          .catch((error) => {
+            logToConsole(`Analysis error: ${error}`, "error");
+            document.getElementById("graph-container").innerHTML = `
+                    <div class="error-message">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <p>Error processing data</p>
+                    </div>
+                `;
+          });
+      }
+
+      function renderKnowledgeGraph(data) {
+        const graphContainer = document.getElementById("graph-container");
+        graphContainer.innerHTML = ""; // Clear previous content
+
+        // Check for visualization file and potential errors
+        if (data.graph_visualization) {
+          // Render interactive graph HTML
+          const graphFrame = document.createElement("iframe");
+          graphFrame.src = `${apiUrl}/static/${data.graph_visualization}`;
+          graphFrame.classList.add("knowledge-graph-iframe");
+          graphFrame.setAttribute("width", "100%");
+          graphFrame.setAttribute("height", "500px");
+          graphFrame.setAttribute("frameborder", "0");
+
+          // Add error handling for iframe
+          graphFrame.onerror = () => {
+            graphContainer.innerHTML = `
+                <div class="error-message">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <p>Failed to load graph visualization</p>
+                </div>
+            `;
+          };
+
+          graphContainer.appendChild(graphFrame);
+        } else {
+          // Fallback for no visualization
+          graphContainer.innerHTML = `
+            <div class="error-message">
+                <i class="fas fa-exclamation-circle"></i>
+                <p>${
+                  data.error ||
+                  "Unable to generate knowledge graph visualization"
+                }</p>
+            </div>
+        `;
+        }
+      }
+
+      function renderInsights(data) {
+        const insightsContainer = document.getElementById("insights-container");
+        insightsContainer.innerHTML = ""; // Clear previous content
+
+        // Check for error
+        if (data.error) {
+          insightsContainer.innerHTML = `
+            <div class="error-message">
+                <i class="fas fa-exclamation-circle"></i>
+                <p>${data.error}</p>
+            </div>
+        `;
+          return;
+        }
+
+        const insights = data.graph_insights || {};
+
+        // Create insights section
+        const insightsDiv = document.createElement("div");
+        insightsDiv.classList.add("insights-details");
+
+        // Render different types of insights
+        const sections = [
+          { key: "central_technologies", title: "Central Technologies" },
+          {
+            key: "cross_domain_connections",
+            title: "Cross-Domain Connections",
+          },
+          { key: "innovation_pathways", title: "Innovation Pathways" },
+        ];
+
+        sections.forEach((section) => {
+          if (insights[section.key]) {
+            const sectionDiv = document.createElement("div");
+            sectionDiv.classList.add("insight-section");
+
+            const titleEl = document.createElement("h4");
+            titleEl.textContent = section.title;
+            sectionDiv.appendChild(titleEl);
+
+            const contentEl = document.createElement("p");
+            contentEl.textContent = insights[section.key];
+            sectionDiv.appendChild(contentEl);
+
+            insightsDiv.appendChild(sectionDiv);
+          }
+        });
+
+        insightsContainer.appendChild(insightsDiv);
+      }
+      // Navigation
+      function navigateTo(page) {
+        window.location.href = page;
+      }
+
+      // Initialize on page load
+      document.addEventListener("DOMContentLoaded", () => {
+        connectSocket();
+      });
+    </script>
+  </body>
+</html>
