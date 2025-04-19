@@ -92,7 +92,7 @@ class ScoutAgent:
             OR ANY(keyword IN $keywords WHERE k.abstract IS NOT NULL AND toLower(k.abstract) CONTAINS toLower(keyword))
             OR ANY(keyword IN $keywords WHERE k.domain IS NOT NULL AND toLower(k.domain) CONTAINS toLower(keyword))
             
-            // Calculate relevance score
+            // Calculate similarity_score
             WITH k, 
                 size([keyword IN $keywords WHERE 
                     toLower(k.title) CONTAINS toLower(keyword) OR 
@@ -100,8 +100,8 @@ class ScoutAgent:
                     (k.domain IS NOT NULL AND toLower(k.domain) CONTAINS toLower(keyword))
                 ]) AS matches,
                 size($keywords) AS total_keywords
-            WITH k, (1.0 * matches / total_keywords) AS relevance_score
-            WHERE relevance_score > 0.2
+            WITH k, (1.0 * matches / total_keywords) AS similarity_score
+            WHERE similarity_score > 0.2
             
             // Find all connected nodes with a single pattern
             OPTIONAL MATCH (k)-[:ASSIGNED_TO]->(assignee:Assignee)
@@ -119,7 +119,7 @@ class ScoutAgent:
                 k.id AS id,
                 k.title AS title,
                 COALESCE(k.abstract, "No summary available") AS summary_text,
-                relevance_score AS similarity_score,
+                similarity_score AS similarity_score,
                 k.domain AS domain,
                 k.knowledge_type AS knowledge_type,
                 k.publication_date AS publication_date,
@@ -135,7 +135,7 @@ class ScoutAgent:
                 COLLECT(DISTINCT publisher.name) AS publishers,
                 COLLECT(DISTINCT subdomain.name) AS subdomains,
                 COLLECT(DISTINCT technology.name) AS technologies
-            ORDER BY relevance_score DESC
+            ORDER BY similarity_score DESC
             LIMIT $limit
             """
 
