@@ -3,6 +3,7 @@ from neo4j import GraphDatabase
 import networkx as nx
 import json
 import os
+import re
 from dotenv import load_dotenv
 import time
 
@@ -338,45 +339,130 @@ class AnalystAgent:
             self.emit_log(f"⚠️ Error identifying innovation pathways: {str(e)}")
             innovation_pathways = []
 
-        # Prepare analysis task inputs
-        analysis_task = Task(
-            description=f"""
-            Perform a comprehensive analysis of the technology knowledge graph with {len(G.nodes())} nodes.
-
-            Analyze the following key aspects:
-            1. Central Technologies (Top 5 Influential Nodes):
-            {json.dumps([{
+        # Process detailed information for the LLM task
+        # Create more structured data for the LLM
+        central_tech_details = []
+        for tech in central_technologies:
+            # Filter relevant details
+            tech_detail = {
                 "title": tech["title"],
                 "domain": tech["domain"],
                 "type": tech["type"],
                 "centrality": round(tech["centrality"], 4),
                 "degree": tech["degree"]
-            } for tech in central_technologies], indent=2)}
-
-            2. Cross-Domain Connections ({len(cross_domain_connections)} identified):
-            {json.dumps([{
-                "from": conn["from"]["title"] + " (" + conn["from"]["domain"] + ")", 
-                "to": conn["to"]["title"] + " (" + conn["to"]["domain"] + ")",
+            }
+            
+            # Add extra information for trends
+            if tech["type"] == "trend" and "data" in tech and tech["data"]:
+                data = tech["data"]
+                if "knowledge_type" in data:
+                    tech_detail["knowledge_type"] = data["knowledge_type"]
+                if "publication_date" in data:
+                    tech_detail["publication_date"] = data["publication_date"]
+                if "summary_text" in data and data["summary_text"] and data["summary_text"] != "No summary available":
+                    tech_detail["summary"] = data["summary_text"][:200] + "..." if len(data["summary_text"]) > 200 else data["summary_text"]
+            
+            central_tech_details.append(tech_detail)
+        
+        # Create more detailed cross-domain connections
+        cross_domain_details = []
+        for conn in cross_domain_connections[:5]:  # Limit to top 5 for analysis
+            conn_detail = {
+                "from": f"{conn['from']['title']} ({conn['from']['domain']})",
+                "to": f"{conn['to']['title']} ({conn['to']['domain']})",
                 "relationship": conn["relationship"],
                 "reasons": conn.get("reasons", [])
-            } for conn in cross_domain_connections[:5]], indent=2)}
-
-            3. Innovation Pathways ({len(innovation_pathways)} identified):
-            {json.dumps([{
+            }
+            cross_domain_details.append(conn_detail)
+        
+        # Create more detailed innovation pathways
+        pathway_details = []
+        for path in innovation_pathways:
+            pathway_detail = {
                 "path": " → ".join(path["path_titles"]),
-                "domains": path["start_domain"] + " → " + path["end_domain"]
-            } for path in innovation_pathways], indent=2)}
-
-            Your task is to provide rich, insightful analysis addressing:
-            - What makes these technologies central and what are their implications?
-            - What cross-domain innovations are possible based on the connections?
-            - What emerging technological pathways could lead to breakthroughs?
-            - What strategic opportunities exist based on this knowledge graph?
-
-            Format your response as a structured JSON with:
-            - central_technologies: Detailed analysis of top technologies and their significance
-            - cross_domain_connections: Analysis of cross-domain opportunities
-            - innovation_pathways: Implications of the identified technological trajectories
+                "domains": f"{path['start_domain']} → {path['end_domain']}",
+                "length": path["length"]
+            }
+            pathway_details.append(pathway_detail)
+            
+        # Prepare analysis task inputs - detailed prompt with more context
+        analysis_task = Task(
+            description=f"""
+            Perform a comprehensive analysis of the technology knowledge graph with {len(G.nodes())} nodes.
+            
+            Your task is to analyze three key elements from this knowledge graph:
+            
+            1. Central Technologies (Top {len(central_tech_details)} Influential Nodes):
+            ```json
+            {json.dumps(central_tech_details, indent=2)}
+            ```
+            
+            2. Cross-Domain Connections ({len(cross_domain_details)} identified):
+            ```json
+            {json.dumps(cross_domain_details, indent=2)}
+            ```
+            
+            3. Innovation Pathways ({len(pathway_details)} identified):
+            ```json
+            {json.dumps(pathway_details, indent=2)}
+            ```
+            
+            For each of these three sections, provide a detailed analysis that includes:
+            
+            For Central Technologies:
+            - Explain why these technologies are central in the knowledge graph
+            - Identify patterns or clusters that indicate emerging tech trends
+            - Describe the strategic importance of these key technologies
+            - Assess their potential impact on their respective domains
+            
+            For Cross-Domain Connections:
+            - Analyze specific opportunities for cross-domain innovation
+            - Identify the most promising connection points between domains
+            - Explain potential applications or products that could emerge from these connections
+            - Describe how these connections could lead to technological breakthroughs
+            
+            For Innovation Pathways:
+            - Interpret what each pathway represents in terms of technological development
+            - Explain the significance of the connections between nodes in these paths
+            - Identify implications for future innovation in these areas
+            - Suggest potential research or development directions based on these pathways
+            
+            Your analysis should be detailed, insightful, and focused on actionable intelligence.
+            Format your response as a JSON object with these three sections:
+            
+            {{
+              "central_technologies": {{
+                "analysis": "Your detailed analysis of central technologies",
+                "technologies": [
+                  {{
+                    "title": "Technology name",
+                    "analysis": "Specific analysis for this technology",
+                    "impact": "Potential impact of this technology"
+                  }},
+                  ...
+                ]
+              }},
+              "cross_domain_connections": {{
+                "analysis": "Your analysis of cross-domain connections",
+                "opportunities": [
+                  {{
+                    "connection": "Description of the connection",
+                    "potential": "Potential innovation or application"
+                  }},
+                  ...
+                ]
+              }},
+              "innovation_pathways": {{
+                "analysis": "Your analysis of innovation pathways",
+                "implications": [
+                  {{
+                    "path": "Description of the pathway",
+                    "implication": "Strategic implication of this pathway"
+                  }},
+                  ...
+                ]
+              }}
+            }}
             """,
             agent=self.agent,
             expected_output="Comprehensive trend analysis in structured JSON format"
@@ -396,101 +482,62 @@ class AnalystAgent:
             insights_str = str(crew.kickoff())
             self.emit_log("Insights generation complete")
 
-            # Parse JSON response
+            # Parse JSON response - extract from potential markdown wrapper
+            # Try to extract JSON from the response
+            json_match = re.search(r'```(?:json)?\s*([\s\S]*?)\s*```', insights_str)
+            if json_match:
+                insights_str = json_match.group(1).strip()
+            else:
+                # Try to find JSON without code block markers
+                json_match = re.search(r'({[\s\S]*})', insights_str)
+                if json_match:
+                    insights_str = json_match.group(1).strip()
+                    
+            # Clean up any remaining non-JSON text (sometimes LLMs add explanations)
+            insights_str = re.sub(r'^[^{]*', '', insights_str)  # Remove anything before the first {
+            insights_str = re.sub(r'[^}]*$', '', insights_str)  # Remove anything after the last }
+            
             try:
-                # Extract JSON from potential markdown wrapper
-                if "```json" in insights_str:
-                    insights_str = insights_str.split("```json")[1].split("```")[0].strip()
-                elif "```" in insights_str:
-                    insights_str = insights_str.split("```")[1].split("```")[0].strip()
-                
                 insights = json.loads(insights_str)
-            except (json.JSONDecodeError, TypeError) as e:
-                self.emit_log(f"⚠️ Error parsing JSON response from LLM: {str(e)}")
+                self.emit_log("Successfully parsed insights JSON")
+            except json.JSONDecodeError as e:
+                self.emit_log(f"⚠️ Error parsing JSON from LLM response: {str(e)}")
+                # Create a fallback response with the original string
                 insights = {
-                    "central_technologies": "The analysis encountered an error processing the results.",
-                    "cross_domain_connections": "No cross-domain connections could be analyzed.",
-                    "innovation_pathways": "No innovation pathways could be determined."
+                    "central_technologies": {
+                        "analysis": "Error parsing analysis results",
+                        "technologies": [{"title": t["title"], "analysis": "Details unavailable", "impact": "Unknown"} for t in central_tech_details]
+                    },
+                    "cross_domain_connections": {
+                        "analysis": "Error parsing cross-domain connections",
+                        "opportunities": []
+                    },
+                    "innovation_pathways": {
+                        "analysis": "Error parsing innovation pathways",
+                        "implications": []
+                    }
                 }
-
-            # Format insights for readability
-            return {
-                "central_technologies": self._format_central_technologies(insights.get("central_technologies", [])),
-                "cross_domain_connections": self._format_cross_domain_connections(insights.get("cross_domain_connections", [])),
-                "innovation_pathways": self._format_innovation_pathways(insights.get("innovation_pathways", []))
-            }
+                # Try to save the original text for debugging
+                self.emit_log(f"Original LLM response: {insights_str[:200]}...")
+            
+            return insights
 
         except Exception as e:
             self.emit_log(f"⚠️ Error in analysis: {str(e)}")
             return {
-                "central_technologies": f"Analysis error: {str(e)}",
-                "cross_domain_connections": "Analysis interrupted",
-                "innovation_pathways": "Unable to generate insights"
+                "central_technologies": {
+                    "analysis": f"Analysis error: {str(e)}",
+                    "technologies": [{"title": "Analysis unavailable", "analysis": "Error encountered", "impact": "Unknown"}]
+                },
+                "cross_domain_connections": {
+                    "analysis": "Analysis interrupted",
+                    "opportunities": []
+                },
+                "innovation_pathways": {
+                    "analysis": "Unable to generate insights",
+                    "implications": []
+                }
             }
-
-    def _format_central_technologies(self, technologies):
-        """Format central technologies for readability"""
-        if not technologies:
-            return "No central technologies identified"
-        
-        if isinstance(technologies, str):
-            return technologies
-        
-        if isinstance(technologies, list):
-            formatted = []
-            for tech in technologies:
-                if isinstance(tech, dict):
-                    formatted.append(f"🔬 {tech.get('title', 'Unnamed Technology')} (Domain: {tech.get('domain', 'Unknown')})\n"
-                                    f"  Degree of Influence: {tech.get('degree', 'N/A')}\n"
-                                    f"  Analysis: {tech.get('analysis', 'No detailed analysis available')}")
-                else:
-                    formatted.append(f"🔬 {tech}")
-            
-            return "\n\n".join(formatted)
-        
-        return technologies
-
-    def _format_cross_domain_connections(self, connections):
-        """Format cross-domain connections for readability"""
-        if not connections:
-            return "No cross-domain connections found"
-        
-        if isinstance(connections, str):
-            return connections
-        
-        if isinstance(connections, list):
-            formatted = []
-            for conn in connections:
-                if isinstance(conn, dict):
-                    formatted.append(f"🔗 Connection: {conn.get('from', 'Unknown')} → {conn.get('to', 'Unknown')}\n"
-                                    f"  Potential Innovation: {conn.get('potential_innovation', 'No specific innovation identified')}")
-                else:
-                    formatted.append(f"🔗 {conn}")
-            
-            return "\n\n".join(formatted)
-        
-        return connections
-
-    def _format_innovation_pathways(self, pathways):
-        """Format innovation pathways for readability"""
-        if not pathways:
-            return "No innovation pathways discovered"
-        
-        if isinstance(pathways, str):
-            return pathways
-        
-        if isinstance(pathways, list):
-            formatted = []
-            for pathway in pathways:
-                if isinstance(pathway, dict):
-                    formatted.append(f"🚀 {pathway.get('pathway', 'Unnamed Pathway')}\n"
-                                    f"  Description: {pathway.get('description', 'No description available')}")
-                else:
-                    formatted.append(f"🚀 {pathway}")
-            
-            return "\n\n".join(formatted)
-        
-        return pathways
 
     def process_analyst_query(self, scout_data):
         """Main method to process scout data and generate analyst insights"""
@@ -543,34 +590,10 @@ class AnalystAgent:
             self.emit_log("Analyzing knowledge graph...")
             graph_insights = self.analyze_knowledge_graph(knowledge_graph)
             
-            # Process insights to ensure proper formatting
-            processed_insights = {}
-            
-            # Process each section of insights
-            for key, value in graph_insights.items():
-                # If the value is already a JSON string, keep it as is
-                if isinstance(value, str):
-                    if value.startswith('{') or value.startswith('['):
-                        try:
-                            # Validate it's proper JSON
-                            json.loads(value)
-                            processed_insights[key] = value
-                        except json.JSONDecodeError:
-                            # If it's not valid JSON, keep as is
-                            processed_insights[key] = value
-                    else:
-                        processed_insights[key] = value
-                else:
-                    # Convert non-string insights to JSON strings
-                    try:
-                        processed_insights[key] = json.dumps(value)
-                    except TypeError:
-                        processed_insights[key] = str(value)
-            
             # Return results
             result = {
                 'graph_data': graph_data,
-                'graph_insights': processed_insights,
+                'graph_insights': graph_insights,
                 'original_scout_data': scout_data,
                 'timestamp': int(time.time())
             }
@@ -585,4 +608,4 @@ class AnalystAgent:
                 'graph_visualization': None,
                 'graph_insights': {},
                 'original_scout_data': scout_data
-            } 
+            }

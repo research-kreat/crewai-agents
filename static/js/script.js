@@ -1428,6 +1428,9 @@ function showCardDetails(trendId) {
 /**
  * Render insights
  */
+/**
+ * Render insights
+ */
 function renderInsights(data) {
     const insightsContainer = document.getElementById("insights-container");
     if (!insightsContainer) return;
@@ -1451,161 +1454,145 @@ function renderInsights(data) {
     const insightsDiv = document.createElement("div");
     insightsDiv.classList.add("insights-details");
   
-    // Render different types of insights
-    const sections = [
-      {
-        key: "central_technologies",
-        title: "Central Technologies",
-        icon: "fa-microchip",
-      },
-      {
-        key: "cross_domain_connections",
-        title: "Cross-Domain Connections",
-        icon: "fa-link",
-      },
-      {
-        key: "innovation_pathways",
-        title: "Innovation Pathways",
-        icon: "fa-road",
-      },
-    ];
-  
-    sections.forEach((section) => {
-      if (insights[section.key]) {
-        const sectionDiv = document.createElement("div");
-        sectionDiv.classList.add("insight-section");
-  
-        const titleEl = document.createElement("h4");
-        titleEl.innerHTML = `<i class="fas ${section.icon}"></i> ${section.title}`;
-        sectionDiv.appendChild(titleEl);
-  
-        const contentEl = document.createElement("div");
-        contentEl.classList.add("insight-content");
-  
-        // Format the content based on section type and structure
-        const content = insights[section.key];
+    // Add central technologies section
+    if (insights.central_technologies) {
+      const techSection = document.createElement("div");
+      techSection.classList.add("insight-section");
+      
+      const titleEl = document.createElement("h4");
+      titleEl.innerHTML = `<i class="fas fa-microchip"></i> Central Technologies`;
+      techSection.appendChild(titleEl);
+      
+      const contentEl = document.createElement("div");
+      contentEl.classList.add("insight-content");
+      
+      // Format central technologies content
+      const techData = insights.central_technologies;
+      let techHTML = '';
+      
+      // Check if it's a string (older format) or object (new format)
+      if (typeof techData === 'string') {
+        techHTML = techData;
+      } else if (typeof techData === 'object') {
+        // Main analysis
+        if (techData.analysis) {
+          techHTML += `<div class="section-overview"><p>${techData.analysis}</p></div>`;
+        }
         
-        // First try to parse any string content as JSON if it looks like JSON
-        let parsedContent = content;
-        if (typeof content === "string" && 
-            (content.trim().startsWith('{') || content.trim().startsWith('['))) {
-          try {
-            parsedContent = JSON.parse(content);
-          } catch (e) {
-            // If it fails to parse, keep the original string
-            parsedContent = content;
-          }
+        // Individual technologies
+        if (Array.isArray(techData.technologies) && techData.technologies.length > 0) {
+          techHTML += `<ul class="tech-list">`;
+          techData.technologies.forEach(tech => {
+            techHTML += `
+              <li>
+                <div class="tech-name"><strong>${tech.title || 'Unnamed Technology'}</strong></div>
+                <div class="tech-analysis">${tech.analysis || 'No analysis available'}</div>
+                ${tech.impact ? `<div class="tech-impact"><em>Impact: ${tech.impact}</em></div>` : ''}
+              </li>
+            `;
+          });
+          techHTML += `</ul>`;
         }
-  
-        // Create formatted HTML based on the content structure
-        let formattedHtml = "";
-  
-        if (typeof parsedContent === "string") {
-          // If it's a simple string
-          formattedHtml = parsedContent.replace(/\n/g, "<br>");
-        } 
-        // Handle Cross-Domain Connections specific format
-        else if (section.key === "cross_domain_connections" && 
-                 parsedContent && typeof parsedContent === "object") {
-          
-          if (parsedContent.analysis && parsedContent.analysis.opportunities && 
-              Array.isArray(parsedContent.analysis.opportunities)) {
-            // Specific format from the example
-            formattedHtml = "<ul class='connection-list'>";
-            parsedContent.analysis.opportunities.forEach(item => {
-              formattedHtml += `
-                <li>
-                  <div class="connection-item">
-                    <strong>Connection:</strong> ${item.connection}
-                  </div>
-                  <div class="connection-potential">
-                    <strong>Potential:</strong> ${item.potential}
-                  </div>
-                </li>
-              `;
-            });
-            formattedHtml += "</ul>";
-          } else {
-            // Generic object fallback
-            formattedHtml = `<pre>${JSON.stringify(parsedContent, null, 2)}</pre>`;
-          }
-        } 
-        // Handle Innovation Pathways specific format
-        else if (section.key === "innovation_pathways" && 
-                 parsedContent && typeof parsedContent === "object") {
-          
-          if (parsedContent.implications && Array.isArray(parsedContent.implications)) {
-            // Specific format from the example
-            formattedHtml = "<ul class='pathway-list'>";
-            parsedContent.implications.forEach(item => {
-              formattedHtml += `
-                <li>
-                  <div class="pathway-path">
-                    <strong>Path:</strong> ${item.path}
-                  </div>
-                  <div class="pathway-implication">
-                    <strong>Implication:</strong> ${item.implication}
-                  </div>
-                </li>
-              `;
-            });
-            formattedHtml += "</ul>";
-          } else {
-            // Generic object fallback
-            formattedHtml = `<pre>${JSON.stringify(parsedContent, null, 2)}</pre>`;
-          }
-        }
-        // Handle central technologies or other structured content
-        else if (parsedContent && typeof parsedContent === "object") {
-          if (Array.isArray(parsedContent)) {
-            // If it's an array
-            formattedHtml = "<ul>";
-            parsedContent.forEach(item => {
-              if (typeof item === "object") {
-                formattedHtml += `<li><strong>${item.title || item.name || "Item"}</strong>: ${item.description || item.analysis || JSON.stringify(item)}</li>`;
-              } else {
-                formattedHtml += `<li>${item}</li>`;
-              }
-            });
-            formattedHtml += "</ul>";
-          } else {
-            // If it's a non-array object, try to format it in a readable way
-            formattedHtml = "<div class='insight-object'>";
-            
-            // Check for common patterns in your data
-            if (parsedContent.title && parsedContent.analysis) {
-              formattedHtml += `<h5>${parsedContent.title}</h5><p>${parsedContent.analysis}</p>`;
-            } else if (parsedContent.summary) {
-              formattedHtml += `<p class="summary">${parsedContent.summary}</p>`;
-            } else {
-              // Generic object rendering
-              for (const key in parsedContent) {
-                if (Object.hasOwnProperty.call(parsedContent, key)) {
-                  const value = parsedContent[key];
-                  if (typeof value === "object" && value !== null) {
-                    formattedHtml += `<div class="object-property"><strong>${key}:</strong> <pre>${JSON.stringify(value, null, 2)}</pre></div>`;
-                  } else {
-                    formattedHtml += `<div class="object-property"><strong>${key}:</strong> ${value}</div>`;
-                  }
-                }
-              }
-            }
-            
-            formattedHtml += "</div>";
-          }
-        } else {
-          // Default fallback
-          formattedHtml = `<p>No detailed ${section.title.toLowerCase()} information available</p>`;
-        }
-  
-        contentEl.innerHTML = formattedHtml;
-        sectionDiv.appendChild(contentEl);
-        insightsDiv.appendChild(sectionDiv);
       }
-    });
-  
+      
+      contentEl.innerHTML = techHTML || 'No detailed central technologies information available';
+      techSection.appendChild(contentEl);
+      insightsDiv.appendChild(techSection);
+    }
+    
+    // Add cross-domain connections section
+    if (insights.cross_domain_connections) {
+      const connectionSection = document.createElement("div");
+      connectionSection.classList.add("insight-section");
+      
+      const titleEl = document.createElement("h4");
+      titleEl.innerHTML = `<i class="fas fa-link"></i> Cross-Domain Connections`;
+      connectionSection.appendChild(titleEl);
+      
+      const contentEl = document.createElement("div");
+      contentEl.classList.add("insight-content");
+      
+      // Format cross domain connections
+      const connectionData = insights.cross_domain_connections;
+      let connectionHTML = '';
+      
+      // Check if it's a string (older format) or object (new format)
+      if (typeof connectionData === 'string') {
+        connectionHTML = connectionData;
+      } else if (typeof connectionData === 'object') {
+        // Main analysis
+        if (connectionData.analysis) {
+          connectionHTML += `<div class="section-overview"><p>${connectionData.analysis}</p></div>`;
+        }
+        
+        // Individual opportunities
+        if (Array.isArray(connectionData.opportunities) && connectionData.opportunities.length > 0) {
+          connectionHTML += `<ul class="connection-list">`;
+          connectionData.opportunities.forEach(conn => {
+            connectionHTML += `
+              <li>
+                <div class="connection-item"><strong>${conn.connection || 'Unnamed Connection'}</strong></div>
+                <div class="connection-potential">${conn.potential || 'No potential identified'}</div>
+              </li>
+            `;
+          });
+          connectionHTML += `</ul>`;
+        }
+      }
+      
+      contentEl.innerHTML = connectionHTML || 'No cross-domain connections information available';
+      connectionSection.appendChild(contentEl);
+      insightsDiv.appendChild(connectionSection);
+    }
+    
+    // Add innovation pathways section
+    if (insights.innovation_pathways) {
+      const pathwaySection = document.createElement("div");
+      pathwaySection.classList.add("insight-section");
+      
+      const titleEl = document.createElement("h4");
+      titleEl.innerHTML = `<i class="fas fa-road"></i> Innovation Pathways`;
+      pathwaySection.appendChild(titleEl);
+      
+      const contentEl = document.createElement("div");
+      contentEl.classList.add("insight-content");
+      
+      // Format innovation pathways
+      const pathwayData = insights.innovation_pathways;
+      let pathwayHTML = '';
+      
+      // Check if it's a string (older format) or object (new format)
+      if (typeof pathwayData === 'string') {
+        pathwayHTML = pathwayData;
+      } else if (typeof pathwayData === 'object') {
+        // Main analysis
+        if (pathwayData.analysis) {
+          pathwayHTML += `<div class="section-overview"><p>${pathwayData.analysis}</p></div>`;
+        }
+        
+        // Individual implications
+        if (Array.isArray(pathwayData.implications) && pathwayData.implications.length > 0) {
+          pathwayHTML += `<ul class="pathway-list">`;
+          pathwayData.implications.forEach(path => {
+            pathwayHTML += `
+              <li>
+                <div class="pathway-path"><strong>${path.path || 'Unnamed Pathway'}</strong></div>
+                <div class="pathway-implication">${path.implication || 'No implication identified'}</div>
+              </li>
+            `;
+          });
+          pathwayHTML += `</ul>`;
+        }
+      }
+      
+      contentEl.innerHTML = pathwayHTML || 'No innovation pathways information available';
+      pathwaySection.appendChild(contentEl);
+      insightsDiv.appendChild(pathwaySection);
+    }
+    
+    // Add the insights to the container
     insightsContainer.appendChild(insightsDiv);
-  }
+}
 
 // Navigation
 function navigateTo(page) {

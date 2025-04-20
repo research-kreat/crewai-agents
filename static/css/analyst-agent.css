@@ -743,14 +743,16 @@
 
 /* Style for connection list */
 .connection-list,
-.pathway-list {
+.pathway-list,
+.tech-list {
     list-style: none;
     padding: 0;
     margin: 0;
 }
 
 .connection-list li,
-.pathway-list li {
+.pathway-list li,
+.tech-list li {
     margin-bottom: 1rem;
     padding: 0.75rem;
     border-left: 3px solid #4a6de5;
@@ -759,18 +761,21 @@
 }
 
 .connection-list li:last-child,
-.pathway-list li:last-child {
+.pathway-list li:last-child,
+.tech-list li:last-child {
     margin-bottom: 0;
 }
 
 .connection-item,
-.pathway-path {
+.pathway-path,
+.tech-list {
     margin-bottom: 0.5rem;
     font-size: 0.9rem;
 }
 
 .connection-potential,
-.pathway-implication {
+.pathway-implication,
+.tech-list {
     font-size: 0.85rem;
     line-height: 1.5;
 }
@@ -784,6 +789,10 @@
 .pathway-list li {
     border-left-color: #28a745;
     /* Green for pathways */
+}
+
+.tech-list li{
+    border-left-color: #5928a7;
 }
 
 /* Preformatted code blocks in insights */
