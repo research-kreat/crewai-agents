@@ -5,11 +5,16 @@ import json
 import os
 from dotenv import load_dotenv
 import plotly.graph_objs as go
+import uuid
+import time
 
 load_dotenv()
 
 class AnalystAgent:
     def __init__(self, socket_instance=None):
+        # Store SocketIO instance for emitting events
+        self.socketio = socket_instance
+        
         # Neo4j connection setup
         self.driver = GraphDatabase.driver(
             os.getenv("NEO4J_URI"), 
@@ -26,19 +31,28 @@ class AnalystAgent:
                 "interconnections, and provide strategic insights."
             ),
             verbose=True,
-            llm="azure/gpt-4o-mini"
+            llm="azure/gpt-4o-mini"  
         )
+        
+    def emit_log(self, message):
+        """Emits a log message to the client via socket.io"""
+        print(f"LOG: {message}")
+        if self.socketio:
+            self.socketio.emit('analyst_log', {'message': message})
 
     def build_knowledge_graph(self, scout_data):
         """
-        Transform Scout Agent data into a networkx graph
+        Transform Scout Agent data into a networkx graph with enhanced relationship detection
         """
+        self.emit_log("Building knowledge graph from scout data...")
         G = nx.DiGraph()
         
         # Ensure relevant_trends exists and is a list
         relevant_trends = scout_data.get('relevant_trends', [])
         if not isinstance(relevant_trends, list):
             relevant_trends = []
+            self.emit_log("No trend data found in scout data")
+            return G
         
         # Add nodes from relevant trends
         for trend in relevant_trends:
@@ -48,150 +62,324 @@ class AnalystAgent:
                 domain=trend.get('domain', 'Unknown'),
                 knowledge_type=trend.get('knowledge_type', 'Unclassified'),
                 publication_date=trend.get('publication_date', 'N/A'),
-                similarity_score=trend.get('similarity_score', 0)
+                similarity_score=trend.get('similarity_score', 0),
+                node_type='trend',
+                data=trend
             )
         
-        # Add relationships based on similarity and shared characteristics
-        for trend1 in relevant_trends:
-            for trend2 in relevant_trends:
-                if trend1 != trend2:
-                    # Add edge if trends share domain or have high similarity
-                    if (trend1.get('domain') == trend2.get('domain')) or \
-                       (abs(trend1.get('similarity_score', 0) - trend2.get('similarity_score', 0)) < 0.2):
-                        G.add_edge(
-                            trend1.get('id', str(hash(json.dumps(trend1)))), 
-                            trend2.get('id', str(hash(json.dumps(trend2)))), 
-                            weight=trend1.get('similarity_score', 0)
+        self.emit_log(f"Added {len(relevant_trends)} trend nodes to graph")
+        
+        # Extract and add technology nodes
+        tech_nodes = 0
+        for trend in relevant_trends:
+            # Add technology nodes
+            if trend.get('technologies') and isinstance(trend.get('technologies'), list):
+                for tech in trend.get('technologies'):
+                    tech_id = f"tech_{tech.replace(' ', '_').lower()}"
+                    if not G.has_node(tech_id):
+                        G.add_node(tech_id,
+                            title=tech,
+                            domain=trend.get('domain', 'Unknown'),
+                            node_type='technology'
                         )
+                        tech_nodes += 1
+                    
+                    # Add relationship from trend to technology
+                    G.add_edge(
+                        node_id, 
+                        tech_id, 
+                        relationship_type='uses_technology',
+                        weight=1.0
+                    )
+        
+        self.emit_log(f"Added {tech_nodes} technology nodes to graph")
+        
+        # Extract and add keyword nodes
+        keyword_nodes = 0
+        for trend in relevant_trends:
+            # Add keyword nodes
+            if trend.get('keywords') and isinstance(trend.get('keywords'), list):
+                for keyword in trend.get('keywords'):
+                    keyword_id = f"keyword_{keyword.replace(' ', '_').lower()}"
+                    if not G.has_node(keyword_id):
+                        G.add_node(keyword_id,
+                            title=keyword,
+                            domain=trend.get('domain', 'Unknown'),
+                            node_type='keyword'
+                        )
+                        keyword_nodes += 1
+                    
+                    # Add relationship from trend to keyword
+                    G.add_edge(
+                        node_id, 
+                        keyword_id, 
+                        relationship_type='has_keyword',
+                        weight=0.7
+                    )
+        
+        self.emit_log(f"Added {keyword_nodes} keyword nodes to graph")
+        
+        # Add connections between trends based on similarity and shared entities
+        trend_connections = 0
+        for i, trend1 in enumerate(relevant_trends):
+            for j, trend2 in enumerate(relevant_trends[i+1:], i+1):
+                trend1_id = trend1.get('id', str(hash(json.dumps(trend1))))
+                trend2_id = trend2.get('id', str(hash(json.dumps(trend2))))
+                
+                # Calculate reasons for connection
+                connection_reasons = []
+                connection_weight = 0
+                
+                # Check domain similarity
+                if trend1.get('domain') == trend2.get('domain'):
+                    connection_reasons.append('same_domain')
+                    connection_weight += 0.5
+                
+                # Check similarity score proximity
+                if (trend1.get('similarity_score') and trend2.get('similarity_score') and 
+                    abs(trend1.get('similarity_score') - trend2.get('similarity_score')) < 0.2):
+                    connection_reasons.append('similar_relevance')
+                    connection_weight += 0.3
+                
+                # Check for shared technologies
+                tech1 = set(trend1.get('technologies', []))
+                tech2 = set(trend2.get('technologies', []))
+                shared_tech = tech1.intersection(tech2)
+                if shared_tech:
+                    connection_reasons.append('shared_technologies')
+                    connection_weight += 0.7 * len(shared_tech)
+                
+                # Check for shared keywords
+                kw1 = set(trend1.get('keywords', []))
+                kw2 = set(trend2.get('keywords', []))
+                shared_kw = kw1.intersection(kw2)
+                if shared_kw:
+                    connection_reasons.append('shared_keywords')
+                    connection_weight += 0.5 * len(shared_kw)
+                
+                # Add connection if there's any relationship
+                if connection_weight > 0:
+                    G.add_edge(
+                        trend1_id,
+                        trend2_id,
+                        relationship_type='related',
+                        reasons=connection_reasons,
+                        weight=min(connection_weight, 3.0)  # Cap at 3.0
+                    )
+                    trend_connections += 1
+        
+        self.emit_log(f"Added {trend_connections} connections between trends")
         
         return G
-
-    def generate_graph_visualization(self, G):
+    
+    def generate_graph_data_for_frontend(self, G):
         """
-        Generate graph visualization using NetworkX and Plotly instead of Matplotlib
+        Convert NetworkX graph to a format suitable for frontend visualization
         """
-        # Handle empty graph
-        if len(G.nodes()) == 0:
-            print("Warning: Empty graph cannot be visualized")
-            return
-
-        # Ensure the static directory exists
-        import os
+        self.emit_log("Preparing graph data for frontend visualization...")
         
-        # Get the absolute path to the static directory
-        static_dir = os.path.join(os.path.dirname(__file__), '..', 'static')
-        os.makedirs(static_dir, exist_ok=True)
-
-        # Full path for the HTML file
-        graph_path = os.path.join(static_dir, 'trend_graph.html')
-
-        # Get node positions
-        pos = nx.spring_layout(G)
-
-        # Create edge trace
-        edge_x = []
-        edge_y = []
-        for edge in G.edges():
-            x0, y0 = pos[edge[0]]
-            x1, y1 = pos[edge[1]]
-            edge_x.extend([x0, x1, None])
-            edge_y.extend([y0, y1, None])
-
-        edge_trace = go.Scatter(
-            x=edge_x, y=edge_y,
-            line=dict(width=0.5, color='#888'),
-            hoverinfo='none',
-            mode='lines')
-
-        # Create node trace
-        node_x = []
-        node_y = []
-        node_text = []
-        node_size = []
-        for node in G.nodes():
-            x, y = pos[node]
-            node_x.append(x)
-            node_y.append(y)
-            node_text.append(G.nodes[node].get('title', node))
-            node_size.append(max(G.degree(node) * 10, 10))  # Ensure minimum size
-
-        node_trace = go.Scatter(
-            x=node_x, y=node_y,
-            mode='markers+text',
-            hoverinfo='text',
-            marker=dict(
-                showscale=True,
-                colorscale='YlGnBu',
-                size=node_size,
-                colorbar=dict(
-                    title='Node Connections',
-                    x=1.02,
-                    xanchor='left'
-                )
-            ),
-            text=node_text
-        )
-
-        # Create figure
-        fig = go.Figure(data=[edge_trace, node_trace])
-
-        # Update layout with correct properties
-        fig.update_layout(
-            title='Knowledge Graph',  # Use title instead of titlefont
-            title_font_size=16,  # Corrected font size specification
-            showlegend=False,
-            hovermode='closest',
-            margin=dict(b=20, l=5, r=100, t=40),
-            annotations=[dict(
-                text="Knowledge Graph Visualization",
-                showarrow=False,
-                xref="paper", 
-                yref="paper"
-            )],
-            xaxis=dict(
-                showgrid=False, 
-                zeroline=False, 
-                showticklabels=False
-            ),
-            yaxis=dict(
-                showgrid=False, 
-                zeroline=False, 
-                showticklabels=False
-            )
-        )
-
-        # Save as interactive HTML
-        fig.write_html(graph_path)
+        # Generate nodes list with type-based colors and sizes
+        nodes = []
+        for node_id in G.nodes():
+            node_data = G.nodes[node_id]
+            node_type = node_data.get('node_type', 'unknown')
+            
+            # Determine node color and size based on type
+            if node_type == 'trend':
+                color = '#4a6de5'  # Blue for trends
+                size = 10 + (node_data.get('similarity_score', 0) * 15)
+            elif node_type == 'technology':
+                color = '#28a745'  # Green for technologies
+                size = 8
+            elif node_type == 'keyword':
+                color = '#fd7e14'  # Orange for keywords
+                size = 6
+            else:
+                color = '#6c757d'  # Gray for unknown
+                size = 5
+            
+            # Create node object
+            node = {
+                'id': node_id,
+                'title': node_data.get('title', 'Unnamed Node'),
+                'domain': node_data.get('domain', 'Unknown'),
+                'type': node_type,
+                'color': color,
+                'size': size
+            }
+            
+            # Add additional properties based on node type
+            if node_type == 'trend':
+                node.update({
+                    'publication_date': node_data.get('publication_date', 'Unknown'),
+                    'knowledge_type': node_data.get('knowledge_type', 'Unknown'),
+                    'similarity_score': node_data.get('similarity_score', 0),
+                    'data': node_data.get('data', {})
+                })
+            
+            nodes.append(node)
         
-        print(f"Graph visualization saved to {graph_path}")
+        # Generate links list
+        links = []
+        for source, target, edge_data in G.edges(data=True):
+            # Create link object
+            link = {
+                'source': source,
+                'target': target,
+                'type': edge_data.get('relationship_type', 'related'),
+                'weight': edge_data.get('weight', 1.0),
+            }
+            
+            # Add reasons if available
+            if 'reasons' in edge_data:
+                link['reasons'] = edge_data['reasons']
+            
+            links.append(link)
+        
+        self.emit_log(f"Prepared {len(nodes)} nodes and {len(links)} links for visualization")
+        
+        return {
+            'nodes': nodes,
+            'links': links
+        }
 
     def analyze_knowledge_graph(self, G):
         """
-        Perform comprehensive analysis on the knowledge graph
+        Perform comprehensive analysis on the knowledge graph with improved metrics
         """
+        self.emit_log("Analyzing knowledge graph for insights...")
 
         # Handle empty graph
         if len(G.nodes()) == 0:
+            self.emit_log("⚠️ Empty graph - cannot perform analysis")
             return {
                 "central_technologies": "No technologies found in the graph",
                 "cross_domain_connections": "Insufficient data for cross-domain analysis",
                 "innovation_pathways": "Unable to determine innovation pathways with current data"
             }
 
+        # Calculate centrality metrics
+        try:
+            # Degree centrality - how many connections each node has
+            degree_cent = nx.degree_centrality(G)
+            
+            # Betweenness centrality - nodes that act as bridges between other nodes
+            betweenness_cent = nx.betweenness_centrality(G)
+            
+            # Eigenvector centrality - influence of a node in the network
+            eigenvector_cent = nx.eigenvector_centrality_numpy(G)
+            
+            self.emit_log("Calculated graph centrality metrics")
+        except Exception as e:
+            self.emit_log(f"⚠️ Error calculating centrality metrics: {str(e)}")
+            # Fallback to simpler metrics
+            degree_cent = {node: G.degree(node) / (len(G.nodes()) - 1) for node in G.nodes()}
+            betweenness_cent = {node: 0.0 for node in G.nodes()}
+            eigenvector_cent = {node: 0.0 for node in G.nodes()}
+
         # Prepare node and edge information
         nodes_info = []
         for node in G.nodes(data=True):
-            node_data = {
-                "id": node[0],
-                "title": node[1].get('title', 'Unnamed Technology'),
-                "domain": node[1].get('domain', 'Unknown'),
-                "knowledge_type": node[1].get('knowledge_type', 'Unclassified'),
-                "degree": G.degree(node[0])
+            node_id = node[0]
+            node_data = node[1]
+            
+            # Combined centrality score (weighted average)
+            centrality_score = (
+                0.4 * degree_cent.get(node_id, 0) + 
+                0.4 * betweenness_cent.get(node_id, 0) + 
+                0.2 * eigenvector_cent.get(node_id, 0)
+            )
+            
+            node_info = {
+                "id": node_id,
+                "title": node_data.get('title', 'Unnamed Technology'),
+                "domain": node_data.get('domain', 'Unknown'),
+                "type": node_data.get('node_type', 'unknown'),
+                "degree": G.degree(node_id),
+                "centrality": centrality_score,
+                "data": node_data
             }
-            nodes_info.append(node_data)
+            nodes_info.append(node_info)
 
-        # Sort nodes by degree to identify central technologies
-        central_technologies = sorted(nodes_info, key=lambda x: x['degree'], reverse=True)[:3]
+        # Sort nodes by centrality to identify central technologies
+        central_technologies = sorted(nodes_info, key=lambda x: x['centrality'], reverse=True)[:5]
+        
+        # Identify cross-domain connections
+        cross_domain_connections = []
+        for source, target, data in G.edges(data=True):
+            source_domain = G.nodes[source].get('domain', 'Unknown')
+            target_domain = G.nodes[target].get('domain', 'Unknown')
+            
+            if source_domain != target_domain and source_domain != 'Unknown' and target_domain != 'Unknown':
+                cross_domain_connections.append({
+                    "from": {
+                        "id": source,
+                        "title": G.nodes[source].get('title', 'Unknown'),
+                        "domain": source_domain,
+                        "type": G.nodes[source].get('node_type', 'unknown')
+                    },
+                    "to": {
+                        "id": target,
+                        "title": G.nodes[target].get('title', 'Unknown'),
+                        "domain": target_domain,
+                        "type": G.nodes[target].get('node_type', 'unknown')
+                    },
+                    "relationship": data.get('relationship_type', 'related'),
+                    "weight": data.get('weight', 1.0),
+                    "reasons": data.get('reasons', [])
+                })
+        
+        self.emit_log(f"Identified {len(cross_domain_connections)} cross-domain connections")
+        
+        # Identify innovation pathways (important paths in the graph)
+        innovation_pathways = []
+        try:
+            # Use the top trends as starting points for paths
+            start_nodes = [node['id'] for node in central_technologies if node['type'] == 'trend'][:3]
+            
+            for start_node in start_nodes:
+                # Find all simple paths of length 2-4 from this node
+                for length in range(2, 5):
+                    for node in G.nodes():
+                        if node != start_node and nx.has_path(G, start_node, node):
+                            try:
+                                # Get the shortest path
+                                path = nx.shortest_path(G, start_node, node)
+                                if len(path) == length:
+                                    # Get the node titles to make the path readable
+                                    path_titles = [G.nodes[n].get('title', 'Unknown') for n in path]
+                                    
+                                    # Add this path
+                                    innovation_pathways.append({
+                                        "path_nodes": path,
+                                        "path_titles": path_titles,
+                                        "length": length,
+                                        "start_domain": G.nodes[start_node].get('domain', 'Unknown'),
+                                        "end_domain": G.nodes[node].get('domain', 'Unknown')
+                                    })
+                            except nx.NetworkXNoPath:
+                                continue
+            
+            # Deduplicate and take top paths
+            unique_paths = {}
+            for path in innovation_pathways:
+                path_key = tuple(path["path_nodes"])
+                if path_key not in unique_paths:
+                    unique_paths[path_key] = path
+            
+            innovation_pathways = list(unique_paths.values())
+            
+            # Sort by cross-domain nature (prefer paths that cross domains)
+            innovation_pathways.sort(key=lambda x: x["start_domain"] != x["end_domain"], reverse=True)
+            
+            # Take top 5 paths
+            innovation_pathways = innovation_pathways[:5]
+            
+            self.emit_log(f"Identified {len(innovation_pathways)} innovation pathways")
+            
+        except Exception as e:
+            self.emit_log(f"⚠️ Error identifying innovation pathways: {str(e)}")
+            innovation_pathways = []
 
         # Analysis task to generate insights
         analysis_task = Task(
@@ -199,22 +387,39 @@ class AnalystAgent:
             Perform a comprehensive analysis of the technology knowledge graph with {len(G.nodes())} nodes.
 
             Analyze the following key aspects:
-            1. Central Technologies (Top Influential Nodes):
-            {json.dumps(central_technologies, indent=2)}
+            1. Central Technologies (Top 5 Influential Nodes):
+            {json.dumps([{
+                "title": tech["title"],
+                "domain": tech["domain"],
+                "type": tech["type"],
+                "centrality": round(tech["centrality"], 4),
+                "degree": tech["degree"]
+            } for tech in central_technologies], indent=2)}
 
-            2. Identify cross-domain connections and potential innovation opportunities
+            2. Cross-Domain Connections ({len(cross_domain_connections)} identified):
+            {json.dumps([{
+                "from": conn["from"]["title"] + " (" + conn["from"]["domain"] + ")", 
+                "to": conn["to"]["title"] + " (" + conn["to"]["domain"] + ")",
+                "relationship": conn["relationship"],
+                "reasons": conn.get("reasons", [])
+            } for conn in cross_domain_connections[:5]], indent=2)}
 
-            3. Explore potential innovation pathways based on technology relationships
+            3. Innovation Pathways ({len(innovation_pathways)} identified):
+            {json.dumps([{
+                "path": " → ".join(path["path_titles"]),
+                "domains": path["start_domain"] + " → " + path["end_domain"]
+            } for path in innovation_pathways], indent=2)}
 
-            Provide insights addressing:
-            - What makes these technologies central?
-            - What cross-domain innovations are possible?
-            - What are the emerging technological connections?
+            Your task is to provide rich, insightful analysis addressing:
+            - What makes these technologies central and what are their implications?
+            - What cross-domain innovations are possible based on the connections?
+            - What emerging technological pathways could lead to breakthroughs?
+            - What strategic opportunities exist based on this knowledge graph?
 
             Format your response as a structured JSON with:
-            - central_technologies: Brief analysis of top technologies
-            - cross_domain_connections: Potential innovative connections
-            - innovation_pathways: Emerging technology trajectories
+            - central_technologies: Detailed analysis of top technologies and their significance
+            - cross_domain_connections: Analysis of cross-domain opportunities
+            - innovation_pathways: Implications of the identified technological trajectories
             """,
             agent=self.agent,
             expected_output="Comprehensive trend analysis in structured JSON format"
@@ -229,17 +434,20 @@ class AnalystAgent:
         )
         try:
             # Generate insights
+            self.emit_log("Generating comprehensive insights using CrewAI...")
             insights_str = crew.kickoff()
+            self.emit_log("Insights generation complete")
 
             # Attempt to parse JSON
             try:
                 insights = json.loads(insights_str)
             except (json.JSONDecodeError, TypeError):
+                self.emit_log("⚠️ Error parsing JSON response from LLM")
                 # Fallback parsing for potential partial JSON or string responses
                 insights = {
-                    "central_technologies": "Unable to parse detailed insights",
-                    "cross_domain_connections": "No cross-domain connections found",
-                    "innovation_pathways": "No innovation pathways discovered"
+                    "central_technologies": "The analysis encountered an error processing the results. Please try again with more data.",
+                    "cross_domain_connections": "No cross-domain connections could be analyzed.",
+                    "innovation_pathways": "No innovation pathways could be determined."
                 }
 
             # Ensure all keys exist and format for readability
@@ -252,6 +460,7 @@ class AnalystAgent:
             return formatted_insights
 
         except Exception as e:
+            self.emit_log(f"⚠️ Error in analysis: {str(e)}")
             return {
                 "central_technologies": f"Analysis error: {str(e)}",
                 "cross_domain_connections": "Analysis interrupted",
@@ -263,47 +472,78 @@ class AnalystAgent:
         if not technologies:
             return "No central technologies identified"
         
-        formatted = []
-        for tech in technologies:
-            formatted.append(f"🔬 {tech.get('title', 'Unnamed Technology')} (Domain: {tech.get('domain', 'Unknown')})\n"
-                            f"  Degree of Influence: {tech.get('degree', 'N/A')}\n"
-                            f"  Analysis: {tech.get('analysis', 'No detailed analysis available')}")
+        if isinstance(technologies, str):
+            return technologies
         
-        return "\n\n".join(formatted)
+        if isinstance(technologies, list):
+            formatted = []
+            for tech in technologies:
+                if isinstance(tech, dict):
+                    formatted.append(f"🔬 {tech.get('title', 'Unnamed Technology')} (Domain: {tech.get('domain', 'Unknown')})\n"
+                                    f"  Degree of Influence: {tech.get('degree', 'N/A')}\n"
+                                    f"  Analysis: {tech.get('analysis', 'No detailed analysis available')}")
+                else:
+                    formatted.append(f"🔬 {tech}")
+            
+            return "\n\n".join(formatted)
+        
+        return technologies
 
     def _format_cross_domain_connections(self, connections):
         """Format cross-domain connections for readability"""
         if not connections:
             return "No cross-domain connections found"
         
-        formatted = []
-        for conn in connections:
-            formatted.append(f"🔗 Connection: {conn.get('from', 'Unknown')} → {conn.get('to', 'Unknown')}\n"
-                            f"  Potential Innovation: {conn.get('potential_innovation', 'No specific innovation identified')}")
+        if isinstance(connections, str):
+            return connections
         
-        return "\n\n".join(formatted)
+        if isinstance(connections, list):
+            formatted = []
+            for conn in connections:
+                if isinstance(conn, dict):
+                    formatted.append(f"🔗 Connection: {conn.get('from', 'Unknown')} → {conn.get('to', 'Unknown')}\n"
+                                    f"  Potential Innovation: {conn.get('potential_innovation', 'No specific innovation identified')}")
+                else:
+                    formatted.append(f"🔗 {conn}")
+            
+            return "\n\n".join(formatted)
+        
+        return connections
 
     def _format_innovation_pathways(self, pathways):
         """Format innovation pathways for readability"""
         if not pathways:
             return "No innovation pathways discovered"
         
-        formatted = []
-        for pathway in pathways:
-            formatted.append(f"🚀 {pathway.get('pathway', 'Unnamed Pathway')}\n"
-                            f"  Description: {pathway.get('description', 'No description available')}")
+        if isinstance(pathways, str):
+            return pathways
         
-        return "\n\n".join(formatted)
+        if isinstance(pathways, list):
+            formatted = []
+            for pathway in pathways:
+                if isinstance(pathway, dict):
+                    formatted.append(f"🚀 {pathway.get('pathway', 'Unnamed Pathway')}\n"
+                                    f"  Description: {pathway.get('description', 'No description available')}")
+                else:
+                    formatted.append(f"🚀 {pathway}")
+            
+            return "\n\n".join(formatted)
+        
+        return pathways
 
     def process_analyst_query(self, scout_data):
         """
         Main method to process scout data and generate analyst insights
         """
+        self.emit_log("Starting analyst query processing...")
+        
         # If scout_data is a string, try to parse it as JSON
         if isinstance(scout_data, str):
             try:
                 scout_data = json.loads(scout_data)
+                self.emit_log("Successfully parsed JSON input")
             except json.JSONDecodeError:
+                self.emit_log("⚠️ Invalid JSON data provided")
                 return {
                     'error': 'Invalid JSON data provided',
                     'graph_visualization': None,
@@ -313,6 +553,7 @@ class AnalystAgent:
 
         # Validate input
         if not scout_data or 'relevant_trends' not in scout_data:
+            self.emit_log("⚠️ Invalid scout data - missing relevant_trends")
             return {
                 'error': 'Invalid scout data. Missing relevant_trends.',
                 'graph_visualization': None,
@@ -322,20 +563,38 @@ class AnalystAgent:
 
         try:
             # Build knowledge graph
+            self.emit_log("Building knowledge graph from scout data...")
             knowledge_graph = self.build_knowledge_graph(scout_data)
             
-            # Generate visualization
-            self.generate_graph_visualization(knowledge_graph)
+            # Check if graph is empty
+            if len(knowledge_graph.nodes()) == 0:
+                self.emit_log("⚠️ Generated knowledge graph is empty")
+                return {
+                    'error': 'Unable to generate knowledge graph. No valid nodes found.',
+                    'graph_visualization': None,
+                    'graph_insights': {},
+                    'original_scout_data': scout_data
+                }
+            
+            # Process graph data for frontend visualization
+            self.emit_log("Preparing graph data for visualization...")
+            graph_data = self.generate_graph_data_for_frontend(knowledge_graph)
             
             # Perform graph analysis
+            self.emit_log("Analyzing knowledge graph...")
             graph_insights = self.analyze_knowledge_graph(knowledge_graph)
             
+            # Add timestamp for uniqueness
+            timestamp = int(time.time())
+            
             return {
-                'graph_visualization': 'trend_graph.html',
+                'graph_data': graph_data,
                 'graph_insights': graph_insights,
-                'original_scout_data': scout_data
+                'original_scout_data': scout_data,
+                'timestamp': timestamp
             }
         except Exception as e:
+            self.emit_log(f"⚠️ Error in analysis: {str(e)}")
             return {
                 'error': f'Analysis failed: {str(e)}',
                 'graph_visualization': None,
