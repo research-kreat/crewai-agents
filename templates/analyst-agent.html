@@ -54,10 +54,14 @@
           <!-- Tabs for Scout Data Entry Methods -->
           <div class="input-tabs">
             <div class="tab-header">
-              <button class="tab-btn active" data-tab="paste-tab">Paste Scout Data</button>
-              <button class="tab-btn" data-tab="scout-results-tab">Scout Results</button>
+              <button class="tab-btn active" data-tab="paste-tab">
+                Paste Scout Data
+              </button>
+              <button class="tab-btn" data-tab="scout-results-tab">
+                Scout Results
+              </button>
             </div>
-            
+
             <div class="tab-content active" id="paste-tab">
               <!-- Direct Paste Input -->
               <div class="form-group">
@@ -68,7 +72,7 @@
                   placeholder="Paste JSON output from Scout Agent..."
                 ></textarea>
               </div>
-              
+
               <div class="form-actions">
                 <button
                   id="analyze-button"
@@ -82,23 +86,25 @@
                 </button>
               </div>
             </div>
-            
+
             <div class="tab-content" id="scout-results-tab">
               <!-- Scout Results Selection -->
               <div class="form-group">
-                <label for="scout-results-select">Select Scout Query Result</label>
+                <label for="scout-results-select"
+                  >Select Scout Query Result</label
+                >
                 <select id="scout-results-select" class="scout-select">
                   <option value="">Select a previous Scout query...</option>
                 </select>
               </div>
-              
+
               <div id="scout-result-preview" class="scout-preview">
                 <div class="placeholder-message">
                   <i class="fas fa-search"></i>
                   <p>Select a Scout result to preview</p>
                 </div>
               </div>
-              
+
               <div class="form-actions">
                 <button
                   id="analyze-selected-button"
@@ -120,7 +126,9 @@
                 </button>
               </div>
               <div id="console-log" class="console-log">
-                <div class="log-message system"><span class="log-timestamp">System</span> Analyst Agent ready to process data
+                <div class="log-message system">
+                  <span class="log-timestamp">System</span> Analyst Agent ready
+                  to process data
                 </div>
               </div>
             </div>
@@ -147,10 +155,16 @@
                   >
                     <i class="fas fa-download"></i>
                   </button>
-                  <div class="control-slider">
-                    <label for="node-size">Node Size:</label>
-                    <input type="range" id="node-size" min="1" max="20" value="8" oninput="updateNodeSize(this.value)">
-                  </div>
+                  <!-- increase or decrease node size -->
+                  <input
+                    type="range"
+                    title="Node Size"
+                    id="node-size"
+                    min="1"
+                    max="20"
+                    value="8"
+                    oninput="updateNodeSize(this.value)"
+                  />
                 </div>
               </div>
               <div id="graph-container" class="graph-container">
@@ -179,8 +193,14 @@
         <!-- Search & Filter Controls -->
         <div class="graph-controls">
           <div class="search-box">
-            <input type="text" id="node-search" placeholder="Search for nodes...">
-            <button onclick="searchNodes()"><i class="fas fa-search"></i></button>
+            <input
+              type="text"
+              id="node-search"
+              placeholder="Search for nodes..."
+            />
+            <button onclick="searchNodes()">
+              <i class="fas fa-search"></i>
+            </button>
           </div>
           <div class="filter-options">
             <label for="domain-filter">Filter by Domain:</label>
@@ -189,13 +209,29 @@
             </select>
           </div>
           <div class="view-options">
-            <button class="view-btn active" data-view="graph" onclick="switchView('graph')">Graph View</button>
-            <button class="view-btn" data-view="cards" onclick="switchView('cards')">Card View</button>
+            <button
+              class="view-btn active"
+              data-view="graph"
+              onclick="switchView('graph')"
+            >
+              Graph View
+            </button>
+            <button
+              class="view-btn"
+              data-view="cards"
+              onclick="switchView('cards')"
+            >
+              Card View
+            </button>
           </div>
         </div>
-        
+
         <!-- Data Cards View (Alternative to Graph) -->
-        <div id="data-cards-container" class="data-cards-container" style="display:none">
+        <div
+          id="data-cards-container"
+          class="data-cards-container"
+          style="display: none"
+        >
           <!-- Cards will be generated here -->
         </div>
 
@@ -205,7 +241,7 @@
             <span class="close-modal">&times;</span>
             <h4 id="node-details-title">Node Details</h4>
             <div id="node-details-body"></div>
-            
+
             <div class="modal-actions">
               <button class="primary-button" onclick="showRelatedNodes()">
                 <i class="fas fa-project-diagram"></i> Show Related
@@ -218,6 +254,5 @@
         </div>
       </main>
     </div>
-
   </body>
 </html>

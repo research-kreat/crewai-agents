@@ -163,9 +163,9 @@ class AnalystAgent:
             
             # Set color and size based on node type
             color_map = {
-                'trend': '#4a6de5',    # Blue
+                'trend': '#4a6de5',     # Blue
                 'technology': '#28a745', # Green
-                'keyword': '#fd7e14',   # Orange
+                'keyword': '#fd7e14',    # Orange
                 'unknown': '#6c757d'     # Gray
             }
             
@@ -201,16 +201,20 @@ class AnalystAgent:
             nodes.append(node)
         
         # Generate links
-        links = [
-            {
+        links = []
+        for source, target, edge_data in G.edges(data=True):
+            link = {
                 'source': source,
                 'target': target,
                 'type': edge_data.get('relationship_type', 'related'),
-                'weight': edge_data.get('weight', 1.0),
-                'reasons': edge_data.get('reasons', []) if 'reasons' in edge_data else None
+                'weight': edge_data.get('weight', 1.0)
             }
-            for source, target, edge_data in G.edges(data=True)
-        ]
+            
+            # Add reasons if they exist
+            if 'reasons' in edge_data:
+                link['reasons'] = edge_data['reasons']
+                
+            links.append(link)
         
         self.emit_log(f"Prepared {len(nodes)} nodes and {len(links)} links for visualization")
         return {'nodes': nodes, 'links': links}
@@ -389,14 +393,20 @@ class AnalystAgent:
         try:
             # Generate insights
             self.emit_log("Generating comprehensive insights using CrewAI...")
-            insights_str = crew.kickoff()
+            insights_str = str(crew.kickoff())
             self.emit_log("Insights generation complete")
 
             # Parse JSON response
             try:
+                # Extract JSON from potential markdown wrapper
+                if "```json" in insights_str:
+                    insights_str = insights_str.split("```json")[1].split("```")[0].strip()
+                elif "```" in insights_str:
+                    insights_str = insights_str.split("```")[1].split("```")[0].strip()
+                
                 insights = json.loads(insights_str)
-            except (json.JSONDecodeError, TypeError):
-                self.emit_log("⚠️ Error parsing JSON response from LLM")
+            except (json.JSONDecodeError, TypeError) as e:
+                self.emit_log(f"⚠️ Error parsing JSON response from LLM: {str(e)}")
                 insights = {
                     "central_technologies": "The analysis encountered an error processing the results.",
                     "cross_domain_connections": "No cross-domain connections could be analyzed.",
@@ -533,13 +543,40 @@ class AnalystAgent:
             self.emit_log("Analyzing knowledge graph...")
             graph_insights = self.analyze_knowledge_graph(knowledge_graph)
             
+            # Process insights to ensure proper formatting
+            processed_insights = {}
+            
+            # Process each section of insights
+            for key, value in graph_insights.items():
+                # If the value is already a JSON string, keep it as is
+                if isinstance(value, str):
+                    if value.startswith('{') or value.startswith('['):
+                        try:
+                            # Validate it's proper JSON
+                            json.loads(value)
+                            processed_insights[key] = value
+                        except json.JSONDecodeError:
+                            # If it's not valid JSON, keep as is
+                            processed_insights[key] = value
+                    else:
+                        processed_insights[key] = value
+                else:
+                    # Convert non-string insights to JSON strings
+                    try:
+                        processed_insights[key] = json.dumps(value)
+                    except TypeError:
+                        processed_insights[key] = str(value)
+            
             # Return results
-            return {
+            result = {
                 'graph_data': graph_data,
-                'graph_insights': graph_insights,
+                'graph_insights': processed_insights,
                 'original_scout_data': scout_data,
                 'timestamp': int(time.time())
             }
+            
+            self.emit_log("Analysis complete, returning results")
+            return result
             
         except Exception as e:
             self.emit_log(f"⚠️ Error in analysis: {str(e)}")
@@ -548,4 +585,4 @@ class AnalystAgent:
                 'graph_visualization': None,
                 'graph_insights': {},
                 'original_scout_data': scout_data
-            }
+            } 
