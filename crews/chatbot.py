@@ -9,10 +9,7 @@ class ChatBot:
         self.agent = Agent(
             role="Conversational Chatbot",
             goal="Maintain helpful dialogue and summarize the conversation",
-            backstory=(
-                "You're a smart and friendly chatbot. "
-                "You generate responses to user queries while also keeping a running summary of the conversation."
-            ),
+            backstory="You're a smart and friendly chatbot that generates responses while tracking conversation history.",
             verbose=True,
             llm="azure/gpt-4o-mini"  
         )
@@ -25,15 +22,14 @@ class ChatBot:
 
         chat_task = Task(
             description=(
-                "You are a chatbot maintaining an ongoing conversation.\n"
+                "As a chatbot maintaining an ongoing conversation:\n"
                 "Given the user query:\n"
                 "{query}\n"
-                "and the current summary of the conversation:\n"
+                "and the current summary:\n"
                 "{summary}\n\n"
-                "Your job is to:\n"
-                "1. Generate a helpful chatbot response to the query.\n"
-                "2. Update the summary of the conversation accordingly.\n\n"
-                "Respond ONLY in the following JSON format (include no explanation):\n"
+                "1. Generate a helpful response to the query.\n"
+                "2. Update the conversation summary.\n\n"
+                "Respond ONLY in JSON format:\n"
                 "```\n"
                 "{{\n"
                 "  \"response\": \"<chatbot response>\",\n"
@@ -52,16 +48,14 @@ class ChatBot:
             verbose=True
         )
 
-        result = crew.kickoff(inputs=inputs)
-
         try:
-            # Use str(result) since CrewOutput doesn't have an 'output' attribute
-            output = str(result).strip()
-            output = re.sub(r'^```(?:json)?\s*', '', output)
-            output = re.sub(r'\s*```$', '', output)
-            return json.loads(output)
+            result = str(crew.kickoff(inputs=inputs)).strip()
+            # Extract JSON from potential markdown
+            result = re.sub(r'^```(?:json)?\s*', '', result)
+            result = re.sub(r'\s*```$', '', result)
+            return json.loads(result)
         except Exception as e:
             return {
                 'error': f'Failed to parse JSON response: {str(e)}',
-                'raw_output': str(result)  # Ensure this outputs as a string
+                'raw_output': str(result)
             }

@@ -4,8 +4,6 @@ import networkx as nx
 import json
 import os
 from dotenv import load_dotenv
-import plotly.graph_objs as go
-import uuid
 import time
 
 load_dotenv()
@@ -25,11 +23,7 @@ class AnalystAgent:
         self.agent = Agent(
             role="Trend Analysis Specialist",
             goal="Perform deep analysis of technological trends and generate comprehensive insights",
-            backstory=(
-                "You are an expert trend analyst with the ability to "
-                "dissect complex technological landscapes, identify "
-                "interconnections, and provide strategic insights."
-            ),
+            backstory="You are an expert trend analyst with the ability to dissect complex technological landscapes.",
             verbose=True,
             llm="azure/gpt-4o-mini"  
         )
@@ -41,16 +35,13 @@ class AnalystAgent:
             self.socketio.emit('analyst_log', {'message': message})
 
     def build_knowledge_graph(self, scout_data):
-        """
-        Transform Scout Agent data into a networkx graph with enhanced relationship detection
-        """
+        """Transform Scout Agent data into a networkx graph with enhanced relationship detection"""
         self.emit_log("Building knowledge graph from scout data...")
         G = nx.DiGraph()
         
-        # Ensure relevant_trends exists and is a list
+        # Get relevant trends
         relevant_trends = scout_data.get('relevant_trends', [])
-        if not isinstance(relevant_trends, list):
-            relevant_trends = []
+        if not isinstance(relevant_trends, list) or not relevant_trends:
             self.emit_log("No trend data found in scout data")
             return G
         
@@ -69,11 +60,15 @@ class AnalystAgent:
         
         self.emit_log(f"Added {len(relevant_trends)} trend nodes to graph")
         
-        # Extract and add technology nodes
+        # Process technologies and keywords
         tech_nodes = 0
+        keyword_nodes = 0
+        
         for trend in relevant_trends:
+            node_id = trend.get('id', str(hash(json.dumps(trend))))
+            
             # Add technology nodes
-            if trend.get('technologies') and isinstance(trend.get('technologies'), list):
+            if isinstance(trend.get('technologies'), list):
                 for tech in trend.get('technologies'):
                     tech_id = f"tech_{tech.replace(' ', '_').lower()}"
                     if not G.has_node(tech_id):
@@ -85,20 +80,10 @@ class AnalystAgent:
                         tech_nodes += 1
                     
                     # Add relationship from trend to technology
-                    G.add_edge(
-                        node_id, 
-                        tech_id, 
-                        relationship_type='uses_technology',
-                        weight=1.0
-                    )
-        
-        self.emit_log(f"Added {tech_nodes} technology nodes to graph")
-        
-        # Extract and add keyword nodes
-        keyword_nodes = 0
-        for trend in relevant_trends:
+                    G.add_edge(node_id, tech_id, relationship_type='uses_technology', weight=1.0)
+            
             # Add keyword nodes
-            if trend.get('keywords') and isinstance(trend.get('keywords'), list):
+            if isinstance(trend.get('keywords'), list):
                 for keyword in trend.get('keywords'):
                     keyword_id = f"keyword_{keyword.replace(' ', '_').lower()}"
                     if not G.has_node(keyword_id):
@@ -110,38 +95,33 @@ class AnalystAgent:
                         keyword_nodes += 1
                     
                     # Add relationship from trend to keyword
-                    G.add_edge(
-                        node_id, 
-                        keyword_id, 
-                        relationship_type='has_keyword',
-                        weight=0.7
-                    )
+                    G.add_edge(node_id, keyword_id, relationship_type='has_keyword', weight=0.7)
         
-        self.emit_log(f"Added {keyword_nodes} keyword nodes to graph")
+        self.emit_log(f"Added {tech_nodes} technology nodes and {keyword_nodes} keyword nodes")
         
-        # Add connections between trends based on similarity and shared entities
+        # Add connections between trends based on similarity
         trend_connections = 0
         for i, trend1 in enumerate(relevant_trends):
             for j, trend2 in enumerate(relevant_trends[i+1:], i+1):
                 trend1_id = trend1.get('id', str(hash(json.dumps(trend1))))
                 trend2_id = trend2.get('id', str(hash(json.dumps(trend2))))
                 
-                # Calculate reasons for connection
+                # Calculate connection reasons and weight
                 connection_reasons = []
                 connection_weight = 0
                 
-                # Check domain similarity
+                # Domain similarity
                 if trend1.get('domain') == trend2.get('domain'):
                     connection_reasons.append('same_domain')
                     connection_weight += 0.5
                 
-                # Check similarity score proximity
+                # Similarity score proximity
                 if (trend1.get('similarity_score') and trend2.get('similarity_score') and 
                     abs(trend1.get('similarity_score') - trend2.get('similarity_score')) < 0.2):
                     connection_reasons.append('similar_relevance')
                     connection_weight += 0.3
                 
-                # Check for shared technologies
+                # Shared technologies
                 tech1 = set(trend1.get('technologies', []))
                 tech2 = set(trend2.get('technologies', []))
                 shared_tech = tech1.intersection(tech2)
@@ -149,7 +129,7 @@ class AnalystAgent:
                     connection_reasons.append('shared_technologies')
                     connection_weight += 0.7 * len(shared_tech)
                 
-                # Check for shared keywords
+                # Shared keywords
                 kw1 = set(trend1.get('keywords', []))
                 kw2 = set(trend2.get('keywords', []))
                 shared_kw = kw1.intersection(kw2)
@@ -169,33 +149,34 @@ class AnalystAgent:
                     trend_connections += 1
         
         self.emit_log(f"Added {trend_connections} connections between trends")
-        
         return G
     
     def generate_graph_data_for_frontend(self, G):
-        """
-        Convert NetworkX graph to a format suitable for frontend visualization
-        """
+        """Convert NetworkX graph to a format suitable for frontend visualization"""
         self.emit_log("Preparing graph data for frontend visualization...")
         
-        # Generate nodes list with type-based colors and sizes
+        # Generate nodes with type-based colors and sizes
         nodes = []
         for node_id in G.nodes():
             node_data = G.nodes[node_id]
             node_type = node_data.get('node_type', 'unknown')
             
-            # Determine node color and size based on type
+            # Set color and size based on node type
+            color_map = {
+                'trend': '#4a6de5',    # Blue
+                'technology': '#28a745', # Green
+                'keyword': '#fd7e14',   # Orange
+                'unknown': '#6c757d'     # Gray
+            }
+            
+            # Calculate size
             if node_type == 'trend':
-                color = '#4a6de5'  # Blue for trends
                 size = 10 + (node_data.get('similarity_score', 0) * 15)
             elif node_type == 'technology':
-                color = '#28a745'  # Green for technologies
                 size = 8
             elif node_type == 'keyword':
-                color = '#fd7e14'  # Orange for keywords
                 size = 6
             else:
-                color = '#6c757d'  # Gray for unknown
                 size = 5
             
             # Create node object
@@ -204,11 +185,11 @@ class AnalystAgent:
                 'title': node_data.get('title', 'Unnamed Node'),
                 'domain': node_data.get('domain', 'Unknown'),
                 'type': node_type,
-                'color': color,
+                'color': color_map.get(node_type, color_map['unknown']),
                 'size': size
             }
             
-            # Add additional properties based on node type
+            # Add type-specific properties
             if node_type == 'trend':
                 node.update({
                     'publication_date': node_data.get('publication_date', 'Unknown'),
@@ -219,34 +200,23 @@ class AnalystAgent:
             
             nodes.append(node)
         
-        # Generate links list
-        links = []
-        for source, target, edge_data in G.edges(data=True):
-            # Create link object
-            link = {
+        # Generate links
+        links = [
+            {
                 'source': source,
                 'target': target,
                 'type': edge_data.get('relationship_type', 'related'),
                 'weight': edge_data.get('weight', 1.0),
+                'reasons': edge_data.get('reasons', []) if 'reasons' in edge_data else None
             }
-            
-            # Add reasons if available
-            if 'reasons' in edge_data:
-                link['reasons'] = edge_data['reasons']
-            
-            links.append(link)
+            for source, target, edge_data in G.edges(data=True)
+        ]
         
         self.emit_log(f"Prepared {len(nodes)} nodes and {len(links)} links for visualization")
-        
-        return {
-            'nodes': nodes,
-            'links': links
-        }
+        return {'nodes': nodes, 'links': links}
 
     def analyze_knowledge_graph(self, G):
-        """
-        Perform comprehensive analysis on the knowledge graph with improved metrics
-        """
+        """Perform comprehensive analysis on the knowledge graph"""
         self.emit_log("Analyzing knowledge graph for insights...")
 
         # Handle empty graph
@@ -260,15 +230,10 @@ class AnalystAgent:
 
         # Calculate centrality metrics
         try:
-            # Degree centrality - how many connections each node has
+            # Calculate various centrality metrics
             degree_cent = nx.degree_centrality(G)
-            
-            # Betweenness centrality - nodes that act as bridges between other nodes
             betweenness_cent = nx.betweenness_centrality(G)
-            
-            # Eigenvector centrality - influence of a node in the network
             eigenvector_cent = nx.eigenvector_centrality_numpy(G)
-            
             self.emit_log("Calculated graph centrality metrics")
         except Exception as e:
             self.emit_log(f"⚠️ Error calculating centrality metrics: {str(e)}")
@@ -277,29 +242,21 @@ class AnalystAgent:
             betweenness_cent = {node: 0.0 for node in G.nodes()}
             eigenvector_cent = {node: 0.0 for node in G.nodes()}
 
-        # Prepare node and edge information
-        nodes_info = []
-        for node in G.nodes(data=True):
-            node_id = node[0]
-            node_data = node[1]
-            
-            # Combined centrality score (weighted average)
-            centrality_score = (
-                0.4 * degree_cent.get(node_id, 0) + 
-                0.4 * betweenness_cent.get(node_id, 0) + 
-                0.2 * eigenvector_cent.get(node_id, 0)
-            )
-            
-            node_info = {
+        # Process node information with centrality metrics
+        nodes_info = [
+            {
                 "id": node_id,
                 "title": node_data.get('title', 'Unnamed Technology'),
                 "domain": node_data.get('domain', 'Unknown'),
                 "type": node_data.get('node_type', 'unknown'),
                 "degree": G.degree(node_id),
-                "centrality": centrality_score,
+                "centrality": 0.4 * degree_cent.get(node_id, 0) + 
+                              0.4 * betweenness_cent.get(node_id, 0) + 
+                              0.2 * eigenvector_cent.get(node_id, 0),
                 "data": node_data
             }
-            nodes_info.append(node_info)
+            for node_id, node_data in G.nodes(data=True)
+        ]
 
         # Sort nodes by centrality to identify central technologies
         central_technologies = sorted(nodes_info, key=lambda x: x['centrality'], reverse=True)[:5]
@@ -334,22 +291,21 @@ class AnalystAgent:
         # Identify innovation pathways (important paths in the graph)
         innovation_pathways = []
         try:
-            # Use the top trends as starting points for paths
+            # Use top trends as starting points for paths
             start_nodes = [node['id'] for node in central_technologies if node['type'] == 'trend'][:3]
             
             for start_node in start_nodes:
-                # Find all simple paths of length 2-4 from this node
+                # Find paths of length 2-4
                 for length in range(2, 5):
                     for node in G.nodes():
                         if node != start_node and nx.has_path(G, start_node, node):
                             try:
-                                # Get the shortest path
+                                # Get shortest path
                                 path = nx.shortest_path(G, start_node, node)
                                 if len(path) == length:
-                                    # Get the node titles to make the path readable
+                                    # Create path with titles
                                     path_titles = [G.nodes[n].get('title', 'Unknown') for n in path]
                                     
-                                    # Add this path
                                     innovation_pathways.append({
                                         "path_nodes": path,
                                         "path_titles": path_titles,
@@ -360,19 +316,16 @@ class AnalystAgent:
                             except nx.NetworkXNoPath:
                                 continue
             
-            # Deduplicate and take top paths
+            # Deduplicate paths
             unique_paths = {}
             for path in innovation_pathways:
                 path_key = tuple(path["path_nodes"])
                 if path_key not in unique_paths:
                     unique_paths[path_key] = path
             
+            # Sort by cross-domain nature and limit to top 5
             innovation_pathways = list(unique_paths.values())
-            
-            # Sort by cross-domain nature (prefer paths that cross domains)
             innovation_pathways.sort(key=lambda x: x["start_domain"] != x["end_domain"], reverse=True)
-            
-            # Take top 5 paths
             innovation_pathways = innovation_pathways[:5]
             
             self.emit_log(f"Identified {len(innovation_pathways)} innovation pathways")
@@ -381,7 +334,7 @@ class AnalystAgent:
             self.emit_log(f"⚠️ Error identifying innovation pathways: {str(e)}")
             innovation_pathways = []
 
-        # Analysis task to generate insights
+        # Prepare analysis task inputs
         analysis_task = Task(
             description=f"""
             Perform a comprehensive analysis of the technology knowledge graph with {len(G.nodes())} nodes.
@@ -425,39 +378,37 @@ class AnalystAgent:
             expected_output="Comprehensive trend analysis in structured JSON format"
         )
 
-        # Create crew for analysis
+        # Generate insights using CrewAI
         crew = Crew(
             agents=[self.agent],
             tasks=[analysis_task],
             process=Process.sequential,
             verbose=True
         )
+        
         try:
             # Generate insights
             self.emit_log("Generating comprehensive insights using CrewAI...")
             insights_str = crew.kickoff()
             self.emit_log("Insights generation complete")
 
-            # Attempt to parse JSON
+            # Parse JSON response
             try:
                 insights = json.loads(insights_str)
             except (json.JSONDecodeError, TypeError):
                 self.emit_log("⚠️ Error parsing JSON response from LLM")
-                # Fallback parsing for potential partial JSON or string responses
                 insights = {
-                    "central_technologies": "The analysis encountered an error processing the results. Please try again with more data.",
+                    "central_technologies": "The analysis encountered an error processing the results.",
                     "cross_domain_connections": "No cross-domain connections could be analyzed.",
                     "innovation_pathways": "No innovation pathways could be determined."
                 }
 
-            # Ensure all keys exist and format for readability
-            formatted_insights = {
+            # Format insights for readability
+            return {
                 "central_technologies": self._format_central_technologies(insights.get("central_technologies", [])),
                 "cross_domain_connections": self._format_cross_domain_connections(insights.get("cross_domain_connections", [])),
                 "innovation_pathways": self._format_innovation_pathways(insights.get("innovation_pathways", []))
             }
-
-            return formatted_insights
 
         except Exception as e:
             self.emit_log(f"⚠️ Error in analysis: {str(e)}")
@@ -532,12 +483,10 @@ class AnalystAgent:
         return pathways
 
     def process_analyst_query(self, scout_data):
-        """
-        Main method to process scout data and generate analyst insights
-        """
+        """Main method to process scout data and generate analyst insights"""
         self.emit_log("Starting analyst query processing...")
         
-        # If scout_data is a string, try to parse it as JSON
+        # Parse JSON if needed
         if isinstance(scout_data, str):
             try:
                 scout_data = json.loads(scout_data)
@@ -576,23 +525,22 @@ class AnalystAgent:
                     'original_scout_data': scout_data
                 }
             
-            # Process graph data for frontend visualization
+            # Process graph for frontend visualization
             self.emit_log("Preparing graph data for visualization...")
             graph_data = self.generate_graph_data_for_frontend(knowledge_graph)
             
-            # Perform graph analysis
+            # Analyze graph
             self.emit_log("Analyzing knowledge graph...")
             graph_insights = self.analyze_knowledge_graph(knowledge_graph)
             
-            # Add timestamp for uniqueness
-            timestamp = int(time.time())
-            
+            # Return results
             return {
                 'graph_data': graph_data,
                 'graph_insights': graph_insights,
                 'original_scout_data': scout_data,
-                'timestamp': timestamp
+                'timestamp': int(time.time())
             }
+            
         except Exception as e:
             self.emit_log(f"⚠️ Error in analysis: {str(e)}")
             return {
