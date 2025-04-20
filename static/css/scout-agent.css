@@ -1,0 +1,75 @@
+  /* Scout results selection */
+  .scout-select {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid var(--gray-300);
+      border-radius: var(--border-radius);
+      font-family: inherit;
+      font-size: 0.95rem;
+      transition: var(--transition);
+      background-color: white;
+      margin-bottom: 1rem;
+  }
+
+  .scout-preview {
+      background-color: white;
+      border: 1px solid var(--gray-300);
+      border-radius: var(--border-radius);
+      min-height: 150px;
+      margin-bottom: 1rem;
+      padding: 1rem;
+  }
+
+  .scout-preview-content {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+  }
+
+  .preview-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+  }
+
+  .preview-item strong {
+      color: var(--gray-700);
+      font-size: 0.9rem;
+  }
+
+  .preview-item p {
+      margin: 0;
+      color: var(--gray-800);
+  }
+
+  /* Scout Preview Section */
+  .scout-preview {
+      background-color: white;
+      border: 1px solid var(--gray-300);
+      border-radius: var(--border-radius);
+      min-height: 150px;
+      margin-bottom: 1rem;
+      padding: 1rem;
+  }
+
+  .scout-preview-content {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+  }
+
+  .preview-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+  }
+
+  .preview-item strong {
+      color: var(--gray-700);
+      font-size: 0.9rem;
+  }
+
+  .preview-item p {
+      margin: 0;
+      color: var(--gray-800);
+  }

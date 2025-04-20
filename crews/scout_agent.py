@@ -419,10 +419,9 @@ class ScoutAgent:
             "Do these tasks:\n"
             "1. Extract 3-5 key **insights** from trends.\n"
             "2. Suggest 2-3 **strategic recommendations**.\n"
-            "3. Provide a short **trend landscape summary**.\n"
-            "4. Write a 300-word **narrative note** blending trends, insights, and actions.\n"
-            "5. Generate a **response_to_user_prompt**: a brief, user-facing answer directly addressing the prompt.\n\n"
-            "Output format: JSON with keys: insights, recommendations, trend_summary, notes, response_to_user_prompt."
+            "3. Write a 300-word **narrative note** blending insights, and actions.\n"
+            "4. Generate a **response_to_user_prompt**: a brief, user-facing answer directly addressing the prompt.\n\n"
+            "Output format: JSON with keys: insights, recommendations, notes, response_to_user_prompt."
         )
 
         # Create the task for generating insights
@@ -432,7 +431,6 @@ class ScoutAgent:
                 "Return structured JSON with keys: "
                 "'insights' (list of strings), "
                 "'recommendations' (list of strings), "
-                "'trend_summary' (string), "
                 "'notes' (string), "
                 "'response_to_user_prompt' (string)."
             ),
@@ -489,10 +487,9 @@ class ScoutAgent:
                 "insights": parsed_output.get("insights", []),
                 "recommendations": parsed_output.get("recommendations", []),
                 "notes": parsed_output.get("notes", ""),
-                "trend_summary": parsed_output.get("trend_summary", ""),
+                "trend_summary": trend_summary_for_prompt,
                 "response_to_user_prompt": parsed_output.get("response_to_user_prompt", ""),
                 "relevant_trends": trend_with_scores,
-                "trend_summary_raw": trend_summary_for_prompt,
                 "message": "Successfully generated insights.",
                 "data_from_source": trend_data,
                 "source": "neo4j"
