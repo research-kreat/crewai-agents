@@ -831,84 +831,6 @@ function previewScoutResult(result) {
   }
 }
 
-function processAnalystQuery(scoutData) {
-  // If no data was passed, try to get it from the textarea
-  if (!scoutData) {
-    const scoutDataInput = document.getElementById("scout-data-input");
-    if (!scoutDataInput || !scoutDataInput.value.trim()) {
-      logToConsole("Please enter Scout Agent data", "warning");
-      return;
-    }
-
-    // Parse JSON input
-    try {
-      scoutData = JSON.parse(scoutDataInput.value);
-    } catch (error) {
-      logToConsole("Invalid JSON input: " + error.message, "error");
-      return;
-    }
-  }
-
-  // Validate input
-  if (
-    !scoutData ||
-    !scoutData.relevant_trends ||
-    scoutData.relevant_trends.length === 0
-  ) {
-    logToConsole("Invalid scout data - no trends found", "warning");
-    return;
-  }
-
-  // Show loading state
-  document.getElementById("graph-container").innerHTML = `
-      <div class="loading">
-        <div class="spinner"></div>
-        <p>Generating Knowledge Graph...</p>
-      </div>
-    `;
-
-  // Send to Analyst Agent
-  logToConsole("Sending data to Analyst Agent for processing...", "info");
-  fetch(`${apiUrl}/agent/analyst/process`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(scoutData),
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`Server responded with status: ${response.status}`);
-      }
-      return response.json();
-    })
-    .then((data) => {
-      logToConsole("Analysis complete", "system");
-      graphData = data;
-
-      // Populate domain filter
-      populateDomainFilter(data);
-
-      // Render Graph with Force Graph
-      renderForceGraph(data);
-
-      // Render Insights
-      renderInsights(data);
-
-      // Generate data cards
-      generateDataCards(data);
-    })
-    .catch((error) => {
-      logToConsole(`Analysis error: ${error}`, "error");
-      document.getElementById("graph-container").innerHTML = `
-          <div class="error-message">
-            <i class="fas fa-exclamation-circle"></i>
-            <p>Error processing data: ${error.message}</p>
-          </div>
-        `;
-    });
-}
-
 /**
  * Process a Scout Result by ID
  */
@@ -930,7 +852,13 @@ function processScoutResultById(resultId) {
 }
 
 // Process Analyst Query
-function processAnalystQuery() {
+function processAnalystQuery(predefinedData = null) {
+    // Either use predefined data or get from textarea
+    let scoutData;
+  
+    if (predefinedData) {
+      scoutData = predefinedData;
+    } else {
       const scoutDataInput = document.getElementById("scout-data-input").value;
   
       // Validate input
@@ -946,6 +874,7 @@ function processAnalystQuery() {
         logToConsole("Invalid JSON input: " + error.message, "error");
         return;
       }
+    }
   
     // Show loading state
     document.getElementById("graph-container").innerHTML = `
