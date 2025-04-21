@@ -21,7 +21,15 @@ function sendChatQuery() {
   document.getElementById("loading").classList.remove("hidden");
   document.getElementById("chat-response").innerHTML = "";
 
-  logToConsole(`Sending chat query: "${query.substring(0, 50)}${query.length > 50 ? "..." : ""}"`, "info");
+  // Disable send button
+  handleButtonState("#send-button", true, "Sending...");
+
+  logToConsole(
+    `Sending chat query: "${query.substring(0, 50)}${
+      query.length > 50 ? "..." : ""
+    }"`,
+    "info"
+  );
 
   fetch(`${apiUrl}/agent/chat`, {
     method: "POST",
@@ -38,11 +46,15 @@ function sendChatQuery() {
       chatHistory.push({
         query: query,
         summary: summary,
-        response: data
+        response: data,
       });
 
       // Format the response
-      document.getElementById("chat-response").innerHTML = formatJsonResponse(data);
+      document.getElementById("chat-response").innerHTML =
+        formatJsonResponse(data);
+
+      // Re-enable send button
+      handleButtonState("#send-button", false);
     })
     .catch((error) => {
       // Hide loading spinner
@@ -56,6 +68,9 @@ function sendChatQuery() {
         <p>Error: ${error}</p>
       </div>
     `;
+
+      // Re-enable send button
+      handleButtonState("#send-button", false);
     });
 }
 
@@ -63,11 +78,11 @@ function sendChatQuery() {
 document.addEventListener("DOMContentLoaded", () => {
   if (getCurrentPage() === "chatbot") {
     logToConsole("ChatBot Agent initialized", "system");
-    
+
     // Set up event listeners
     const chatQuery = document.getElementById("chat-query");
     if (chatQuery) {
-      chatQuery.addEventListener("keypress", function(event) {
+      chatQuery.addEventListener("keypress", function (event) {
         // Send query on Enter key (without Shift key for newlines)
         if (event.key === "Enter" && !event.shiftKey) {
           event.preventDefault();

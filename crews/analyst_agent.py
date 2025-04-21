@@ -478,6 +478,7 @@ class AnalystAgent:
         
         try:
             # Generate insights
+            self.emit_log(f"[analysis_task-description]: {analysis_task.description}")
             self.emit_log("Generating comprehensive insights using CrewAI...")
             insights_str = str(crew.kickoff())
             self.emit_log("Insights generation complete")

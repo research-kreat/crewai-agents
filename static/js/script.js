@@ -233,7 +233,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const currentPage = getCurrentPage();
 
   // Load common.js first (contains shared functionality)
-  loadScript("/static/js/common.js", () => {
+  loadScript("/static/js/script.js", () => {
     // After common.js is loaded, load the page-specific script if needed
     if (currentPage === "chatbot") {
       loadScript("/static/js/chatbot.js");
@@ -276,4 +276,91 @@ function loadScript(url, callback) {
   }
 
   document.head.appendChild(script);
+}
+
+/**
+ * Utility function to handle button state changes consistently across the application
+ * @param {string} selector - CSS selector for targeting buttons
+ * @param {boolean} isLoading - Whether to set buttons to loading state (true) or normal state (false)
+ * @param {string} loadingText - Optional text to display during loading, defaults to "Processing..."
+ */
+function handleButtonState(selector, isLoading, loadingText = "Processing...") {
+  const buttons = document.querySelectorAll(selector);
+
+  buttons.forEach((btn) => {
+    if (isLoading) {
+      // Save original state for later restoration
+      btn.dataset.originalHtml = btn.innerHTML;
+
+      // Disable the button and update its appearance
+      btn.disabled = true;
+
+      // If button has an icon, replace it with a spinner
+      const icon = btn.querySelector("i");
+      if (icon) {
+        // Store original icon class
+        const originalIconClass = icon.className;
+        btn.dataset.originalIcon = originalIconClass;
+
+        // Replace with spinner
+        icon.className = "fas fa-circle-notch fa-spin";
+
+        // Update button text based on its current text
+        const buttonText = btn.textContent.trim();
+        if (buttonText.includes("Analyze")) {
+          btn.innerHTML = btn.innerHTML.replace(
+            /Analyze\s*\w*/g,
+            "Analyzing..."
+          );
+        } else if (buttonText.includes("Run")) {
+          btn.innerHTML = btn.innerHTML.replace(/Run\s*\w*/g, "Running...");
+        } else if (buttonText.includes("Search")) {
+          btn.innerHTML = btn.innerHTML.replace(
+            /Search\s*\w*/g,
+            "Searching..."
+          );
+        } else if (buttonText.includes("Process")) {
+          btn.innerHTML = btn.innerHTML.replace(
+            /Process\s*\w*/g,
+            "Processing..."
+          );
+        } else if (buttonText.includes("Send")) {
+          btn.innerHTML = btn.innerHTML.replace(/Send\s*\w*/g, "Sending...");
+        } else {
+          // If no specific text pattern found, use the generic loading text
+          btn.innerHTML = `<i class="fas fa-circle-notch fa-spin"></i> ${loadingText}`;
+        }
+      } else {
+        // Button doesn't have an icon, just update the text
+        btn.textContent = loadingText;
+      }
+
+      // Add a subtle visual cue that the button is disabled
+      btn.style.opacity = "0.7";
+      btn.style.cursor = "not-allowed";
+    } else {
+      // Restore the button to its original state
+      if (btn.dataset.originalHtml) {
+        btn.innerHTML = btn.dataset.originalHtml;
+      } else if (btn.dataset.originalIcon) {
+        // If we only stored the icon, restore just that
+        const icon = btn.querySelector("i");
+        if (icon) {
+          icon.className = btn.dataset.originalIcon;
+        }
+      }
+
+      // Re-enable the button
+      btn.disabled = false;
+      btn.style.opacity = "";
+      btn.style.cursor = "";
+
+      // Clean up data attributes
+      delete btn.dataset.originalHtml;
+      delete btn.dataset.originalIcon;
+    }
+  });
+
+  // Return true to allow for function chaining
+  return true;
 }

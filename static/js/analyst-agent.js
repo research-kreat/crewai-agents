@@ -27,8 +27,10 @@ function switchTab(tabId) {
 
   // Activate selected tab
   document.getElementById(tabId).classList.add("active");
-  document.querySelector(`.tab-btn[data-tab="${tabId}"]`).classList.add("active");
-  
+  document
+    .querySelector(`.tab-btn[data-tab="${tabId}"]`)
+    .classList.add("active");
+
   logToConsole(`Switched to ${tabId} tab`, "info");
 }
 
@@ -55,7 +57,10 @@ function updateScoutResultsUI() {
 
   // Sort results by timestamp (newest first)
   const sortedResults = [...scoutResults].sort((a, b) => {
-    return new Date(b.date + " " + b.timestamp) - new Date(a.date + " " + a.timestamp);
+    return (
+      new Date(b.date + " " + b.timestamp) -
+      new Date(a.date + " " + a.timestamp)
+    );
   });
 
   // Group by date
@@ -142,13 +147,19 @@ function createScoutResultCard(result) {
   const trendsCount = result.data.relevant_trends?.length || 0;
 
   // Truncate prompt for display
-  const promptDisplay = result.prompt.length > 60 ? result.prompt.substring(0, 60) + "..." : result.prompt;
+  const promptDisplay =
+    result.prompt.length > 60
+      ? result.prompt.substring(0, 60) + "..."
+      : result.prompt;
 
   // Generate card HTML
   card.innerHTML = `
     <div class="card-header" style="border-color: ${domainColor}">
       <div class="card-time">${formattedTime}</div>
       <div class="card-actions">
+        <button class="card-action-btn copy-btn" title="Copy JSON to clipboard">
+          <i class="fas fa-copy"></i>
+        </button>
         <button class="card-action-btn analyze-btn" title="Analyze with Analyst Agent">
           <i class="fas fa-chart-line"></i>
         </button>
@@ -175,6 +186,12 @@ function createScoutResultCard(result) {
   card.querySelector(".delete-btn").addEventListener("click", (e) => {
     e.stopPropagation(); // Prevent card click
     deleteScoutResult(result.id);
+  });
+
+  // Add event listener for the copy button
+  card.querySelector(".copy-btn").addEventListener("click", (e) => {
+    e.stopPropagation(); // Prevent card click
+    copyScoutResultJson(result.id);
   });
 
   // Make whole card clickable to preview
@@ -264,7 +281,10 @@ function loadScoutResultsFromLocalStorage() {
       }
     });
 
-    logToConsole(`Loaded ${scoutResults.length} scout results from localStorage`, "system");
+    logToConsole(
+      `Loaded ${scoutResults.length} scout results from localStorage`,
+      "system"
+    );
 
     // Update UI
     updateScoutResultsUI();
@@ -283,16 +303,28 @@ function previewScoutResult(result) {
   previewElement.innerHTML = `
       <div class="preview-header">
         <h4>Query: "${result.prompt}"</h4>
-        <span class="preview-timestamp">${result.date} at ${result.timestamp}</span>
+        <span class="preview-timestamp">${result.date} at ${
+    result.timestamp
+  }</span>
+        <button class="preview-copy-btn" onclick="copyScoutResultJson('${
+          result.id
+        }')">
+          <i class="fas fa-copy"></i> Copy JSON
+        </button>
       </div>
       <div class="preview-content">
         <div class="preview-response">
-          ${result.data.response_to_user_prompt || "No direct response available"}
+          ${
+            result.data.response_to_user_prompt ||
+            "No direct response available"
+          }
         </div>
         <div class="preview-stats">
           <div class="preview-stat">
             <span class="stat-label">Trends Found:</span>
-            <span class="stat-value">${result.data.relevant_trends?.length || 0}</span>
+            <span class="stat-value">${
+              result.data.relevant_trends?.length || 0
+            }</span>
           </div>
           <div class="preview-stat">
             <span class="stat-label">Data Available:</span>
@@ -300,7 +332,9 @@ function previewScoutResult(result) {
           </div>
         </div>
         <div class="preview-actions">
-          <button class="primary-button" onclick="processScoutResultById('${result.id}')">
+          <button class="primary-button analyze-preview-btn" id="analyze-id-btn" onclick="processScoutResultById('${
+            result.id
+          }')">
             <i class="fas fa-chart-line"></i> Analyze This Data
           </button>
         </div>
@@ -312,23 +346,6 @@ function previewScoutResult(result) {
   if (analyzeButton) {
     analyzeButton.disabled = false;
   }
-}
-
-/**
- * Process a Scout Result by ID
- */
-function processScoutResultById(resultId) {
-  const result = scoutResults.find((r) => r.id === resultId);
-  if (!result) {
-    logToConsole(`Result with ID ${resultId} not found`, "error");
-    return;
-  }
-
-  logToConsole(`Processing Scout result: ${result.prompt.substring(0, 30)}...`, "info");
-  processAnalystQuery(result.data);
-
-  // Switch to the analysis tab
-  switchTab("paste-tab");
 }
 
 /**
@@ -357,6 +374,29 @@ function processAnalystQuery(predefinedData = null) {
       return;
     }
   }
+
+  // Disable all analyze buttons immediately
+  // First, let's explicitly disable the main analyze button by ID
+  const analyzeButton = document.getElementById("analyze-button");
+  if (analyzeButton) {
+    analyzeButton.disabled = true;
+    analyzeButton.innerHTML =
+      '<i class="fas fa-circle-notch fa-spin"></i> Analyzing...';
+  }
+
+  // Disable the preview button if it exists
+  const previewButton = document.getElementById("analyze-id-btn");
+  if (previewButton) {
+    previewButton.disabled = true;
+    previewButton.innerHTML =
+      '<i class="fas fa-circle-notch fa-spin"></i> Analyzing...';
+  }
+
+  // Disable any other analyze buttons by class
+  document.querySelectorAll(".analyze-btn").forEach((btn) => {
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
+  });
 
   // Show loading state
   document.getElementById("graph-container").innerHTML = `
@@ -396,6 +436,24 @@ function processAnalystQuery(predefinedData = null) {
 
       // Generate data cards
       generateDataCards(data);
+
+      // Re-enable all buttons
+      if (analyzeButton) {
+        analyzeButton.disabled = false;
+        analyzeButton.innerHTML =
+          '<i class="fas fa-chart-line"></i> Analyze Trends';
+      }
+
+      if (previewButton) {
+        previewButton.disabled = false;
+        previewButton.innerHTML =
+          '<i class="fas fa-chart-line"></i> Analyze This Data';
+      }
+
+      document.querySelectorAll(".analyze-btn").forEach((btn) => {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-chart-line"></i>';
+      });
     })
     .catch((error) => {
       logToConsole(`Analysis error: ${error}`, "error");
@@ -405,7 +463,68 @@ function processAnalystQuery(predefinedData = null) {
           <p>Error processing data: ${error.message}</p>
         </div>
       `;
+
+      // Re-enable all buttons
+      if (analyzeButton) {
+        analyzeButton.disabled = false;
+        analyzeButton.innerHTML =
+          '<i class="fas fa-chart-line"></i> Analyze Trends';
+      }
+
+      if (previewButton) {
+        previewButton.disabled = false;
+        previewButton.innerHTML =
+          '<i class="fas fa-chart-line"></i> Analyze This Data';
+      }
+
+      document.querySelectorAll(".analyze-btn").forEach((btn) => {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-chart-line"></i>';
+      });
     });
+}
+
+/**
+ * Process a Scout Result by ID
+ */
+function processScoutResultById(resultId) {
+  const result = scoutResults.find((r) => r.id === resultId);
+  if (!result) {
+    logToConsole(`Result with ID ${resultId} not found`, "error");
+    return;
+  }
+
+  // Explicitly disable the button that was clicked
+  const clickedButton = document.getElementById("analyze-id-btn");
+  if (clickedButton) {
+    clickedButton.disabled = true;
+    clickedButton.innerHTML =
+      '<i class="fas fa-circle-notch fa-spin"></i> Analyzing...';
+  }
+
+  // Also disable any other analyze buttons
+  document.querySelectorAll(".analyze-btn").forEach((btn) => {
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
+  });
+
+  logToConsole(
+    `Processing Scout result: ${result.prompt.substring(0, 30)}...`,
+    "info"
+  );
+
+  // Now also disable the main analyze button as we've switched tabs
+  const analyzeButton = document.getElementById("analyze-button");
+  if (analyzeButton) {
+    analyzeButton.disabled = true;
+    analyzeButton.innerHTML =
+      '<i class="fas fa-circle-notch fa-spin"></i> Analyzing...';
+  }
+
+  processAnalystQuery(result.data);
+
+  // Note: The buttons will be re-enabled in the processAnalystQuery function's
+  // .then and .catch blocks
 }
 
 // Populate domain filter based on data
@@ -531,9 +650,11 @@ function switchView(viewType) {
   // Show/hide appropriate containers
   if (viewType === "graph") {
     document.querySelector(".graph-visualization").style.display = "block";
+    document.querySelector(".s-visualization").style.display = "block";
     document.getElementById("data-cards-container").style.display = "none";
   } else {
     document.querySelector(".graph-visualization").style.display = "none";
+    document.querySelector(".s-visualization").style.display = "none";
     document.getElementById("data-cards-container").style.display = "grid";
   }
 
@@ -545,7 +666,11 @@ function renderForceGraph(data) {
   const graphContainer = document.getElementById("graph-container");
   graphContainer.innerHTML = ""; // Clear previous content
 
-  if (!data || !data.original_scout_data || !data.original_scout_data.relevant_trends) {
+  if (
+    !data ||
+    !data.original_scout_data ||
+    !data.original_scout_data.relevant_trends
+  ) {
     graphContainer.innerHTML = `
       <div class="error-message">
         <i class="fas fa-exclamation-circle"></i>
@@ -607,7 +732,9 @@ function renderForceGraph(data) {
     // Add keyword nodes
     if (trend.keywords && Array.isArray(trend.keywords)) {
       trend.keywords.forEach((keyword) => {
-        const keywordId = `keyword-${keyword.replace(/\s+/g, "-").toLowerCase()}`;
+        const keywordId = `keyword-${keyword
+          .replace(/\s+/g, "-")
+          .toLowerCase()}`;
 
         if (!nodeMap.has(keywordId)) {
           const keywordNode = {
@@ -713,7 +840,10 @@ function renderForceGraph(data) {
       }
     });
 
-  logToConsole(`Rendered knowledge graph with ${nodes.length} nodes and ${links.length} links`, "info");
+  logToConsole(
+    `Rendered knowledge graph with ${nodes.length} nodes and ${links.length} links`,
+    "info"
+  );
 }
 
 // Update node size
@@ -727,7 +857,8 @@ function updateNodeSize(size) {
 // Show node details
 function showNodeDetails(node) {
   const modal = document.getElementById("node-details-modal");
-  document.getElementById("node-details-title").textContent = node.title || "Node Details";
+  document.getElementById("node-details-title").textContent =
+    node.title || "Node Details";
 
   let detailsHtml = `
     <div class="node-details">
@@ -739,10 +870,18 @@ function showNodeDetails(node) {
   if (node.type === "trend") {
     const trend = node.data || {};
     detailsHtml += `
-      <p><strong>Knowledge Type:</strong> ${trend.knowledge_type || "Not specified"}</p>
-      <p><strong>Publication Date:</strong> ${trend.publication_date || "Not specified"}</p>
-      <p><strong>Similarity Score:</strong> ${(trend.similarity_score || 0).toFixed(4)}</p>
-      <p><strong>Data Quality Score:</strong> ${(trend.data_quality_score || 0).toFixed(2)}</p>
+      <p><strong>Knowledge Type:</strong> ${
+        trend.knowledge_type || "Not specified"
+      }</p>
+      <p><strong>Publication Date:</strong> ${
+        trend.publication_date || "Not specified"
+      }</p>
+      <p><strong>Similarity Score:</strong> ${(
+        trend.similarity_score || 0
+      ).toFixed(4)}</p>
+      <p><strong>Data Quality Score:</strong> ${(
+        trend.data_quality_score || 0
+      ).toFixed(2)}</p>
       
       <div class="details-section">
         <h5>Summary</h5>
@@ -851,7 +990,12 @@ function showNodeDetails(node) {
 
 // Show link details
 function showLinkDetails(link) {
-  logToConsole(`Link selected: ${link.source.title || link.source} → ${link.target.title || link.target}`, "info");
+  logToConsole(
+    `Link selected: ${link.source.title || link.source} → ${
+      link.target.title || link.target
+    }`,
+    "info"
+  );
 
   // Highlight connected nodes
   selectedNodeId = null; // Clear any selected node
@@ -888,15 +1032,19 @@ function showRelatedNodes() {
   // Find links connected to the selected node
   const connectedLinks = graphData.links.filter(
     (link) =>
-      (typeof link.source === "object" ? link.source.id : link.source) === selectedNodeId ||
-      (typeof link.target === "object" ? link.target.id : link.target) === selectedNodeId
+      (typeof link.source === "object" ? link.source.id : link.source) ===
+        selectedNodeId ||
+      (typeof link.target === "object" ? link.target.id : link.target) ===
+        selectedNodeId
   );
 
   // Get connected node IDs
   const connectedNodeIds = new Set();
   connectedLinks.forEach((link) => {
-    const sourceId = typeof link.source === "object" ? link.source.id : link.source;
-    const targetId = typeof link.target === "object" ? link.target.id : link.target;
+    const sourceId =
+      typeof link.source === "object" ? link.source.id : link.source;
+    const targetId =
+      typeof link.target === "object" ? link.target.id : link.target;
 
     if (sourceId !== selectedNodeId) connectedNodeIds.add(sourceId);
     if (targetId !== selectedNodeId) connectedNodeIds.add(targetId);
@@ -927,8 +1075,10 @@ function showRelatedNodes() {
 
   // Update link widths
   forceGraph.linkWidth((link) => {
-    const sourceId = typeof link.source === "object" ? link.source.id : link.source;
-    const targetId = typeof link.target === "object" ? link.target.id : link.target;
+    const sourceId =
+      typeof link.source === "object" ? link.source.id : link.source;
+    const targetId =
+      typeof link.target === "object" ? link.target.id : link.target;
 
     if (sourceId === selectedNodeId || targetId === selectedNodeId) {
       return 4; // Highlight connected links
@@ -938,8 +1088,10 @@ function showRelatedNodes() {
 
   // Update link particles
   forceGraph.linkDirectionalParticles((link) => {
-    const sourceId = typeof link.source === "object" ? link.source.id : link.source;
-    const targetId = typeof link.target === "object" ? link.target.id : link.target;
+    const sourceId =
+      typeof link.source === "object" ? link.source.id : link.source;
+    const targetId =
+      typeof link.target === "object" ? link.target.id : link.target;
 
     if (sourceId === selectedNodeId || targetId === selectedNodeId) {
       return 4;
@@ -1016,7 +1168,11 @@ function generateDataCards(data) {
   const cardsContainer = document.getElementById("data-cards-container");
   cardsContainer.innerHTML = "";
 
-  if (!data || !data.original_scout_data || !data.original_scout_data.relevant_trends) {
+  if (
+    !data ||
+    !data.original_scout_data ||
+    !data.original_scout_data.relevant_trends
+  ) {
     cardsContainer.innerHTML = `
       <div class="error-message">
         <i class="fas fa-exclamation-circle"></i>
@@ -1052,22 +1208,32 @@ function generateDataCards(data) {
     card.innerHTML = `
       <div class="card-header" style="border-color: ${domainColor}">
         <h3 class="card-title">${trend.title || "Unnamed Trend"}</h3>
-        <span class="card-badge" style="background-color: ${domainColor}">${trend.domain || "Unknown"}</span>
+        <span class="card-badge" style="background-color: ${domainColor}">${
+      trend.domain || "Unknown"
+    }</span>
       </div>
       <div class="card-body">
-        <p class="card-summary">${trend.summary_text || "No summary available"}</p>
+        <p class="card-summary">${
+          trend.summary_text || "No summary available"
+        }</p>
         <div class="card-details">
           <div class="detail-item">
             <span class="detail-label">Type:</span>
-            <span class="detail-value">${trend.knowledge_type || "Unknown"}</span>
+            <span class="detail-value">${
+              trend.knowledge_type || "Unknown"
+            }</span>
           </div>
           <div class="detail-item">
             <span class="detail-label">Publication:</span>
-            <span class="detail-value">${trend.publication_date || "Unknown"}</span>
+            <span class="detail-value">${
+              trend.publication_date || "Unknown"
+            }</span>
           </div>
           <div class="detail-item">
             <span class="detail-label">Similarity:</span>
-            <span class="detail-value">${(trend.similarity_score || 0).toFixed(4)}</span>
+            <span class="detail-value">${(trend.similarity_score || 0).toFixed(
+              4
+            )}</span>
           </div>
         </div>
       </div>
@@ -1082,7 +1248,9 @@ function generateDataCards(data) {
               : '<span class="tag muted">No keywords</span>'
           }
         </div>
-        <button class="card-action-btn" onclick="showCardDetails('${trend.id}')">
+        <button class="card-action-btn" onclick="showCardDetails('${
+          trend.id
+        }')">
           <i class="fas fa-info-circle"></i> Details
         </button>
       </div>
@@ -1169,14 +1337,25 @@ function renderInsights(data) {
       }
 
       // Individual technologies
-      if (Array.isArray(techData.technologies) && techData.technologies.length > 0) {
+      if (
+        Array.isArray(techData.technologies) &&
+        techData.technologies.length > 0
+      ) {
         techHTML += `<ul class="tech-list">`;
         techData.technologies.forEach((tech) => {
           techHTML += `
             <li>
-              <div class="tech-name"><strong>${tech.title || "Unnamed Technology"}</strong></div>
-              <div class="tech-analysis">${tech.analysis || "No analysis available"}</div>
-              ${tech.impact ? `<div class="tech-impact"><em>Impact: ${tech.impact}</em></div>` : ""}
+              <div class="tech-name"><strong>${
+                tech.title || "Unnamed Technology"
+              }</strong></div>
+              <div class="tech-analysis">${
+                tech.analysis || "No analysis available"
+              }</div>
+              ${
+                tech.impact
+                  ? `<div class="tech-impact"><em>Impact: ${tech.impact}</em></div>`
+                  : ""
+              }
             </li>
           `;
         });
@@ -1184,7 +1363,8 @@ function renderInsights(data) {
       }
     }
 
-    contentEl.innerHTML = techHTML || "No detailed central technologies information available";
+    contentEl.innerHTML =
+      techHTML || "No detailed central technologies information available";
     techSection.appendChild(contentEl);
     insightsDiv.appendChild(techSection);
   }
@@ -1215,13 +1395,20 @@ function renderInsights(data) {
       }
 
       // Individual opportunities
-      if (Array.isArray(connectionData.opportunities) && connectionData.opportunities.length > 0) {
+      if (
+        Array.isArray(connectionData.opportunities) &&
+        connectionData.opportunities.length > 0
+      ) {
         connectionHTML += `<ul class="connection-list">`;
         connectionData.opportunities.forEach((conn) => {
           connectionHTML += `
             <li>
-              <div class="connection-item"><strong>${conn.connection || "Unnamed Connection"}</strong></div>
-              <div class="connection-potential">${conn.potential || "No potential identified"}</div>
+              <div class="connection-item"><strong>${
+                conn.connection || "Unnamed Connection"
+              }</strong></div>
+              <div class="connection-potential">${
+                conn.potential || "No potential identified"
+              }</div>
             </li>
           `;
         });
@@ -1229,7 +1416,8 @@ function renderInsights(data) {
       }
     }
 
-    contentEl.innerHTML = connectionHTML || "No cross-domain connections information available";
+    contentEl.innerHTML =
+      connectionHTML || "No cross-domain connections information available";
     connectionSection.appendChild(contentEl);
     insightsDiv.appendChild(connectionSection);
   }
@@ -1260,13 +1448,20 @@ function renderInsights(data) {
       }
 
       // Individual implications
-      if (Array.isArray(pathwayData.implications) && pathwayData.implications.length > 0) {
+      if (
+        Array.isArray(pathwayData.implications) &&
+        pathwayData.implications.length > 0
+      ) {
         pathwayHTML += `<ul class="pathway-list">`;
         pathwayData.implications.forEach((path) => {
           pathwayHTML += `
             <li>
-              <div class="pathway-path"><strong>${path.path || "Unnamed Pathway"}</strong></div>
-              <div class="pathway-implication">${path.implication || "No implication identified"}</div>
+              <div class="pathway-path"><strong>${
+                path.path || "Unnamed Pathway"
+              }</strong></div>
+              <div class="pathway-implication">${
+                path.implication || "No implication identified"
+              }</div>
             </li>
           `;
         });
@@ -1274,7 +1469,8 @@ function renderInsights(data) {
       }
     }
 
-    contentEl.innerHTML = pathwayHTML || "No innovation pathways information available";
+    contentEl.innerHTML =
+      pathwayHTML || "No innovation pathways information available";
     pathwaySection.appendChild(contentEl);
     insightsDiv.appendChild(pathwaySection);
   }
@@ -1287,7 +1483,7 @@ function renderInsights(data) {
 document.addEventListener("DOMContentLoaded", () => {
   if (getCurrentPage() === "analyst") {
     logToConsole("Analyst Agent initialized", "system");
-    
+
     // Setup tab switching
     document.querySelectorAll(".tab-btn").forEach((btn) => {
       btn.addEventListener("click", () => {
@@ -1297,11 +1493,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Load saved scout results for the scout results tab
     loadScoutResultsFromLocalStorage();
-    
+
     // Set up event listeners for other UI elements
     const nodeSearch = document.getElementById("node-search");
     if (nodeSearch) {
-      nodeSearch.addEventListener("keypress", function(event) {
+      nodeSearch.addEventListener("keypress", function (event) {
         if (event.key === "Enter") {
           event.preventDefault();
           searchNodes();
@@ -1310,3 +1506,26 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 });
+
+function copyScoutResultJson(resultId) {
+  const result = scoutResults.find((r) => r.id === resultId);
+  if (!result) {
+    logToConsole(`Result with ID ${resultId} not found for copying`, "error");
+    return;
+  }
+
+  // Create JSON string
+  const jsonStr = JSON.stringify(result.data, null, 2);
+
+  // Copy to clipboard
+  navigator.clipboard
+    .writeText(jsonStr)
+    .then(() => {
+      showToast("JSON copied to clipboard");
+      logToConsole("Scout result JSON copied to clipboard", "info");
+    })
+    .catch((err) => {
+      showToast("Failed to copy JSON: " + err);
+      logToConsole(`Error copying JSON: ${err}`, "error");
+    });
+}

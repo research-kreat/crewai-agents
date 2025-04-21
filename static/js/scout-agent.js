@@ -8,6 +8,9 @@ let scoutResults = [];
 /**
  * Send Scout query
  */
+/**
+ * Send Scout query
+ */
 function sendScoutQuery() {
   const prompt = document.getElementById("scout-prompt").value;
 
@@ -21,10 +24,8 @@ function sendScoutQuery() {
   document.getElementById("loading").classList.remove("hidden");
   document.getElementById("scout-response").innerHTML = "";
 
-  // Disable run button
-  const runButton = document.getElementById("run-button");
-  runButton.disabled = true;
-  runButton.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Processing...';
+  // Disable run button using the utility function
+  handleButtonState("#run-button", true, "Processing...");
 
   logToConsole(`Sending query: "${prompt.substring(0, 50)}${prompt.length > 50 ? "..." : ""}"`, "info");
 
@@ -46,8 +47,7 @@ function sendScoutQuery() {
       logToConsole("Results displayed successfully", "system");
 
       // Re-enable run button
-      runButton.disabled = false;
-      runButton.innerHTML = '<i class="fas fa-play"></i> Run Query';
+      handleButtonState("#run-button", false);
     })
     .catch((error) => {
       document.getElementById("loading").classList.add("hidden");
@@ -60,8 +60,8 @@ function sendScoutQuery() {
       </div>
     `;
 
-      runButton.disabled = false;
-      runButton.innerHTML = '<i class="fas fa-play"></i> Run Query';
+      // Re-enable run button
+      handleButtonState("#run-button", false);
     });
 }
 
@@ -257,23 +257,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-document.addEventListener("DOMContentLoaded", () => {
-    // Determine current page
-    const currentPage = getCurrentPage();
-    
-    // Load common.js first (contains shared functionality)
-    loadScript("/static/js/common.js", () => {
-      // After common.js is loaded, load the page-specific script if needed
-      if (currentPage === "chatbot") {
-        loadScript("/static/js/chatbot.js");
-      } else if (currentPage === "scout") {
-        loadScript("/static/js/scout-agent.js");
-      } else if (currentPage === "analyst") {
-        loadScript("/static/js/analyst-agent.js");
-      }
-    });
-  });
-  
   /**
    * Determine which page we're currently on
    */
