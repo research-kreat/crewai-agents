@@ -351,6 +351,9 @@ function previewScoutResult(result) {
 /**
  * Process Analyst Query with either predefined data or from input field
  */
+/**
+ * Process Analyst Query with either predefined data or from input field
+ */
 function processAnalystQuery(predefinedData = null) {
   // Either use predefined data or get from textarea
   let scoutData;
@@ -398,11 +401,19 @@ function processAnalystQuery(predefinedData = null) {
     btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
   });
 
-  // Show loading state
+  // Show loading state for graph
   document.getElementById("graph-container").innerHTML = `
     <div class="loading">
       <div class="spinner"></div>
       <p>Generating Knowledge Graph...</p>
+    </div>
+  `;
+  
+  // Show loading state for S-Curve
+  document.getElementById("s-curve-container").innerHTML = `
+    <div class="loading">
+      <div class="spinner"></div>
+      <p>Generating S-Curve Visualization...</p>
     </div>
   `;
 
@@ -428,8 +439,11 @@ function processAnalystQuery(predefinedData = null) {
       // Populate domain filter
       populateDomainFilter(data);
 
-      // Render Graph with Force Graph
+      // Render Knowledge Graph
       renderForceGraph(data);
+      
+      // Render S-Curve Visualization
+      renderSCurve(data);
 
       // Render Insights
       renderInsights(data);
@@ -457,7 +471,17 @@ function processAnalystQuery(predefinedData = null) {
     })
     .catch((error) => {
       logToConsole(`Analysis error: ${error}`, "error");
+      
+      // Show error message for graph
       document.getElementById("graph-container").innerHTML = `
+        <div class="error-message">
+          <i class="fas fa-exclamation-circle"></i>
+          <p>Error processing data: ${error.message}</p>
+        </div>
+      `;
+      
+      // Show error message for S-Curve
+      document.getElementById("s-curve-container").innerHTML = `
         <div class="error-message">
           <i class="fas fa-exclamation-circle"></i>
           <p>Error processing data: ${error.message}</p>
@@ -1528,4 +1552,519 @@ function copyScoutResultJson(resultId) {
       showToast("Failed to copy JSON: " + err);
       logToConsole(`Error copying JSON: ${err}`, "error");
     });
+}
+
+// ==================================================
+// S-CURVE VISUALIZATION FUNCTIONS
+// ==================================================
+
+// S-curve variables
+let sCurveData = null;
+let sCurveChart = null;
+let currentTimeFilter = 'All';
+
+/**
+ * Render S-Curve visualization using D3.js
+ */
+function renderSCurve(data) {
+  const sCurveContainer = document.getElementById("s-curve-container");
+  sCurveContainer.innerHTML = ""; // Clear previous content
+
+  if (!data || !data.s_curve_data || data.s_curve_data.error) {
+    sCurveContainer.innerHTML = `
+      <div class="error-message">
+        <i class="fas fa-exclamation-circle"></i>
+        <p>${data.s_curve_data?.error || "No data available for S-Curve visualization"}</p>
+      </div>
+    `;
+    return;
+  }
+
+  // Store data globally for filtering later
+  sCurveData = data.s_curve_data;
+  
+  // Set up the S-Curve container
+  const margin = { top: 40, right: 120, bottom: 60, left: 50 };
+  const width = sCurveContainer.clientWidth - margin.left - margin.right;
+  const height = 400 - margin.top - margin.bottom;
+
+  // Create SVG element
+  const svg = d3.select("#s-curve-container")
+    .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", `translate(${margin.left},${margin.top})`);
+
+  // Extract technologies data
+  const technologies = sCurveData.technologies;
+  
+  // If no technologies, show error message
+  if (!technologies || technologies.length === 0) {
+    sCurveContainer.innerHTML = `
+      <div class="error-message">
+        <i class="fas fa-exclamation-circle"></i>
+        <p>No technology trends available for S-Curve visualization</p>
+      </div>
+    `;
+    return;
+  }
+
+  // Filter data based on selected time period
+  const filteredData = filterSCurveDataByTime(technologies, currentTimeFilter);
+  
+  // Set up scales
+  const x = d3.scaleTime()
+    .domain([new Date(filteredData.minYear, 0, 1), new Date(filteredData.maxYear, 11, 31)])
+    .range([0, width]);
+
+  const y = d3.scaleLinear()
+    .domain([0, filteredData.maxCumulative * 1.1]) // Add 10% padding
+    .range([height, 0]);
+
+  // Add X and Y axes
+  svg.append("g")
+    .attr("transform", `translate(0,${height})`)
+    .call(d3.axisBottom(x).tickFormat(d3.timeFormat("%Y")))
+    .selectAll("text")
+    .attr("transform", "rotate(-45)")
+    .style("text-anchor", "end");
+
+  svg.append("g")
+    .call(d3.axisLeft(y));
+
+  // Add X and Y axis labels
+  svg.append("text")
+    .attr("text-anchor", "middle")
+    .attr("x", width / 2)
+    .attr("y", height + margin.bottom - 10)
+    .text("Year");
+
+  svg.append("text")
+    .attr("text-anchor", "middle")
+    .attr("transform", "rotate(-90)")
+    .attr("x", -height / 2)
+    .attr("y", -margin.left + 15)
+    .text("Technology Adoption (Cumulative Mentions)");
+    
+  // Add title
+  svg.append("text")
+    .attr("text-anchor", "middle")
+    .attr("x", width / 2)
+    .attr("y", -15)
+    .style("font-size", "16px")
+    .style("font-weight", "bold")
+    .text("Technology S-Curve Analysis");
+
+  // Generate line paths
+  const line = d3.line()
+    .x(d => x(new Date(d.year, 0, 1)))
+    .y(d => y(d.cumulative))
+    .curve(d3.curveMonotoneX);
+
+  // Create color scale for technologies
+  const colorScale = d3.scaleOrdinal(d3.schemeCategory10)
+    .domain(filteredData.technologies.map(t => t.technology));
+
+  // Add the lines
+  const paths = svg.selectAll(".line")
+    .data(filteredData.technologies)
+    .enter()
+    .append("path")
+    .attr("fill", "none")
+    .attr("class", "line")
+    .attr("stroke", d => colorScale(d.technology))
+    .attr("stroke-width", 2)
+    .attr("d", d => line(d.filteredData));
+
+  // Add hover effect
+  paths.on("mouseover", function(event, d) {
+      d3.select(this)
+        .attr("stroke-width", 4);
+      
+      // Show tooltip
+      const tooltip = d3.select("body")
+        .append("div")
+        .attr("class", "tooltip")
+        .style("position", "absolute")
+        .style("background", "rgba(0,0,0,0.7)")
+        .style("color", "white")
+        .style("padding", "8px")
+        .style("border-radius", "4px")
+        .style("pointer-events", "none")
+        .style("font-size", "12px")
+        .style("opacity", 0);
+        
+      tooltip.transition()
+        .duration(200)
+        .style("opacity", 0.9);
+        
+      tooltip.html(`
+        <strong>${d.technology}</strong><br/>
+        Stage: ${d.stage}<br/>
+        Total Mentions: ${d.total_mentions}<br/>
+        Domains: ${d.domains.join(", ")}
+      `)
+        .style("left", (event.pageX + 10) + "px")
+        .style("top", (event.pageY - 28) + "px");
+    })
+    .on("mouseout", function(event, d) {
+      d3.select(this)
+        .attr("stroke-width", 2);
+      
+      // Remove tooltip
+      d3.selectAll(".tooltip").remove();
+    });
+
+  // Add dots for each data point
+  filteredData.technologies.forEach(tech => {
+    svg.selectAll(".dot")
+      .data(tech.filteredData)
+      .enter()
+      .append("circle")
+      .attr("class", "dot")
+      .attr("cx", d => x(new Date(d.year, 0, 1)))
+      .attr("cy", d => y(d.cumulative))
+      .attr("r", 3)
+      .attr("fill", colorScale(tech.technology));
+  });
+
+  // Add a legend
+  const legend = svg.append("g")
+    .attr("class", "legend")
+    .attr("transform", `translate(${width + 10}, 0)`);
+
+  const legendItems = legend.selectAll(".legend-item")
+    .data(filteredData.technologies)
+    .enter()
+    .append("g")
+    .attr("class", "legend-item")
+    .attr("transform", (d, i) => `translate(0, ${i * 20})`);
+
+  legendItems.append("rect")
+    .attr("width", 10)
+    .attr("height", 10)
+    .attr("fill", d => colorScale(d.technology));
+
+  legendItems.append("text")
+    .attr("x", 15)
+    .attr("y", 8)
+    .attr("font-size", "10px")
+    .text(d => `${d.technology} (${d.stage})`);
+
+  // Save reference to the chart for later updates
+  sCurveChart = {
+    svg,
+    width,
+    height,
+    margin,
+    x,
+    y,
+    colorScale,
+    line
+  };
+
+  logToConsole(`Rendered S-Curve with ${filteredData.technologies.length} technologies`, "info");
+}
+
+/**
+ * Filter S-Curve data by time period
+ */
+function filterSCurveDataByTime(technologies, period = 'All') {
+  // If no data, return empty object
+  if (!technologies || technologies.length === 0) {
+    return {
+      technologies: [],
+      minYear: 0,
+      maxYear: 0,
+      maxCumulative: 0
+    };
+  }
+
+  // Get current year
+  const currentYear = new Date().getFullYear();
+  
+  // Determine year range based on selected period
+  let minYear;
+  const maxYear = currentYear; // Always use current year as max
+  
+  switch (period) {
+    case '1Y':
+      minYear = currentYear - 1;
+      break;
+    case '3Y':
+      minYear = currentYear - 3;
+      break;
+    case '5Y':
+      minYear = currentYear - 5;
+      break;
+    case 'All':
+    default:
+      minYear = Math.min(...technologies.flatMap(tech => 
+        tech.data.map(d => d.year)
+      ));
+      break;
+  }
+
+  // Filter technologies data by year range
+  const filteredTechnologies = technologies.map(tech => {
+    // Filter data points by year
+    const filteredData = tech.data.filter(d => 
+      d.year >= minYear && d.year <= maxYear
+    );
+    
+    // If no data in range, skip
+    if (filteredData.length === 0) {
+      return null;
+    }
+    
+    // Adjust cumulative values to start from first visible year
+    let baseValue = 0;
+    if (filteredData[0].year > minYear) {
+      // Find the largest cumulative value before minYear
+      const earlierPoints = tech.data.filter(d => d.year < minYear);
+      if (earlierPoints.length > 0) {
+        baseValue = earlierPoints[earlierPoints.length - 1].cumulative;
+      }
+    }
+    
+    // Return filtered technology data
+    return {
+      ...tech,
+      filteredData: filteredData.map(d => ({
+        ...d,
+        adjustedCumulative: d.cumulative - baseValue
+      }))
+    };
+  }).filter(Boolean); // Remove null items
+  
+  // Calculate maximum cumulative value for Y-axis scaling
+  const maxCumulative = Math.max(
+    ...filteredTechnologies.flatMap(tech => tech.filteredData.map(d => d.cumulative))
+  );
+  
+  return {
+    technologies: filteredTechnologies,
+    minYear,
+    maxYear,
+    maxCumulative
+  };
+}
+
+/**
+ * Filter S-Curve by time period
+ */
+function filterCurveByTime(period) {
+  if (!sCurveData || !sCurveData.technologies) {
+    logToConsole("No S-Curve data available for filtering", "warning");
+    return;
+  }
+  
+  // Update active button
+  document.querySelectorAll('.year-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  document.querySelector(`.year-btn[data-period="${period}"]`).classList.add('active');
+  
+  // Update current filter
+  currentTimeFilter = period;
+  
+  // Re-render chart
+  updateSCurveVisualization(period);
+  
+  logToConsole(`Filtered S-Curve to period: ${period}`, "info");
+}
+
+/**
+ * Update S-Curve visualization with new filter
+ */
+function updateSCurveVisualization(period) {
+  // If no chart or data, return
+  if (!sCurveChart || !sCurveData) return;
+  
+  const { svg, width, height, margin, colorScale, line } = sCurveChart;
+  
+  // Filter data
+  const filteredData = filterSCurveDataByTime(sCurveData.technologies, period);
+  
+  // Update scales
+  const x = d3.scaleTime()
+    .domain([new Date(filteredData.minYear, 0, 1), new Date(filteredData.maxYear, 11, 31)])
+    .range([0, width]);
+    
+  const y = d3.scaleLinear()
+    .domain([0, filteredData.maxCumulative * 1.1])
+    .range([height, 0]);
+  
+  // Update X axis
+  svg.select("g")
+    .transition()
+    .duration(1000)
+    .call(d3.axisBottom(x).tickFormat(d3.timeFormat("%Y")));
+  
+  // Update Y axis  
+  svg.selectAll("g:not(:first-child)")
+    .filter(function() {
+      return d3.select(this).attr("transform") !== `translate(0,${height})`;
+    })
+    .transition()
+    .duration(1000)
+    .call(d3.axisLeft(y));
+  
+  // Update line generator
+  const updatedLine = d3.line()
+    .x(d => x(new Date(d.year, 0, 1)))
+    .y(d => y(d.cumulative))
+    .curve(d3.curveMonotoneX);
+  
+  // Remove existing lines and dots
+  svg.selectAll(".line").remove();
+  svg.selectAll(".dot").remove();
+  
+  // Add new lines
+  const paths = svg.selectAll(".line")
+    .data(filteredData.technologies)
+    .enter()
+    .append("path")
+    .attr("fill", "none")
+    .attr("class", "line")
+    .attr("stroke", d => colorScale(d.technology))
+    .attr("stroke-width", 2)
+    .attr("d", d => updatedLine(d.filteredData));
+  
+  // Add hover effect
+  paths.on("mouseover", function(event, d) {
+      d3.select(this)
+        .attr("stroke-width", 4);
+      
+      // Show tooltip
+      const tooltip = d3.select("body")
+        .append("div")
+        .attr("class", "tooltip")
+        .style("position", "absolute")
+        .style("background", "rgba(0,0,0,0.7)")
+        .style("color", "white")
+        .style("padding", "8px")
+        .style("border-radius", "4px")
+        .style("pointer-events", "none")
+        .style("font-size", "12px")
+        .style("opacity", 0);
+        
+      tooltip.transition()
+        .duration(200)
+        .style("opacity", 0.9);
+        
+      tooltip.html(`
+        <strong>${d.technology}</strong><br/>
+        Stage: ${d.stage}<br/>
+        Total Mentions: ${d.total_mentions}<br/>
+        Domains: ${d.domains.join(", ")}
+      `)
+        .style("left", (event.pageX + 10) + "px")
+        .style("top", (event.pageY - 28) + "px");
+    })
+    .on("mouseout", function(event, d) {
+      d3.select(this)
+        .attr("stroke-width", 2);
+      
+      // Remove tooltip
+      d3.selectAll(".tooltip").remove();
+    });
+  
+  // Add new dots
+  filteredData.technologies.forEach(tech => {
+    svg.selectAll(`.dot-${tech.technology.replace(/\s+/g, '-')}`)
+      .data(tech.filteredData)
+      .enter()
+      .append("circle")
+      .attr("class", "dot")
+      .attr("cx", d => x(new Date(d.year, 0, 1)))
+      .attr("cy", d => y(d.cumulative))
+      .attr("r", 3)
+      .attr("fill", colorScale(tech.technology));
+  });
+  
+  // Update the legend
+  svg.select(".legend").remove();
+  
+  const legend = svg.append("g")
+    .attr("class", "legend")
+    .attr("transform", `translate(${width + 10}, 0)`);
+
+  const legendItems = legend.selectAll(".legend-item")
+    .data(filteredData.technologies)
+    .enter()
+    .append("g")
+    .attr("class", "legend-item")
+    .attr("transform", (d, i) => `translate(0, ${i * 20})`);
+
+  legendItems.append("rect")
+    .attr("width", 10)
+    .attr("height", 10)
+    .attr("fill", d => colorScale(d.technology));
+
+  legendItems.append("text")
+    .attr("x", 15)
+    .attr("y", 8)
+    .attr("font-size", "10px")
+    .text(d => `${d.technology} (${d.stage})`);
+}
+
+/**
+ * Download S-Curve image
+ */
+function downloadSCurveImage() {
+  // Check if S-Curve exists
+  const svgContainer = document.querySelector("#s-curve-container svg");
+  if (!svgContainer) {
+    logToConsole("No S-Curve to download", "warning");
+    showToast("No S-Curve visualization to download");
+    return;
+  }
+
+  try {
+    // Get SVG string
+    const svgString = new XMLSerializer().serializeToString(svgContainer);
+    
+    // Create a canvas
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    
+    // Set dimensions
+    const svgWidth = svgContainer.width.baseVal.value;
+    const svgHeight = svgContainer.height.baseVal.value;
+    canvas.width = svgWidth;
+    canvas.height = svgHeight;
+    
+    // Create SVG image
+    const img = new Image();
+    img.onload = function() {
+      // Draw SVG on canvas
+      ctx.fillStyle = "white";
+      ctx.fillRect(0, 0, svgWidth, svgHeight);
+      ctx.drawImage(img, 0, 0);
+      
+      // Convert to PNG
+      const pngData = canvas.toDataURL("image/png");
+      
+      // Create download link
+      const downloadLink = document.createElement("a");
+      downloadLink.href = pngData;
+      downloadLink.download = "technology-s-curve.png";
+      
+      // Trigger download
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+      
+      logToConsole("S-Curve image downloaded", "info");
+      showToast("S-Curve image downloaded");
+    };
+    
+    // Load SVG data
+    img.src = "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svgString)));
+  } catch (error) {
+    logToConsole(`Error downloading S-Curve: ${error.message}`, "error");
+    showToast("Failed to download S-Curve image");
+  }
 }

@@ -6,6 +6,8 @@ import os
 import re
 from dotenv import load_dotenv
 import time
+import datetime
+from collections import defaultdict
 
 load_dotenv()
 
@@ -478,7 +480,6 @@ class AnalystAgent:
         
         try:
             # Generate insights
-            self.emit_log(f"[analysis_task-description]: {analysis_task.description}")
             self.emit_log("Generating comprehensive insights using CrewAI...")
             insights_str = str(crew.kickoff())
             self.emit_log("Insights generation complete")
@@ -540,6 +541,167 @@ class AnalystAgent:
                 }
             }
 
+    def generate_s_curve_data(self, scout_data):
+        """Generate S-Curve data for technology adoption visualization"""
+        self.emit_log("Generating S-Curve data from scout data...")
+        
+        # Get relevant trends
+        relevant_trends = scout_data.get('relevant_trends', [])
+        if not isinstance(relevant_trends, list) or not relevant_trends:
+            self.emit_log("No trend data found for S-Curve generation")
+            return {"error": "No trend data available for S-Curve"}
+        
+        # Extract domains and technologies
+        domains = set()
+        technologies = {}
+        dates = []
+        
+        # Process trends to extract technology trends over time
+        for trend in relevant_trends:
+            # Extract domain
+            domain = trend.get('domain', 'Unknown')
+            domains.add(domain)
+            
+            # Extract publication date
+            pub_date = trend.get('publication_date')
+            if not pub_date:
+                continue
+                
+            # Parse and normalize the date (handle various formats)
+            try:
+                # Try different date formats
+                if re.match(r'^\d{4}$', pub_date):
+                    # Just year
+                    year = int(pub_date)
+                    parsed_date = f"{year}-01-01"
+                    dates.append(year)
+                elif re.match(r'^\d{4}-\d{2}$', pub_date):
+                    # Year and month
+                    parsed_date = f"{pub_date}-01"
+                    year = int(pub_date.split('-')[0])
+                    dates.append(year)
+                elif re.match(r'^\d{4}-\d{2}-\d{2}$', pub_date):
+                    # Complete date
+                    parsed_date = pub_date
+                    year = int(pub_date.split('-')[0])
+                    dates.append(year)
+                else:
+                    # Try to parse with datetime
+                    dt = datetime.datetime.strptime(pub_date, "%Y-%m-%d")
+                    parsed_date = dt.strftime("%Y-%m-%d")
+                    dates.append(dt.year)
+                    
+            except (ValueError, TypeError):
+                # Skip if date parsing fails
+                continue
+                
+            # Extract technologies
+            if isinstance(trend.get('technologies'), list):
+                tech_list = trend.get('technologies')
+                for tech in tech_list:
+                    if tech not in technologies:
+                        technologies[tech] = {"dates": {}, "domains": set()}
+                    
+                    # Track this technology by date
+                    year = parsed_date.split('-')[0]
+                    technologies[tech]["dates"][year] = technologies[tech]["dates"].get(year, 0) + 1
+                    technologies[tech]["domains"].add(domain)
+        
+        # Calculate min and max years
+        if not dates:
+            self.emit_log("No valid dates found in the data")
+            return {
+                "error": "No valid dates found in the data",
+                "domains": list(domains),
+                "technologies": []
+            }
+            
+        min_year = min(dates)
+        max_year = max(dates)
+        
+        # Generate year range
+        years = list(range(min_year, max_year + 1))
+        
+        # Create s-curve data for each technology
+        s_curve_data = []
+        for tech_name, tech_data in technologies.items():
+            # Only include technologies with sufficient data points
+            if len(tech_data["dates"]) < 1:
+                continue
+                
+            # Calculate cumulative mentions by year
+            cumulative_data = []
+            cumulative_count = 0
+            
+            for year in years:
+                year_str = str(year)
+                count = tech_data["dates"].get(year_str, 0)
+                cumulative_count += count
+                
+                cumulative_data.append({
+                    "year": year,
+                    "count": count,
+                    "cumulative": cumulative_count
+                })
+            
+            # Calculate growth rate and market stage 
+            # (simplified S-curve stage detection)
+            total_mentions = cumulative_count
+            growth_periods = []
+            
+            for i in range(1, len(cumulative_data)):
+                current = cumulative_data[i]["cumulative"]
+                previous = cumulative_data[i-1]["cumulative"]
+                growth = 0 if previous == 0 else (current - previous) / previous
+                
+                growth_periods.append({
+                    "year": cumulative_data[i]["year"],
+                    "growth": growth
+                })
+            
+            # Determine stage based on cumulative pattern
+            # This is a simplified approach - in a real implementation, 
+            # you might use more sophisticated algorithms
+            if len(cumulative_data) <= 2:
+                stage = "emerging"
+            else:
+                # Look at the last few years' growth pattern
+                recent_growth = growth_periods[-3:] if len(growth_periods) >= 3 else growth_periods
+                avg_recent_growth = sum(g["growth"] for g in recent_growth) / len(recent_growth)
+                
+                if avg_recent_growth > 0.3:
+                    stage = "growth"
+                elif avg_recent_growth > 0.1:
+                    stage = "maturity"
+                else:
+                    stage = "saturation"
+            
+            # Add to final data
+            s_curve_data.append({
+                "technology": tech_name,
+                "domains": list(tech_data["domains"]),
+                "total_mentions": total_mentions,
+                "stage": stage, 
+                "data": cumulative_data,
+                "growth_data": growth_periods
+            })
+        
+        # Sort by total mentions, descending
+        s_curve_data.sort(key=lambda x: x["total_mentions"], reverse=True)
+        
+        # Filter to top technologies for clearer visualization
+        top_technologies = s_curve_data[:10] if len(s_curve_data) > 10 else s_curve_data
+        
+        self.emit_log(f"Generated S-Curve data for {len(top_technologies)} technologies")
+        
+        return {
+            "min_year": min_year,
+            "max_year": max_year,
+            "years": years,
+            "domains": list(domains),
+            "technologies": top_technologies
+        }
+
     def process_analyst_query(self, scout_data):
         """Main method to process scout data and generate analyst insights"""
         self.emit_log("Starting analyst query processing...")
@@ -587,6 +749,10 @@ class AnalystAgent:
             self.emit_log("Preparing graph data for visualization...")
             graph_data = self.generate_graph_data_for_frontend(knowledge_graph)
             
+            # Generate S-Curve data
+            self.emit_log("Generating S-Curve data...")
+            s_curve_data = self.generate_s_curve_data(scout_data)
+            
             # Analyze graph
             self.emit_log("Analyzing knowledge graph...")
             graph_insights = self.analyze_knowledge_graph(knowledge_graph)
@@ -594,6 +760,7 @@ class AnalystAgent:
             # Return results
             result = {
                 'graph_data': graph_data,
+                's_curve_data': s_curve_data,
                 'graph_insights': graph_insights,
                 'original_scout_data': scout_data,
                 'timestamp': int(time.time())
@@ -601,7 +768,6 @@ class AnalystAgent:
             
             self.emit_log("Analysis complete, returning results")
             return result
-            
         except Exception as e:
             self.emit_log(f"⚠️ Error in analysis: {str(e)}")
             return {

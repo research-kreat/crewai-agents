@@ -199,7 +199,8 @@
     gap: 1.5rem;
 }
 
-.graph-visualization, .s-visualization {
+.graph-visualization,
+.s-visualization {
     background-color: var(--gray-50);
     border-radius: var(--border-radius);
     padding: 1.5rem;
@@ -520,7 +521,8 @@
 }
 
 /* Force Graph Improvements */
-.graph-container, .s-container {
+.graph-container,
+.s-container {
     position: relative;
     width: 100%;
     transition: all 0.3s ease;
@@ -960,12 +962,12 @@
     transition: var(--transition);
 }
 
-.s-time-filter{
+.s-time-filter {
     display: flex;
     gap: 2px;
 }
 
-.year-btn{
+.year-btn {
     padding: 0.25rem 0.75rem;
 }
 
@@ -984,42 +986,205 @@
     gap: 0.5rem;
     cursor: pointer;
     transition: var(--transition);
-  }
-  
-  .preview-copy-btn:hover {
+}
+
+.preview-copy-btn:hover {
     background-color: var(--gray-300);
     color: var(--gray-800);
-  }
-  
-  .preview-header {
+}
+
+.preview-header {
     position: relative;
-    padding-right: 6rem; /* Make space for the copy button */
-  }
-  
-  /* Disabled button styles */
-  button:disabled, 
-  button[disabled] {
+    padding-right: 6rem;
+    /* Make space for the copy button */
+}
+
+/* Disabled button styles */
+button:disabled,
+button[disabled] {
     opacity: 0.7;
     cursor: not-allowed;
-  }
-  
-  .primary-button:disabled,
-  .primary-button[disabled] {
+}
+
+.primary-button:disabled,
+.primary-button[disabled] {
     background-color: var(--primary-color);
     opacity: 0.7;
-  }
-  
-  .card-action-btn:disabled,
-  .card-action-btn[disabled] {
+}
+
+.card-action-btn:disabled,
+.card-action-btn[disabled] {
     opacity: 0.5;
     cursor: not-allowed;
-  }
-  
-  /* Copy button specific style */
-  .copy-btn {
+}
+
+/* Copy button specific style */
+.copy-btn {
     color: var(--gray-600);
-  }
-  
-  .copy-btn:hover {
+}
+
+.copy-btn:hover {
     color: var(--info-color);
-  }
+}
+
+/* S-Curve Visualization Styles */
+.s-container {
+    position: relative;
+    width: 100%;
+    transition: all 0.3s ease;
+    height: 400px;
+    border: 1px solid var(--gray-300);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    background-color: #f8f9fa;
+}
+
+.s-visualization {
+    background-color: var(--gray-50);
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 1.5rem;
+}
+
+.s-time-filter {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.year-btn {
+    padding: 0.25rem 0.5rem;
+    background-color: var(--gray-200);
+    color: var(--gray-700);
+    border: none;
+    border-radius: var(--border-radius);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.year-btn.active {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.s-container svg {
+    background-color: white;
+}
+
+/* S-Curve tooltip styles */
+div.tooltip {
+    position: absolute;
+    text-align: left;
+    padding: 8px;
+    font: 12px sans-serif;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    border-radius: 4px;
+    pointer-events: none;
+    z-index: 10000;
+    line-height: 1.4;
+}
+
+/* S-Curve line animations */
+.line {
+    stroke-dasharray: 2000;
+    stroke-dashoffset: 2000;
+    animation: dash 2s ease-in-out forwards;
+}
+
+@keyframes dash {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+/* Dot animations */
+.dot {
+    opacity: 0;
+    animation: fadein 0.5s ease-in-out forwards;
+    animation-delay: 1.5s;
+}
+
+@keyframes fadein {
+    to {
+        opacity: 1;
+    }
+}
+
+/* Legend styles */
+.legend-item {
+    opacity: 0;
+    animation: slidein 0.5s ease-in-out forwards;
+    animation-delay: 2s;
+}
+
+.legend-item:nth-child(1) {
+    animation-delay: 2s;
+}
+
+.legend-item:nth-child(2) {
+    animation-delay: 2.1s;
+}
+
+.legend-item:nth-child(3) {
+    animation-delay: 2.2s;
+}
+
+.legend-item:nth-child(4) {
+    animation-delay: 2.3s;
+}
+
+.legend-item:nth-child(5) {
+    animation-delay: 2.4s;
+}
+
+.legend-item:nth-child(6) {
+    animation-delay: 2.5s;
+}
+
+.legend-item:nth-child(7) {
+    animation-delay: 2.6s;
+}
+
+.legend-item:nth-child(8) {
+    animation-delay: 2.7s;
+}
+
+.legend-item:nth-child(9) {
+    animation-delay: 2.8s;
+}
+
+.legend-item:nth-child(10) {
+    animation-delay: 2.9s;
+}
+
+@keyframes slidein {
+    from {
+        transform: translateX(20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .s-container {
+        height: 300px;
+    }
+
+    .visualization-controls {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .s-time-filter {
+        width: 100%;
+        justify-content: space-between;
+    }
+}
