@@ -115,7 +115,10 @@
                 </button>
               </div>
               <div id="console-log" class="console-log">
-                <div class="log-message system"><span class="log-timestamp">System</span> Analyst Agent ready to process data</div>
+                <div class="log-message system">
+                  <span class="log-timestamp">System</span> Analyst Agent ready
+                  to process data
+                </div>
               </div>
             </div>
           </div>
@@ -157,6 +160,59 @@
                 <div class="placeholder-message">
                   <i class="fas fa-project-diagram"></i>
                   <p>Analyze Scout data to generate Knowledge Graph</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- S-Curve Analysis -->
+            <div class="s-visualization">
+              <div class="visualization-header">
+                <h3>S-Curve Analysis</h3>
+                <div class="visualization-controls">
+                  <button
+                    class="icon-button"
+                    onclick="downloadSCurveImage()"
+                    title="Download S-Curve"
+                  >
+                    <i class="fas fa-download"></i>
+                  </button>
+                  <!-- Time Range Filter Buttons -->
+                  <div class="s-time-filter">
+                    <button
+                      class="year-btn active"
+                      data-period="1Y"
+                      onclick="filterCurveByTime('1Y')"
+                    >
+                      1Y
+                    </button>
+                    <button
+                      class="year-btn"
+                      data-period="3Y"
+                      onclick="filterCurveByTime('3Y')"
+                    >
+                      3Y
+                    </button>
+                    <button
+                      class="year-btn"
+                      data-period="5Y"
+                      onclick="filterCurveByTime('5Y')"
+                    >
+                      5Y
+                    </button>
+                    <button
+                      class="year-btn"
+                      data-period="All"
+                      onclick="filterCurveByTime('All')"
+                    >
+                      All
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div id="s-curve-container" class="s-container">
+                <div class="placeholder-message">
+                  <i class="fas fa-chart-line"></i>
+                  <p>Analyze data to generate S-Curve</p>
                 </div>
               </div>
             </div>

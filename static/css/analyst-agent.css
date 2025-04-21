@@ -40,17 +40,6 @@
     animation: fadeIn 0.3s ease forwards;
 }
 
-/* Knowledge graph visualization improvements */
-.graph-container {
-    width: 100%;
-    height: 500px;
-    border: 1px solid var(--gray-300);
-    border-radius: var(--border-radius);
-    overflow: hidden;
-    background-color: #f8f9fa;
-    position: relative;
-}
-
 .graph-container canvas {
     position: absolute;
     top: 0;
@@ -147,20 +136,6 @@
     border-top: 1px solid var(--gray-200);
 }
 
-/* Search and filter controls */
-.graph-controls {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem;
-    background-color: white;
-    border-radius: var(--border-radius);
-    box-shadow: var(--shadow-sm);
-    margin-top: 1.5rem;
-    flex-wrap: wrap;
-    gap: 1rem;
-}
-
 .search-box {
     display: flex;
     gap: 0.5rem;
@@ -224,7 +199,7 @@
     gap: 1.5rem;
 }
 
-.graph-visualization {
+.graph-visualization, .s-visualization {
     background-color: var(--gray-50);
     border-radius: var(--border-radius);
     padding: 1.5rem;
@@ -545,14 +520,15 @@
 }
 
 /* Force Graph Improvements */
-.graph-container {
+.graph-container, .s-container {
     position: relative;
     width: 100%;
+    transition: all 0.3s ease;
     height: 500px;
+    border: 1px solid var(--gray-300);
     border-radius: var(--border-radius);
     overflow: hidden;
     background-color: #f8f9fa;
-    transition: all 0.3s ease;
 }
 
 .graph-container:fullscreen {
@@ -983,4 +959,13 @@
     color: var(--gray-600);
     font-weight: 500;
     transition: var(--transition);
+}
+
+.s-time-filter{
+    display: flex;
+    gap: 2px;
+}
+
+.year-btn{
+    padding: 0.25rem 0.75rem;
 }
