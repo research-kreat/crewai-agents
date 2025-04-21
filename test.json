@@ -1,1400 +1,795 @@
 {
   "data_from_source": [
     {
-      "assignees": [
-        "RapidDx Genomics"
-      ],
+      "assignees": ["EnergyTech Solutions"],
       "authors": [],
       "country": "United States",
-      "cpcs": [
-        "C12Q1/6806",
-        "G16B30/00",
-        "G16H50/70"
-      ],
-      "data_quality_score": 0.88,
-      "domain": "Healthcare",
-      "id": "patents_BT-PAT-020",
-      "inventors": [
-        "Schatz, Michael C.",
-        "Phillippy, Adam M.",
-        "Zimin, Aleksey V."
-      ],
-      "ipcs": [
-        "C12Q1/6806",
-        "G16B30/00",
-        "G16H50/70"
-      ],
+      "cpcs": ["H01M10/60", "B60L58/26", "H01M10/6556"],
+      "data_quality_score": 0.94,
+      "domain": "Mobility",
+      "id": "patents_MB-PAT-002",
+      "inventors": ["Chen, Jian", "Patel, Nisha", "Schmidt, Erik"],
+      "ipcs": ["H01M10/60", "B60L58/26", "H01M10/6556"],
       "keywords": [
-        "metagenomic",
-        "pathogen detection",
-        "antimicrobial resistance",
-        "nanopore sequencing"
+        "battery cooling",
+        "thermal management",
+        "electric vehicle",
+        "battery longevity"
       ],
       "knowledge_type": "patent",
-      "publication_date": "2023-05-04",
+      "publication_date": "2021-08-12",
       "publishers": [],
       "related_titles": [
-        "Method for mRNA Delivery Using Lipid Nanoparticles",
-        "CRISPR-Cas9 System for Targeted Gene Editing",
-        "Bispecific Antibodies Targeting PD-1 and CTLA-4",
-        "Engineered CAR-T Cells with Enhanced Tumor Targeting",
-        "Microbiome-Based Therapeutics for Inflammatory Bowel Disease",
-        "Scalable Process for Manufacturing Exosome Therapeutics",
-        "Synthetic Biology Platform for On-Demand Therapeutic Protein Production",
-        "AI-Based Platform for De Novo Protein Design",
-        "Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues",
-        "High-Throughput Screening Platform for Antibody Discovery",
-        "Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy",
-        "RNA-Based Vaccine Platform for Infectious Diseases",
-        "Organs-on-Chips for Drug Toxicity Testing",
-        "Machine Learning Platform for Predicting Drug-Target Interactions",
-        "Nanobody Therapeutics for Neurodegenerative Diseases",
-        "Gene Therapy for Age-Related Macular Degeneration",
-        "Continuous Manufacturing Process for mRNA Vaccines",
-        "PROTAC Technology for Protein Degradation",
-        "Single-Cell Multi-omics Analysis of the Immune Response in COVID-19",
-        "CRISPR-Engineered T Cells in Patients with Refractory Cancer",
-        "Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment",
-        "In Vivo Base Editing Corrects Hutchinson–Gilford Progeria Syndrome in Mice",
-        "Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials",
-        "Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research",
-        "Enzyme-Free Biosensor for Continuous Glucose Monitoring",
-        "Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome",
-        "Massively Parallel Screening of Protein Design Space Using Machine Learning",
-        "PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer"
+        "Dynamic Wireless Charging System for Electric Vehicles",
+        "Solid-State Battery with Silicon-Carbon Composite Anode",
+        "Lightweight Composite Materials for Electric Vehicle Structures",
+        "Robotic Autonomous Charging System for Electric Vehicles",
+        "Comprehensive Analysis of Electric Vehicle Battery Degradation Across Multiple Vehicle Models and Usage Patterns",
+        "Secure and Efficient Vehicle-to-Grid Integration for Electric Vehicle Fleets",
+        "Quantifying Environmental Benefits of Electric Last-Mile Delivery: A Life Cycle Assessment",
+        "Advanced LiDAR System for Autonomous Vehicle Navigation",
+        "Machine Learning System for Predictive Vehicle Maintenance",
+        "Adaptive Vehicle Crash Avoidance System"
       ],
-      "similarity_score": 0.6646566390991211,
-      "subdomains": [
-        "Biotech",
-        "Diagnostics"
-      ],
+      "similarity_score": 0.788557767868042,
+      "subdomains": ["Automotive Technology", "Electrification"],
       "summary_text": "No summary available",
       "technologies": [
-        "metagenomic sequencing",
-        "nanopore technology",
-        "bioinformatics"
+        "battery technology",
+        "thermal management",
+        "electric vehicles"
       ],
-      "title": "Real-Time Pathogen Detection System Using Metagenomic Sequencing"
-    },
-    {
-      "assignees": [
-        "RapidVax Inc."
-      ],
-      "authors": [],
-      "country": "United States",
-      "cpcs": [
-        "C12N15/88",
-        "A61K39/00",
-        "A61K47/69"
-      ],
-      "data_quality_score": 0.93,
-      "domain": "Healthcare",
-      "id": "patents_BT-PAT-012",
-      "inventors": [
-        "Karikó, Katalin",
-        "Weissman, Drew",
-        "Pardi, Norbert"
-      ],
-      "ipcs": [
-        "C12N15/88",
-        "A61K39/00",
-        "A61K47/69"
-      ],
-      "keywords": [
-        "mRNA",
-        "vaccine",
-        "infectious disease",
-        "lipid nanoparticle"
-      ],
-      "knowledge_type": "patent",
-      "publication_date": "2019-09-05",
-      "publishers": [],
-      "related_titles": [
-        "Method for mRNA Delivery Using Lipid Nanoparticles",
-        "CRISPR-Cas9 System for Targeted Gene Editing",
-        "Bispecific Antibodies Targeting PD-1 and CTLA-4",
-        "Engineered CAR-T Cells with Enhanced Tumor Targeting",
-        "Microbiome-Based Therapeutics for Inflammatory Bowel Disease",
-        "Scalable Process for Manufacturing Exosome Therapeutics",
-        "Synthetic Biology Platform for On-Demand Therapeutic Protein Production",
-        "AI-Based Platform for De Novo Protein Design",
-        "Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues",
-        "High-Throughput Screening Platform for Antibody Discovery",
-        "Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy",
-        "Organs-on-Chips for Drug Toxicity Testing",
-        "Machine Learning Platform for Predicting Drug-Target Interactions",
-        "Nanobody Therapeutics for Neurodegenerative Diseases",
-        "Gene Therapy for Age-Related Macular Degeneration",
-        "Continuous Manufacturing Process for mRNA Vaccines",
-        "PROTAC Technology for Protein Degradation",
-        "Real-Time Pathogen Detection System Using Metagenomic Sequencing",
-        "Single-Cell Multi-omics Analysis of the Immune Response in COVID-19",
-        "CRISPR-Engineered T Cells in Patients with Refractory Cancer",
-        "Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment",
-        "In Vivo Base Editing Corrects Hutchinson–Gilford Progeria Syndrome in Mice",
-        "Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials",
-        "Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research",
-        "Enzyme-Free Biosensor for Continuous Glucose Monitoring",
-        "Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome",
-        "Massively Parallel Screening of Protein Design Space Using Machine Learning",
-        "PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer"
-      ],
-      "similarity_score": 0.6375582218170166,
-      "subdomains": [
-        "Biotech",
-        "Vaccines"
-      ],
-      "summary_text": "No summary available",
-      "technologies": [
-        "lipid nanoparticles",
-        "mRNA vaccines",
-        "infectious disease"
-      ],
-      "title": "RNA-Based Vaccine Platform for Infectious Diseases"
+      "title": "Electric Vehicle Battery Thermal Management System"
     },
     {
       "assignees": [],
       "authors": [
-        "Li, Haoyang",
-        "Schulz, Daniel",
-        "Thrane, Kristine",
-        "Larsson, Ludvig",
-        "Pe'er, Dana"
+        "Chang, Hyun-Joon",
+        "Oliveira, Paulo",
+        "Kramer, Sophia",
+        "Ahmed, Farid",
+        "Reynolds, Karen"
       ],
       "country": "United States",
+      "cpcs": [],
+      "data_quality_score": 0.89,
+      "domain": "Mobility",
+      "id": "journals_MB-JRN-006",
+      "inventors": [],
+      "ipcs": [],
+      "keywords": [
+        "electric vehicles",
+        "vehicle-to-grid",
+        "V2G",
+        "fleet management",
+        "grid services"
+      ],
+      "knowledge_type": "journal",
+      "publication_date": "2023-02-20",
+      "publishers": ["IEEE Transactions on Smart Grid"],
+      "related_titles": [
+        "Electric Vehicle Battery Thermal Management System",
+        "Solid-State Battery with Silicon-Carbon Composite Anode",
+        "Dynamic Wireless Charging System for Electric Vehicles",
+        "Robotic Autonomous Charging System for Electric Vehicles",
+        "Comprehensive Analysis of Electric Vehicle Battery Degradation Across Multiple Vehicle Models and Usage Patterns",
+        "Quantifying Environmental Benefits of Electric Last-Mile Delivery: A Life Cycle Assessment"
+      ],
+      "similarity_score": 0.7850584983825684,
+      "subdomains": ["Electrification", "Energy Systems"],
+      "summary_text": "No summary available",
+      "technologies": [],
+      "title": "Secure and Efficient Vehicle-to-Grid Integration for Electric Vehicle Fleets"
+    },
+    {
+      "assignees": ["ElectroRoad Systems"],
+      "authors": [],
+      "country": "United States",
+      "cpcs": ["B60L53/12", "B60L53/30", "H02J50/12"],
+      "data_quality_score": 0.9,
+      "domain": "Mobility",
+      "id": "patents_MB-PAT-009",
+      "inventors": [
+        "Choi, Sung-Yul",
+        "Bennett, Rebecca",
+        "Lombardi, Francesco"
+      ],
+      "ipcs": ["B60L53/12", "B60L53/30", "H02J50/12"],
+      "keywords": [
+        "electric vehicle",
+        "dynamic charging",
+        "wireless power transfer",
+        "charging infrastructure"
+      ],
+      "knowledge_type": "patent",
+      "publication_date": "2021-05-20",
+      "publishers": [],
+      "related_titles": [
+        "Robotic Autonomous Charging System for Electric Vehicles",
+        "Electric Vehicle Battery Thermal Management System",
+        "Solid-State Battery with Silicon-Carbon Composite Anode",
+        "Lightweight Composite Materials for Electric Vehicle Structures",
+        "Comprehensive Analysis of Electric Vehicle Battery Degradation Across Multiple Vehicle Models and Usage Patterns",
+        "Secure and Efficient Vehicle-to-Grid Integration for Electric Vehicle Fleets",
+        "Quantifying Environmental Benefits of Electric Last-Mile Delivery: A Life Cycle Assessment",
+        "Smart Infrastructure for Connected and Autonomous Vehicles",
+        "Hyperloop Capsule Suspension and Propulsion System",
+        "Urban Air Mobility: Infrastructure Requirements and Operational Challenges",
+        "Hydrogen Fuel Cell System with Enhanced Power Density"
+      ],
+      "similarity_score": 0.7828657627105713,
+      "subdomains": ["Electrification", "Infrastructure"],
+      "summary_text": "No summary available",
+      "technologies": [
+        "electric vehicles",
+        "power electronics",
+        "wireless charging"
+      ],
+      "title": "Dynamic Wireless Charging System for Electric Vehicles"
+    },
+    {
+      "assignees": ["AutoCharge Robotics"],
+      "authors": [],
+      "country": "United States",
+      "cpcs": ["B60L53/30", "B25J9/1633", "G06V10/253"],
+      "data_quality_score": 0.88,
+      "domain": "Mobility",
+      "id": "patents_MB-PAT-020",
+      "inventors": ["Lindholm, Erik", "Gupta, Anjali", "Torres, Miguel"],
+      "ipcs": ["B60L53/30", "B25J9/16", "G06V10/25"],
+      "keywords": [
+        "electric vehicle",
+        "charging infrastructure",
+        "robotic charging",
+        "autonomous charging"
+      ],
+      "knowledge_type": "patent",
+      "publication_date": "2023-04-06",
+      "publishers": [],
+      "related_titles": [
+        "Dynamic Wireless Charging System for Electric Vehicles",
+        "Electric Vehicle Battery Thermal Management System",
+        "Solid-State Battery with Silicon-Carbon Composite Anode",
+        "Lightweight Composite Materials for Electric Vehicle Structures",
+        "Modular Autonomous Delivery Robot System",
+        "Comprehensive Analysis of Electric Vehicle Battery Degradation Across Multiple Vehicle Models and Usage Patterns",
+        "Secure and Efficient Vehicle-to-Grid Integration for Electric Vehicle Fleets",
+        "Quantifying Environmental Benefits of Electric Last-Mile Delivery: A Life Cycle Assessment",
+        "Autonomous Navigation in Unstructured Dynamic Environments: Challenges and Recent Advances"
+      ],
+      "similarity_score": 0.7656238079071045,
+      "subdomains": ["Electrification", "Robotics"],
+      "summary_text": "No summary available",
+      "technologies": [
+        "computer vision",
+        "robotics",
+        "electric vehicle charging"
+      ],
+      "title": "Robotic Autonomous Charging System for Electric Vehicles"
+    },
+    {
+      "assignees": ["LightweightEV Materials"],
+      "authors": [],
+      "country": "United States",
+      "cpcs": ["B29C70/086", "B60K1/04", "B60R16/04"],
+      "data_quality_score": 0.9,
+      "domain": "Mobility",
+      "id": "patents_MB-PAT-013",
+      "inventors": ["Wu, Hong", "Johannson, Lars", "Matthews, Catherine"],
+      "ipcs": ["B29C70/08", "B60K1/04", "B60R16/04"],
+      "keywords": [
+        "electric vehicle",
+        "carbon fiber",
+        "lightweight materials",
+        "battery protection"
+      ],
+      "knowledge_type": "patent",
+      "publication_date": "2021-12-09",
+      "publishers": [],
+      "related_titles": [
+        "Electric Vehicle Battery Thermal Management System",
+        "Solid-State Battery with Silicon-Carbon Composite Anode",
+        "Dynamic Wireless Charging System for Electric Vehicles",
+        "Robotic Autonomous Charging System for Electric Vehicles"
+      ],
+      "similarity_score": 0.7297444343566895,
+      "subdomains": ["Materials Technology", "Vehicle Structures"],
+      "summary_text": "No summary available",
+      "technologies": [
+        "composite materials",
+        "lightweight structures",
+        "manufacturing processes"
+      ],
+      "title": "Lightweight Composite Materials for Electric Vehicle Structures"
+    },
+    {
+      "assignees": [],
+      "authors": [
+        "Peterson, Sarah B.",
+        "Zhang, Tianqi",
+        "Garcia, Miguel",
+        "Johnson, Amanda",
+        "Kumar, Pradeep"
+      ],
+      "country": "Netherlands",
+      "cpcs": [],
+      "data_quality_score": 0.93,
+      "domain": "Mobility",
+      "id": "journals_MB-JRN-001",
+      "inventors": [],
+      "ipcs": [],
+      "keywords": [
+        "electric vehicles",
+        "battery degradation",
+        "lithium-ion",
+        "battery lifetime",
+        "usage patterns"
+      ],
+      "knowledge_type": "journal",
+      "publication_date": "2022-06-10",
+      "publishers": ["Journal of Power Sources"],
+      "related_titles": [
+        "Electric Vehicle Battery Thermal Management System",
+        "Solid-State Battery with Silicon-Carbon Composite Anode",
+        "Dynamic Wireless Charging System for Electric Vehicles",
+        "Robotic Autonomous Charging System for Electric Vehicles",
+        "Secure and Efficient Vehicle-to-Grid Integration for Electric Vehicle Fleets",
+        "Quantifying Environmental Benefits of Electric Last-Mile Delivery: A Life Cycle Assessment"
+      ],
+      "similarity_score": 0.7290563583374023,
+      "subdomains": ["Electrification", "Battery Technology"],
+      "summary_text": "No summary available",
+      "technologies": [],
+      "title": "Comprehensive Analysis of Electric Vehicle Battery Degradation Across Multiple Vehicle Models and Usage Patterns"
+    },
+    {
+      "assignees": [],
+      "authors": [
+        "Kaplan, Eleanor",
+        "Figliozzi, Miguel",
+        "Holguín-Veras, José",
+        "Zhang, Renshu",
+        "Baumgartner, Michael"
+      ],
+      "country": "Netherlands",
+      "cpcs": [],
+      "data_quality_score": 0.91,
+      "domain": "Mobility",
+      "id": "journals_MB-JRN-008",
+      "inventors": [],
+      "ipcs": [],
+      "keywords": [
+        "last-mile logistics",
+        "electric delivery vehicles",
+        "life cycle assessment",
+        "urban freight",
+        "sustainability"
+      ],
+      "knowledge_type": "journal",
+      "publication_date": "2022-12-08",
+      "publishers": ["Journal of Cleaner Production"],
+      "related_titles": [
+        "Electric Vehicle Battery Thermal Management System",
+        "Solid-State Battery with Silicon-Carbon Composite Anode",
+        "Dynamic Wireless Charging System for Electric Vehicles",
+        "Robotic Autonomous Charging System for Electric Vehicles",
+        "Comprehensive Analysis of Electric Vehicle Battery Degradation Across Multiple Vehicle Models and Usage Patterns",
+        "Secure and Efficient Vehicle-to-Grid Integration for Electric Vehicle Fleets",
+        "Modular Autonomous Delivery Robot System"
+      ],
+      "similarity_score": 0.7065787315368652,
+      "subdomains": ["Electrification", "Last-Mile Delivery"],
+      "summary_text": "No summary available",
+      "technologies": [],
+      "title": "Quantifying Environmental Benefits of Electric Last-Mile Delivery: A Life Cycle Assessment"
+    },
+    {
+      "assignees": ["SmartRoad Technologies"],
+      "authors": [],
+      "country": "United States",
+      "cpcs": ["G08G1/0104", "H04W4/44", "G08G1/166"],
+      "data_quality_score": 0.89,
+      "domain": "Mobility",
+      "id": "patents_MB-PAT-012",
+      "inventors": ["Zhang, Wei", "Thompson, Sarah", "Ochieng, Washington"],
+      "ipcs": ["G08G1/01", "H04W4/44", "G08G1/16"],
+      "keywords": [
+        "connected vehicles",
+        "V2I",
+        "smart infrastructure",
+        "cooperative perception"
+      ],
+      "knowledge_type": "patent",
+      "publication_date": "2022-07-28",
+      "publishers": [],
+      "related_titles": [
+        "V2X Communication System with Enhanced Security Protocol",
+        "Adaptive Vehicle Crash Avoidance System",
+        "Dynamic Wireless Charging System for Electric Vehicles",
+        "Hyperloop Capsule Suspension and Propulsion System",
+        "Urban Air Mobility: Infrastructure Requirements and Operational Challenges"
+      ],
+      "similarity_score": 0.7026660442352295,
+      "subdomains": ["Connected Vehicles", "Infrastructure"],
+      "summary_text": "No summary available",
+      "technologies": [
+        "connected infrastructure",
+        "V2I communication",
+        "edge computing"
+      ],
+      "title": "Smart Infrastructure for Connected and Autonomous Vehicles"
+    },
+    {
+      "assignees": [],
+      "authors": [
+        "Wang, Jianlong",
+        "Singh, Rajveer",
+        "Müller, Kristina",
+        "Ibrahim, Omar",
+        "Davis, Peter"
+      ],
+      "country": "United Kingdom",
       "cpcs": [],
       "data_quality_score": 0.92,
-      "domain": "Healthcare",
-      "id": "journals_BT-JRN-003",
+      "domain": "Mobility",
+      "id": "journals_MB-JRN-004",
       "inventors": [],
       "ipcs": [],
       "keywords": [
-        "spatial transcriptomics",
-        "tumor microenvironment",
-        "cancer",
-        "gene expression",
-        "precision medicine"
+        "commercial vehicles",
+        "zero emission",
+        "hydrogen fuel cell",
+        "heavy-duty transportation",
+        "sustainable mobility"
       ],
       "knowledge_type": "journal",
-      "publication_date": "2022-09-15",
-      "publishers": [
-        "Cell"
-      ],
+      "publication_date": "2021-06-15",
+      "publishers": ["Progress in Energy and Combustion Science"],
       "related_titles": [
-        "Method for mRNA Delivery Using Lipid Nanoparticles",
-        "CRISPR-Cas9 System for Targeted Gene Editing",
-        "Bispecific Antibodies Targeting PD-1 and CTLA-4",
-        "Engineered CAR-T Cells with Enhanced Tumor Targeting",
-        "Microbiome-Based Therapeutics for Inflammatory Bowel Disease",
-        "Scalable Process for Manufacturing Exosome Therapeutics",
-        "Synthetic Biology Platform for On-Demand Therapeutic Protein Production",
-        "AI-Based Platform for De Novo Protein Design",
-        "Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues",
-        "High-Throughput Screening Platform for Antibody Discovery",
-        "Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy",
-        "RNA-Based Vaccine Platform for Infectious Diseases",
-        "Organs-on-Chips for Drug Toxicity Testing",
-        "Machine Learning Platform for Predicting Drug-Target Interactions",
-        "Nanobody Therapeutics for Neurodegenerative Diseases",
-        "Gene Therapy for Age-Related Macular Degeneration",
-        "Continuous Manufacturing Process for mRNA Vaccines",
-        "PROTAC Technology for Protein Degradation",
-        "Real-Time Pathogen Detection System Using Metagenomic Sequencing",
-        "Single-Cell Multi-omics Analysis of the Immune Response in COVID-19",
-        "CRISPR-Engineered T Cells in Patients with Refractory Cancer",
-        "In Vivo Base Editing Corrects Hutchinson–Gilford Progeria Syndrome in Mice",
-        "Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials",
-        "Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research",
-        "Enzyme-Free Biosensor for Continuous Glucose Monitoring",
-        "Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome",
-        "Massively Parallel Screening of Protein Design Space Using Machine Learning",
-        "PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer"
+        "Hydrogen Fuel Cell System with Enhanced Power Density",
+        "Adaptive Aerodynamic System for Commercial Vehicles"
       ],
-      "similarity_score": 0.6325740814208984,
-      "subdomains": [
-        "Biotech",
-        "Oncology"
-      ],
+      "similarity_score": 0.6956276893615723,
+      "subdomains": ["Alternative Powertrains", "Commercial Vehicles"],
       "summary_text": "No summary available",
       "technologies": [],
-      "title": "Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment"
+      "title": "A Comprehensive Review of Hydrogen Fuel Cell Technologies for Heavy-Duty Transportation"
     },
     {
-      "assignees": [
-        "NanoTherapeutics, Inc."
-      ],
+      "assignees": ["HydroPower Mobility"],
       "authors": [],
       "country": "United States",
-      "cpcs": [
-        "A61K9/127",
-        "A61K47/24",
-        "C12N15/88"
-      ],
-      "data_quality_score": 0.95,
-      "domain": "Healthcare",
-      "id": "patents_BT-PAT-001",
-      "inventors": [
-        "Chen, Li-Qiang",
-        "Rodriguez, Maria",
-        "Patel, Amit K."
-      ],
-      "ipcs": [
-        "A61K9/127",
-        "A61K47/24",
-        "C12N15/88"
-      ],
-      "keywords": [
-        "mRNA delivery",
-        "LNP",
-        "nanoparticle",
-        "gene therapy"
-      ],
-      "knowledge_type": "patent",
-      "publication_date": "2020-05-12",
-      "publishers": [],
-      "related_titles": [
-        "Gene Therapy for Age-Related Macular Degeneration",
-        "In Vivo Base Editing Corrects Hutchinson–Gilford Progeria Syndrome in Mice",
-        "RNA-Based Vaccine Platform for Infectious Diseases",
-        "Continuous Manufacturing Process for mRNA Vaccines",
-        "CRISPR-Cas9 System for Targeted Gene Editing",
-        "Bispecific Antibodies Targeting PD-1 and CTLA-4",
-        "Engineered CAR-T Cells with Enhanced Tumor Targeting",
-        "Microbiome-Based Therapeutics for Inflammatory Bowel Disease",
-        "Scalable Process for Manufacturing Exosome Therapeutics",
-        "Synthetic Biology Platform for On-Demand Therapeutic Protein Production",
-        "AI-Based Platform for De Novo Protein Design",
-        "Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues",
-        "High-Throughput Screening Platform for Antibody Discovery",
-        "Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy",
-        "Organs-on-Chips for Drug Toxicity Testing",
-        "Machine Learning Platform for Predicting Drug-Target Interactions",
-        "Nanobody Therapeutics for Neurodegenerative Diseases",
-        "PROTAC Technology for Protein Degradation",
-        "Real-Time Pathogen Detection System Using Metagenomic Sequencing",
-        "Single-Cell Multi-omics Analysis of the Immune Response in COVID-19",
-        "CRISPR-Engineered T Cells in Patients with Refractory Cancer",
-        "Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment",
-        "Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials",
-        "Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research",
-        "Enzyme-Free Biosensor for Continuous Glucose Monitoring",
-        "Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome",
-        "Massively Parallel Screening of Protein Design Space Using Machine Learning",
-        "PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer"
-      ],
-      "similarity_score": 0.6299538612365723,
-      "subdomains": [
-        "Biotech",
-        "Drug Delivery"
-      ],
-      "summary_text": "No summary available",
-      "technologies": [
-        "mRNA",
-        "lipid nanoparticles",
-        "drug delivery"
-      ],
-      "title": "Method for mRNA Delivery Using Lipid Nanoparticles"
-    },
-    {
-      "assignees": [
-        "BacteriaTx Inc."
-      ],
-      "authors": [],
-      "country": "United States",
-      "cpcs": [
-        "A61P35/00",
-        "A61K35/74",
-        "C12N1/21"
-      ],
-      "data_quality_score": 0.87,
-      "domain": "Healthcare",
-      "id": "patents_BT-PAT-011",
-      "inventors": [
-        "Danino, Tal",
-        "Leventhal, Daniel S.",
-        "Zhang, Shuyi"
-      ],
-      "ipcs": [
-        "A61P35/00",
-        "A61K35/74",
-        "C12N1/21"
-      ],
-      "keywords": [
-        "synthetic biology",
-        "engineered bacteria",
-        "cancer therapy",
-        "probiotic"
-      ],
-      "knowledge_type": "patent",
-      "publication_date": "2022-12-08",
-      "publishers": [],
-      "related_titles": [
-        "Method for mRNA Delivery Using Lipid Nanoparticles",
-        "CRISPR-Cas9 System for Targeted Gene Editing",
-        "Bispecific Antibodies Targeting PD-1 and CTLA-4",
-        "Engineered CAR-T Cells with Enhanced Tumor Targeting",
-        "Microbiome-Based Therapeutics for Inflammatory Bowel Disease",
-        "Scalable Process for Manufacturing Exosome Therapeutics",
-        "Synthetic Biology Platform for On-Demand Therapeutic Protein Production",
-        "AI-Based Platform for De Novo Protein Design",
-        "Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues",
-        "High-Throughput Screening Platform for Antibody Discovery",
-        "RNA-Based Vaccine Platform for Infectious Diseases",
-        "Organs-on-Chips for Drug Toxicity Testing",
-        "Machine Learning Platform for Predicting Drug-Target Interactions",
-        "Nanobody Therapeutics for Neurodegenerative Diseases",
-        "Gene Therapy for Age-Related Macular Degeneration",
-        "Continuous Manufacturing Process for mRNA Vaccines",
-        "PROTAC Technology for Protein Degradation",
-        "Real-Time Pathogen Detection System Using Metagenomic Sequencing",
-        "Single-Cell Multi-omics Analysis of the Immune Response in COVID-19",
-        "CRISPR-Engineered T Cells in Patients with Refractory Cancer",
-        "Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment",
-        "In Vivo Base Editing Corrects Hutchinson–Gilford Progeria Syndrome in Mice",
-        "Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials",
-        "Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research",
-        "Enzyme-Free Biosensor for Continuous Glucose Monitoring",
-        "Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome",
-        "Massively Parallel Screening of Protein Design Space Using Machine Learning",
-        "PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer"
-      ],
-      "similarity_score": 0.6246802806854248,
-      "subdomains": [
-        "Biotech",
-        "Microbiome"
-      ],
-      "summary_text": "No summary available",
-      "technologies": [
-        "genetic engineering",
-        "synthetic biology",
-        "bacterial therapeutics"
-      ],
-      "title": "Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy"
-    },
-    {
-      "assignees": [
-        "Continuous Biologics Inc."
-      ],
-      "authors": [],
-      "country": "United States",
-      "cpcs": [
-        "A61K9/127",
-        "C12P19/34",
-        "C12N15/10"
-      ],
-      "data_quality_score": 0.87,
-      "domain": "Healthcare",
-      "id": "patents_BT-PAT-017",
-      "inventors": [
-        "Trout, Bernhardt L.",
-        "Jensen, Klavs F.",
-        "Chakravarthy, Ankur"
-      ],
-      "ipcs": [
-        "A61K9/127",
-        "C12N15/10",
-        "C12P19/34"
-      ],
-      "keywords": [
-        "biomanufacturing",
-        "continuous manufacturing",
-        "mRNA vaccine",
-        "process intensification"
-      ],
-      "knowledge_type": "patent",
-      "publication_date": "2022-08-11",
-      "publishers": [],
-      "related_titles": [
-        "Method for mRNA Delivery Using Lipid Nanoparticles",
-        "CRISPR-Cas9 System for Targeted Gene Editing",
-        "Bispecific Antibodies Targeting PD-1 and CTLA-4",
-        "Engineered CAR-T Cells with Enhanced Tumor Targeting",
-        "Microbiome-Based Therapeutics for Inflammatory Bowel Disease",
-        "Scalable Process for Manufacturing Exosome Therapeutics",
-        "Synthetic Biology Platform for On-Demand Therapeutic Protein Production",
-        "AI-Based Platform for De Novo Protein Design",
-        "Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues",
-        "High-Throughput Screening Platform for Antibody Discovery",
-        "Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy",
-        "RNA-Based Vaccine Platform for Infectious Diseases",
-        "Organs-on-Chips for Drug Toxicity Testing",
-        "Machine Learning Platform for Predicting Drug-Target Interactions",
-        "Nanobody Therapeutics for Neurodegenerative Diseases",
-        "Gene Therapy for Age-Related Macular Degeneration",
-        "PROTAC Technology for Protein Degradation",
-        "Real-Time Pathogen Detection System Using Metagenomic Sequencing",
-        "Single-Cell Multi-omics Analysis of the Immune Response in COVID-19",
-        "CRISPR-Engineered T Cells in Patients with Refractory Cancer",
-        "Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment",
-        "In Vivo Base Editing Corrects Hutchinson–Gilford Progeria Syndrome in Mice",
-        "Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials",
-        "Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research",
-        "Enzyme-Free Biosensor for Continuous Glucose Monitoring",
-        "Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome",
-        "Massively Parallel Screening of Protein Design Space Using Machine Learning",
-        "PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer"
-      ],
-      "similarity_score": 0.6222655773162842,
-      "subdomains": [
-        "Biotech",
-        "Biologics Manufacturing"
-      ],
-      "summary_text": "No summary available",
-      "technologies": [
-        "continuous manufacturing",
-        "mRNA production",
-        "process intensification"
-      ],
-      "title": "Continuous Manufacturing Process for mRNA Vaccines"
-    },
-    {
-      "assignees": [],
-      "authors": [
-        "Burslem, George M.",
-        "Schultz, David C.",
-        "Bondeson, Daniel P.",
-        "Eide, Christopher A.",
-        "Crews, Craig M."
-      ],
-      "country": "United States",
-      "cpcs": [],
-      "data_quality_score": 0.93,
-      "domain": "Healthcare",
-      "id": "journals_BT-JRN-010",
-      "inventors": [],
-      "ipcs": [],
-      "keywords": [
-        "cancer therapy",
-        "PROTAC",
-        "undruggable targets",
-        "transcription factors",
-        "targeted protein degradation"
-      ],
-      "knowledge_type": "journal",
-      "publication_date": "2023-04-18",
-      "publishers": [
-        "Science Translational Medicine"
-      ],
-      "related_titles": [
-        "Method for mRNA Delivery Using Lipid Nanoparticles",
-        "CRISPR-Cas9 System for Targeted Gene Editing",
-        "Bispecific Antibodies Targeting PD-1 and CTLA-4",
-        "Engineered CAR-T Cells with Enhanced Tumor Targeting",
-        "Microbiome-Based Therapeutics for Inflammatory Bowel Disease",
-        "Scalable Process for Manufacturing Exosome Therapeutics",
-        "Synthetic Biology Platform for On-Demand Therapeutic Protein Production",
-        "AI-Based Platform for De Novo Protein Design",
-        "Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues",
-        "High-Throughput Screening Platform for Antibody Discovery",
-        "Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy",
-        "RNA-Based Vaccine Platform for Infectious Diseases",
-        "Organs-on-Chips for Drug Toxicity Testing",
-        "Machine Learning Platform for Predicting Drug-Target Interactions",
-        "Nanobody Therapeutics for Neurodegenerative Diseases",
-        "Gene Therapy for Age-Related Macular Degeneration",
-        "Continuous Manufacturing Process for mRNA Vaccines",
-        "PROTAC Technology for Protein Degradation",
-        "Real-Time Pathogen Detection System Using Metagenomic Sequencing",
-        "Single-Cell Multi-omics Analysis of the Immune Response in COVID-19",
-        "CRISPR-Engineered T Cells in Patients with Refractory Cancer",
-        "Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment",
-        "In Vivo Base Editing Corrects Hutchinson–Gilford Progeria Syndrome in Mice",
-        "Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials",
-        "Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research",
-        "Enzyme-Free Biosensor for Continuous Glucose Monitoring",
-        "Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome",
-        "Massively Parallel Screening of Protein Design Space Using Machine Learning"
-      ],
-      "similarity_score": 0.6203403472900391,
-      "subdomains": [
-        "Biotech",
-        "Drug Discovery"
-      ],
-      "summary_text": "No summary available",
-      "technologies": [],
-      "title": "PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer"
-    },
-    {
-      "assignees": [
-        "NeuroNano Therapeutics"
-      ],
-      "authors": [],
-      "country": "United States",
-      "cpcs": [
-        "C07K16/18",
-        "A61K39/395",
-        "A61P25/28"
-      ],
-      "data_quality_score": 0.86,
-      "domain": "Healthcare",
-      "id": "patents_BT-PAT-015",
-      "inventors": [
-        "Muyldermans, Serge",
-        "Steyaert, Jan",
-        "De Genst, Erwin"
-      ],
-      "ipcs": [
-        "A61K39/395",
-        "C07K16/18",
-        "A61P25/28"
-      ],
-      "keywords": [
-        "nanobody",
-        "neurodegenerative disease",
-        "blood-brain barrier",
-        "protein misfolding"
-      ],
-      "knowledge_type": "patent",
-      "publication_date": "2021-04-08",
-      "publishers": [],
-      "related_titles": [
-        "Method for mRNA Delivery Using Lipid Nanoparticles",
-        "CRISPR-Cas9 System for Targeted Gene Editing",
-        "Bispecific Antibodies Targeting PD-1 and CTLA-4",
-        "Engineered CAR-T Cells with Enhanced Tumor Targeting",
-        "Microbiome-Based Therapeutics for Inflammatory Bowel Disease",
-        "Scalable Process for Manufacturing Exosome Therapeutics",
-        "Synthetic Biology Platform for On-Demand Therapeutic Protein Production",
-        "AI-Based Platform for De Novo Protein Design",
-        "Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues",
-        "High-Throughput Screening Platform for Antibody Discovery",
-        "Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy",
-        "RNA-Based Vaccine Platform for Infectious Diseases",
-        "Organs-on-Chips for Drug Toxicity Testing",
-        "Machine Learning Platform for Predicting Drug-Target Interactions",
-        "Gene Therapy for Age-Related Macular Degeneration",
-        "Continuous Manufacturing Process for mRNA Vaccines",
-        "PROTAC Technology for Protein Degradation",
-        "Real-Time Pathogen Detection System Using Metagenomic Sequencing",
-        "Single-Cell Multi-omics Analysis of the Immune Response in COVID-19",
-        "CRISPR-Engineered T Cells in Patients with Refractory Cancer",
-        "Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment",
-        "In Vivo Base Editing Corrects Hutchinson–Gilford Progeria Syndrome in Mice",
-        "Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials",
-        "Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research",
-        "Enzyme-Free Biosensor for Continuous Glucose Monitoring",
-        "Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome",
-        "Massively Parallel Screening of Protein Design Space Using Machine Learning",
-        "PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer"
-      ],
-      "similarity_score": 0.6186943054199219,
-      "subdomains": [
-        "Biotech",
-        "Neuroscience"
-      ],
-      "summary_text": "No summary available",
-      "technologies": [
-        "nanobodies",
-        "blood-brain barrier",
-        "protein targeting"
-      ],
-      "title": "Nanobody Therapeutics for Neurodegenerative Diseases"
-    },
-    {
-      "assignees": [
-        "UrbanAir Systems"
-      ],
-      "authors": [],
-      "country": "United States",
-      "cpcs": [
-        "G08G5/0013",
-        "H04L67/12",
-        "G08G5/045"
-      ],
-      "data_quality_score": 0.87,
+      "cpcs": ["H01M8/04", "H01M8/0267", "H01M8/1011"],
+      "data_quality_score": 0.88,
       "domain": "Mobility",
-      "id": "patents_MB-PAT-004",
-      "inventors": [
-        "Yang, Xiaoqian",
-        "Kopardekar, Parimal",
-        "Johnson, Marcus"
-      ],
-      "ipcs": [
-        "G08G5/00",
-        "H04L67/12",
-        "G08G5/04"
-      ],
+      "id": "patents_MB-PAT-007",
+      "inventors": ["Yoshida, Takashi", "Miller, Sarah", "Weber, Andreas"],
+      "ipcs": ["H01M8/04", "H01M8/0267", "H01M8/1011"],
       "keywords": [
-        "urban air mobility",
-        "eVTOL",
-        "air traffic management",
-        "UAM"
+        "hydrogen",
+        "fuel cell",
+        "commercial vehicles",
+        "zero emission"
       ],
       "knowledge_type": "patent",
-      "publication_date": "2023-01-26",
+      "publication_date": "2022-10-13",
       "publishers": [],
       "related_titles": [
-        "Urban Air Mobility: Infrastructure Requirements and Operational Challenges",
-        "Sustainable Aviation Fuel Production from Municipal Waste",
-        "AI-Enabled Traffic Signal Control System",
-        "Machine Learning Approaches for Traffic Signal Control: A Comparative Analysis"
+        "Adaptive Aerodynamic System for Commercial Vehicles",
+        "A Comprehensive Review of Hydrogen Fuel Cell Technologies for Heavy-Duty Transportation",
+        "Dynamic Wireless Charging System for Electric Vehicles"
       ],
-      "similarity_score": 0.6165573596954346,
-      "subdomains": [
-        "Urban Air Mobility",
-        "Traffic Management"
-      ],
+      "similarity_score": 0.6924519538879395,
+      "subdomains": ["Alternative Powertrains", "Commercial Vehicles"],
       "summary_text": "No summary available",
-      "technologies": [
-        "urban air mobility",
-        "air traffic management",
-        "distributed systems"
-      ],
-      "title": "Urban Air Mobility Traffic Management System"
-    },
-    {
-      "assignees": [
-        "MedFly Systems"
-      ],
-      "authors": [],
-      "country": "United States",
-      "cpcs": [
-        "B64C39/024",
-        "G05D1/0088",
-        "A61G3/00"
-      ],
-      "data_quality_score": 0.85,
-      "domain": "Mobility",
-      "id": "patents_MB-PAT-014",
-      "inventors": [
-        "Nguyen, Thuy",
-        "Okonkwo, Chima",
-        "Ramos, Isabella"
-      ],
-      "ipcs": [
-        "B64C39/02",
-        "G05D1/00",
-        "A61G3/00"
-      ],
-      "keywords": [
-        "medical delivery",
-        "emergency response",
-        "drone delivery",
-        "healthcare logistics"
-      ],
-      "knowledge_type": "patent",
-      "publication_date": "2022-06-16",
-      "publishers": [],
-      "related_titles": [],
-      "similarity_score": 0.6164381504058838,
-      "subdomains": [
-        "Drone Technology",
-        "Healthcare Logistics"
-      ],
-      "summary_text": "No summary available",
-      "technologies": [
-        "autonomous drones",
-        "medical logistics",
-        "remote sensing"
-      ],
-      "title": "Drone-Based Emergency Medical Supply Delivery System"
+      "technologies": ["fuel cell", "hydrogen power", "power electronics"],
+      "title": "Hydrogen Fuel Cell System with Enhanced Power Density"
     }
   ],
   "insights": [
-    "The emergence of RNA-based vaccine platforms demonstrates a significant investment in mRNA technology, highlighting its relevance for infectious disease management and response to public health crises.",
-    "Innovations in lipid nanoparticles for mRNA delivery reflect advancements in drug delivery systems, facilitating more effective therapeutic applications in gene therapy and vaccine deployment.",
-    "Continuous manufacturing processes for mRNA vaccines are becoming essential, streamlining production and enhancing the scalability of vaccine development, which was critical during the COVID-19 pandemic."
+    "The trend in electric vehicle development is significantly driven by advancements in battery management systems, particularly focused on thermal management to enhance battery longevity.",
+    "Vehicle-to-grid (V2G) technology is emerging as a critical component for electric vehicle fleets, providing benefits for energy management and grid services, thus indicating a growing trend towards energy convergence.",
+    "Dynamic wireless charging systems are being developed to enhance charging infrastructure for electric vehicles, which will facilitate more efficient energy usage and reduce downtime for electric vehicles.",
+    "There is a notable focus on lightweight materials in electric vehicle structures, aimed at improving energy efficiency while ensuring battery protection, showcasing material innovation in the sector.",
+    "Recent studies on electric vehicle battery degradation and environmental benefits of electric last-mile delivery are increasing awareness regarding the sustainability and operational efficiency of electric mobility."
   ],
   "isData": true,
   "message": "Successfully generated insights.",
-  "notes": "The healthcare sector shows a robust trend towards mRNA technologies, supported by patents related to real-time pathogen detection systems and RNA-based vaccine platforms. With the recent advancements captured in patents about mRNA delivery and manufacturing, it's clear that innovation in this space is accelerating. Continuous manufacturing technologies are essential to meet the growing demand for mRNA vaccines, indicating a strategic opportunity for firms to enhance production capabilities. Additionally, as discoveries regarding lipid nanoparticles and their applications in vaccine efficacy arise, there's a critical need to invest in these areas to further advance therapeutic solutions for infectious diseases. By aligning R&D focus on scalable processes and fostering collaborations in lipid nanoparticle technology, organizations position themselves favorably in the evolving landscape of mRNA-based therapeutics.",
-  "prompt": "MRNA",
+  "notes": "The electric vehicle sector is witnessing transformative developments in battery technology and charging infrastructure. Innovations like thermal management systems are crucial for extending battery life and enhancing vehicle performance. Additionally, vehicle-to-grid (V2G) integration will allow electric vehicles to participate in energy trading and provide grid stability, creating a win-win scenario for consumers and utility companies. The focus on lightweight composite materials indicates a strong move towards innovative manufacturing practices that enhance vehicle efficiency and sustainability. Amidst these developments, it's imperative for companies to invest in R&D, establish partnerships for infrastructure development, and actively engage with academic research to fully leverage these advancements. This proactive approach will position companies favorably in the competitive electric vehicle marketplace, ensuring they meet the growing consumer demand for sustainable and efficient mobility solutions.",
+  "prompt": "ELECTRIC VEHICLE\n",
   "recommendations": [
-    "Invest in research and development of scalable biomanufacturing processes to keep pace with the increasing demand for mRNA vaccines and therapies.",
-    "Explore partnerships with biotechnology firms specializing in lipid nanoparticle technology to enhance drug delivery systems for mRNA therapies, potentially improving patient outcomes."
+    "Invest in R&D for advanced battery thermal management technologies and V2G integration to remain competitive in the electric vehicle market.",
+    "Collaborate with academic institutions on studies assessing battery longevity and degradation patterns to inform product development and improve warranty offerings.",
+    "Develop partnerships with infrastructure companies to accelerate the deployment of dynamic wireless charging systems and promote the use of lightweight materials in electric vehicle design."
   ],
   "relevant_trends": [
     {
-      "assignees": [
-        "RapidDx Genomics"
-      ],
+      "assignees": ["EnergyTech Solutions"],
       "authors": [],
       "country": "United States",
-      "cpcs": [
-        "C12Q1/6806",
-        "G16B30/00",
-        "G16H50/70"
-      ],
-      "data_quality_score": 0.88,
-      "domain": "Healthcare",
-      "id": "patents_BT-PAT-020",
-      "inventors": [
-        "Schatz, Michael C.",
-        "Phillippy, Adam M.",
-        "Zimin, Aleksey V."
-      ],
-      "ipcs": [
-        "C12Q1/6806",
-        "G16B30/00",
-        "G16H50/70"
-      ],
+      "cpcs": ["H01M10/60", "B60L58/26", "H01M10/6556"],
+      "data_quality_score": 0.94,
+      "domain": "Mobility",
+      "id": "patents_MB-PAT-002",
+      "inventors": ["Chen, Jian", "Patel, Nisha", "Schmidt, Erik"],
+      "ipcs": ["H01M10/60", "B60L58/26", "H01M10/6556"],
       "keywords": [
-        "metagenomic",
-        "pathogen detection",
-        "antimicrobial resistance",
-        "nanopore sequencing"
+        "battery cooling",
+        "thermal management",
+        "electric vehicle",
+        "battery longevity"
       ],
       "knowledge_type": "patent",
-      "publication_date": "2023-05-04",
+      "publication_date": "2021-08-12",
       "publishers": [],
       "related_titles": [
-        "Method for mRNA Delivery Using Lipid Nanoparticles",
-        "CRISPR-Cas9 System for Targeted Gene Editing",
-        "Bispecific Antibodies Targeting PD-1 and CTLA-4",
-        "Engineered CAR-T Cells with Enhanced Tumor Targeting",
-        "Microbiome-Based Therapeutics for Inflammatory Bowel Disease",
-        "Scalable Process for Manufacturing Exosome Therapeutics",
-        "Synthetic Biology Platform for On-Demand Therapeutic Protein Production",
-        "AI-Based Platform for De Novo Protein Design",
-        "Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues",
-        "High-Throughput Screening Platform for Antibody Discovery",
-        "Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy",
-        "RNA-Based Vaccine Platform for Infectious Diseases",
-        "Organs-on-Chips for Drug Toxicity Testing",
-        "Machine Learning Platform for Predicting Drug-Target Interactions",
-        "Nanobody Therapeutics for Neurodegenerative Diseases",
-        "Gene Therapy for Age-Related Macular Degeneration",
-        "Continuous Manufacturing Process for mRNA Vaccines",
-        "PROTAC Technology for Protein Degradation",
-        "Single-Cell Multi-omics Analysis of the Immune Response in COVID-19",
-        "CRISPR-Engineered T Cells in Patients with Refractory Cancer",
-        "Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment",
-        "In Vivo Base Editing Corrects Hutchinson–Gilford Progeria Syndrome in Mice",
-        "Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials",
-        "Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research",
-        "Enzyme-Free Biosensor for Continuous Glucose Monitoring",
-        "Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome",
-        "Massively Parallel Screening of Protein Design Space Using Machine Learning",
-        "PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer"
+        "Dynamic Wireless Charging System for Electric Vehicles",
+        "Solid-State Battery with Silicon-Carbon Composite Anode",
+        "Lightweight Composite Materials for Electric Vehicle Structures",
+        "Robotic Autonomous Charging System for Electric Vehicles",
+        "Comprehensive Analysis of Electric Vehicle Battery Degradation Across Multiple Vehicle Models and Usage Patterns",
+        "Secure and Efficient Vehicle-to-Grid Integration for Electric Vehicle Fleets",
+        "Quantifying Environmental Benefits of Electric Last-Mile Delivery: A Life Cycle Assessment",
+        "Advanced LiDAR System for Autonomous Vehicle Navigation",
+        "Machine Learning System for Predictive Vehicle Maintenance",
+        "Adaptive Vehicle Crash Avoidance System"
       ],
-      "similarity_score": 0.6647,
-      "subdomains": [
-        "Biotech",
-        "Diagnostics"
-      ],
+      "similarity_score": 0.7886,
+      "subdomains": ["Automotive Technology", "Electrification"],
       "summary_text": "No summary available",
       "technologies": [
-        "metagenomic sequencing",
-        "nanopore technology",
-        "bioinformatics"
+        "battery technology",
+        "thermal management",
+        "electric vehicles"
       ],
-      "title": "Real-Time Pathogen Detection System Using Metagenomic Sequencing"
-    },
-    {
-      "assignees": [
-        "RapidVax Inc."
-      ],
-      "authors": [],
-      "country": "United States",
-      "cpcs": [
-        "C12N15/88",
-        "A61K39/00",
-        "A61K47/69"
-      ],
-      "data_quality_score": 0.93,
-      "domain": "Healthcare",
-      "id": "patents_BT-PAT-012",
-      "inventors": [
-        "Karikó, Katalin",
-        "Weissman, Drew",
-        "Pardi, Norbert"
-      ],
-      "ipcs": [
-        "C12N15/88",
-        "A61K39/00",
-        "A61K47/69"
-      ],
-      "keywords": [
-        "mRNA",
-        "vaccine",
-        "infectious disease",
-        "lipid nanoparticle"
-      ],
-      "knowledge_type": "patent",
-      "publication_date": "2019-09-05",
-      "publishers": [],
-      "related_titles": [
-        "Method for mRNA Delivery Using Lipid Nanoparticles",
-        "CRISPR-Cas9 System for Targeted Gene Editing",
-        "Bispecific Antibodies Targeting PD-1 and CTLA-4",
-        "Engineered CAR-T Cells with Enhanced Tumor Targeting",
-        "Microbiome-Based Therapeutics for Inflammatory Bowel Disease",
-        "Scalable Process for Manufacturing Exosome Therapeutics",
-        "Synthetic Biology Platform for On-Demand Therapeutic Protein Production",
-        "AI-Based Platform for De Novo Protein Design",
-        "Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues",
-        "High-Throughput Screening Platform for Antibody Discovery",
-        "Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy",
-        "Organs-on-Chips for Drug Toxicity Testing",
-        "Machine Learning Platform for Predicting Drug-Target Interactions",
-        "Nanobody Therapeutics for Neurodegenerative Diseases",
-        "Gene Therapy for Age-Related Macular Degeneration",
-        "Continuous Manufacturing Process for mRNA Vaccines",
-        "PROTAC Technology for Protein Degradation",
-        "Real-Time Pathogen Detection System Using Metagenomic Sequencing",
-        "Single-Cell Multi-omics Analysis of the Immune Response in COVID-19",
-        "CRISPR-Engineered T Cells in Patients with Refractory Cancer",
-        "Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment",
-        "In Vivo Base Editing Corrects Hutchinson–Gilford Progeria Syndrome in Mice",
-        "Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials",
-        "Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research",
-        "Enzyme-Free Biosensor for Continuous Glucose Monitoring",
-        "Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome",
-        "Massively Parallel Screening of Protein Design Space Using Machine Learning",
-        "PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer"
-      ],
-      "similarity_score": 0.6376,
-      "subdomains": [
-        "Biotech",
-        "Vaccines"
-      ],
-      "summary_text": "No summary available",
-      "technologies": [
-        "lipid nanoparticles",
-        "mRNA vaccines",
-        "infectious disease"
-      ],
-      "title": "RNA-Based Vaccine Platform for Infectious Diseases"
+      "title": "Electric Vehicle Battery Thermal Management System"
     },
     {
       "assignees": [],
       "authors": [
-        "Li, Haoyang",
-        "Schulz, Daniel",
-        "Thrane, Kristine",
-        "Larsson, Ludvig",
-        "Pe'er, Dana"
+        "Chang, Hyun-Joon",
+        "Oliveira, Paulo",
+        "Kramer, Sophia",
+        "Ahmed, Farid",
+        "Reynolds, Karen"
       ],
       "country": "United States",
+      "cpcs": [],
+      "data_quality_score": 0.89,
+      "domain": "Mobility",
+      "id": "journals_MB-JRN-006",
+      "inventors": [],
+      "ipcs": [],
+      "keywords": [
+        "electric vehicles",
+        "vehicle-to-grid",
+        "V2G",
+        "fleet management",
+        "grid services"
+      ],
+      "knowledge_type": "journal",
+      "publication_date": "2023-02-20",
+      "publishers": ["IEEE Transactions on Smart Grid"],
+      "related_titles": [
+        "Electric Vehicle Battery Thermal Management System",
+        "Solid-State Battery with Silicon-Carbon Composite Anode",
+        "Dynamic Wireless Charging System for Electric Vehicles",
+        "Robotic Autonomous Charging System for Electric Vehicles",
+        "Comprehensive Analysis of Electric Vehicle Battery Degradation Across Multiple Vehicle Models and Usage Patterns",
+        "Quantifying Environmental Benefits of Electric Last-Mile Delivery: A Life Cycle Assessment"
+      ],
+      "similarity_score": 0.7851,
+      "subdomains": ["Electrification", "Energy Systems"],
+      "summary_text": "No summary available",
+      "technologies": [],
+      "title": "Secure and Efficient Vehicle-to-Grid Integration for Electric Vehicle Fleets"
+    },
+    {
+      "assignees": ["ElectroRoad Systems"],
+      "authors": [],
+      "country": "United States",
+      "cpcs": ["B60L53/12", "B60L53/30", "H02J50/12"],
+      "data_quality_score": 0.9,
+      "domain": "Mobility",
+      "id": "patents_MB-PAT-009",
+      "inventors": [
+        "Choi, Sung-Yul",
+        "Bennett, Rebecca",
+        "Lombardi, Francesco"
+      ],
+      "ipcs": ["B60L53/12", "B60L53/30", "H02J50/12"],
+      "keywords": [
+        "electric vehicle",
+        "dynamic charging",
+        "wireless power transfer",
+        "charging infrastructure"
+      ],
+      "knowledge_type": "patent",
+      "publication_date": "2021-05-20",
+      "publishers": [],
+      "related_titles": [
+        "Robotic Autonomous Charging System for Electric Vehicles",
+        "Electric Vehicle Battery Thermal Management System",
+        "Solid-State Battery with Silicon-Carbon Composite Anode",
+        "Lightweight Composite Materials for Electric Vehicle Structures",
+        "Comprehensive Analysis of Electric Vehicle Battery Degradation Across Multiple Vehicle Models and Usage Patterns",
+        "Secure and Efficient Vehicle-to-Grid Integration for Electric Vehicle Fleets",
+        "Quantifying Environmental Benefits of Electric Last-Mile Delivery: A Life Cycle Assessment",
+        "Smart Infrastructure for Connected and Autonomous Vehicles",
+        "Hyperloop Capsule Suspension and Propulsion System",
+        "Urban Air Mobility: Infrastructure Requirements and Operational Challenges",
+        "Hydrogen Fuel Cell System with Enhanced Power Density"
+      ],
+      "similarity_score": 0.7829,
+      "subdomains": ["Electrification", "Infrastructure"],
+      "summary_text": "No summary available",
+      "technologies": [
+        "electric vehicles",
+        "power electronics",
+        "wireless charging"
+      ],
+      "title": "Dynamic Wireless Charging System for Electric Vehicles"
+    },
+    {
+      "assignees": ["AutoCharge Robotics"],
+      "authors": [],
+      "country": "United States",
+      "cpcs": ["B60L53/30", "B25J9/1633", "G06V10/253"],
+      "data_quality_score": 0.88,
+      "domain": "Mobility",
+      "id": "patents_MB-PAT-020",
+      "inventors": ["Lindholm, Erik", "Gupta, Anjali", "Torres, Miguel"],
+      "ipcs": ["B60L53/30", "B25J9/16", "G06V10/25"],
+      "keywords": [
+        "electric vehicle",
+        "charging infrastructure",
+        "robotic charging",
+        "autonomous charging"
+      ],
+      "knowledge_type": "patent",
+      "publication_date": "2023-04-06",
+      "publishers": [],
+      "related_titles": [
+        "Dynamic Wireless Charging System for Electric Vehicles",
+        "Electric Vehicle Battery Thermal Management System",
+        "Solid-State Battery with Silicon-Carbon Composite Anode",
+        "Lightweight Composite Materials for Electric Vehicle Structures",
+        "Modular Autonomous Delivery Robot System",
+        "Comprehensive Analysis of Electric Vehicle Battery Degradation Across Multiple Vehicle Models and Usage Patterns",
+        "Secure and Efficient Vehicle-to-Grid Integration for Electric Vehicle Fleets",
+        "Quantifying Environmental Benefits of Electric Last-Mile Delivery: A Life Cycle Assessment",
+        "Autonomous Navigation in Unstructured Dynamic Environments: Challenges and Recent Advances"
+      ],
+      "similarity_score": 0.7656,
+      "subdomains": ["Electrification", "Robotics"],
+      "summary_text": "No summary available",
+      "technologies": [
+        "computer vision",
+        "robotics",
+        "electric vehicle charging"
+      ],
+      "title": "Robotic Autonomous Charging System for Electric Vehicles"
+    },
+    {
+      "assignees": ["LightweightEV Materials"],
+      "authors": [],
+      "country": "United States",
+      "cpcs": ["B29C70/086", "B60K1/04", "B60R16/04"],
+      "data_quality_score": 0.9,
+      "domain": "Mobility",
+      "id": "patents_MB-PAT-013",
+      "inventors": ["Wu, Hong", "Johannson, Lars", "Matthews, Catherine"],
+      "ipcs": ["B29C70/08", "B60K1/04", "B60R16/04"],
+      "keywords": [
+        "electric vehicle",
+        "carbon fiber",
+        "lightweight materials",
+        "battery protection"
+      ],
+      "knowledge_type": "patent",
+      "publication_date": "2021-12-09",
+      "publishers": [],
+      "related_titles": [
+        "Electric Vehicle Battery Thermal Management System",
+        "Solid-State Battery with Silicon-Carbon Composite Anode",
+        "Dynamic Wireless Charging System for Electric Vehicles",
+        "Robotic Autonomous Charging System for Electric Vehicles"
+      ],
+      "similarity_score": 0.7297,
+      "subdomains": ["Materials Technology", "Vehicle Structures"],
+      "summary_text": "No summary available",
+      "technologies": [
+        "composite materials",
+        "lightweight structures",
+        "manufacturing processes"
+      ],
+      "title": "Lightweight Composite Materials for Electric Vehicle Structures"
+    },
+    {
+      "assignees": [],
+      "authors": [
+        "Peterson, Sarah B.",
+        "Zhang, Tianqi",
+        "Garcia, Miguel",
+        "Johnson, Amanda",
+        "Kumar, Pradeep"
+      ],
+      "country": "Netherlands",
+      "cpcs": [],
+      "data_quality_score": 0.93,
+      "domain": "Mobility",
+      "id": "journals_MB-JRN-001",
+      "inventors": [],
+      "ipcs": [],
+      "keywords": [
+        "electric vehicles",
+        "battery degradation",
+        "lithium-ion",
+        "battery lifetime",
+        "usage patterns"
+      ],
+      "knowledge_type": "journal",
+      "publication_date": "2022-06-10",
+      "publishers": ["Journal of Power Sources"],
+      "related_titles": [
+        "Electric Vehicle Battery Thermal Management System",
+        "Solid-State Battery with Silicon-Carbon Composite Anode",
+        "Dynamic Wireless Charging System for Electric Vehicles",
+        "Robotic Autonomous Charging System for Electric Vehicles",
+        "Secure and Efficient Vehicle-to-Grid Integration for Electric Vehicle Fleets",
+        "Quantifying Environmental Benefits of Electric Last-Mile Delivery: A Life Cycle Assessment"
+      ],
+      "similarity_score": 0.7291,
+      "subdomains": ["Electrification", "Battery Technology"],
+      "summary_text": "No summary available",
+      "technologies": [],
+      "title": "Comprehensive Analysis of Electric Vehicle Battery Degradation Across Multiple Vehicle Models and Usage Patterns"
+    },
+    {
+      "assignees": [],
+      "authors": [
+        "Kaplan, Eleanor",
+        "Figliozzi, Miguel",
+        "Holguín-Veras, José",
+        "Zhang, Renshu",
+        "Baumgartner, Michael"
+      ],
+      "country": "Netherlands",
+      "cpcs": [],
+      "data_quality_score": 0.91,
+      "domain": "Mobility",
+      "id": "journals_MB-JRN-008",
+      "inventors": [],
+      "ipcs": [],
+      "keywords": [
+        "last-mile logistics",
+        "electric delivery vehicles",
+        "life cycle assessment",
+        "urban freight",
+        "sustainability"
+      ],
+      "knowledge_type": "journal",
+      "publication_date": "2022-12-08",
+      "publishers": ["Journal of Cleaner Production"],
+      "related_titles": [
+        "Electric Vehicle Battery Thermal Management System",
+        "Solid-State Battery with Silicon-Carbon Composite Anode",
+        "Dynamic Wireless Charging System for Electric Vehicles",
+        "Robotic Autonomous Charging System for Electric Vehicles",
+        "Comprehensive Analysis of Electric Vehicle Battery Degradation Across Multiple Vehicle Models and Usage Patterns",
+        "Secure and Efficient Vehicle-to-Grid Integration for Electric Vehicle Fleets",
+        "Modular Autonomous Delivery Robot System"
+      ],
+      "similarity_score": 0.7066,
+      "subdomains": ["Electrification", "Last-Mile Delivery"],
+      "summary_text": "No summary available",
+      "technologies": [],
+      "title": "Quantifying Environmental Benefits of Electric Last-Mile Delivery: A Life Cycle Assessment"
+    },
+    {
+      "assignees": ["SmartRoad Technologies"],
+      "authors": [],
+      "country": "United States",
+      "cpcs": ["G08G1/0104", "H04W4/44", "G08G1/166"],
+      "data_quality_score": 0.89,
+      "domain": "Mobility",
+      "id": "patents_MB-PAT-012",
+      "inventors": ["Zhang, Wei", "Thompson, Sarah", "Ochieng, Washington"],
+      "ipcs": ["G08G1/01", "H04W4/44", "G08G1/16"],
+      "keywords": [
+        "connected vehicles",
+        "V2I",
+        "smart infrastructure",
+        "cooperative perception"
+      ],
+      "knowledge_type": "patent",
+      "publication_date": "2022-07-28",
+      "publishers": [],
+      "related_titles": [
+        "V2X Communication System with Enhanced Security Protocol",
+        "Adaptive Vehicle Crash Avoidance System",
+        "Dynamic Wireless Charging System for Electric Vehicles",
+        "Hyperloop Capsule Suspension and Propulsion System",
+        "Urban Air Mobility: Infrastructure Requirements and Operational Challenges"
+      ],
+      "similarity_score": 0.7027,
+      "subdomains": ["Connected Vehicles", "Infrastructure"],
+      "summary_text": "No summary available",
+      "technologies": [
+        "connected infrastructure",
+        "V2I communication",
+        "edge computing"
+      ],
+      "title": "Smart Infrastructure for Connected and Autonomous Vehicles"
+    },
+    {
+      "assignees": [],
+      "authors": [
+        "Wang, Jianlong",
+        "Singh, Rajveer",
+        "Müller, Kristina",
+        "Ibrahim, Omar",
+        "Davis, Peter"
+      ],
+      "country": "United Kingdom",
       "cpcs": [],
       "data_quality_score": 0.92,
-      "domain": "Healthcare",
-      "id": "journals_BT-JRN-003",
+      "domain": "Mobility",
+      "id": "journals_MB-JRN-004",
       "inventors": [],
       "ipcs": [],
       "keywords": [
-        "spatial transcriptomics",
-        "tumor microenvironment",
-        "cancer",
-        "gene expression",
-        "precision medicine"
+        "commercial vehicles",
+        "zero emission",
+        "hydrogen fuel cell",
+        "heavy-duty transportation",
+        "sustainable mobility"
       ],
       "knowledge_type": "journal",
-      "publication_date": "2022-09-15",
-      "publishers": [
-        "Cell"
-      ],
+      "publication_date": "2021-06-15",
+      "publishers": ["Progress in Energy and Combustion Science"],
       "related_titles": [
-        "Method for mRNA Delivery Using Lipid Nanoparticles",
-        "CRISPR-Cas9 System for Targeted Gene Editing",
-        "Bispecific Antibodies Targeting PD-1 and CTLA-4",
-        "Engineered CAR-T Cells with Enhanced Tumor Targeting",
-        "Microbiome-Based Therapeutics for Inflammatory Bowel Disease",
-        "Scalable Process for Manufacturing Exosome Therapeutics",
-        "Synthetic Biology Platform for On-Demand Therapeutic Protein Production",
-        "AI-Based Platform for De Novo Protein Design",
-        "Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues",
-        "High-Throughput Screening Platform for Antibody Discovery",
-        "Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy",
-        "RNA-Based Vaccine Platform for Infectious Diseases",
-        "Organs-on-Chips for Drug Toxicity Testing",
-        "Machine Learning Platform for Predicting Drug-Target Interactions",
-        "Nanobody Therapeutics for Neurodegenerative Diseases",
-        "Gene Therapy for Age-Related Macular Degeneration",
-        "Continuous Manufacturing Process for mRNA Vaccines",
-        "PROTAC Technology for Protein Degradation",
-        "Real-Time Pathogen Detection System Using Metagenomic Sequencing",
-        "Single-Cell Multi-omics Analysis of the Immune Response in COVID-19",
-        "CRISPR-Engineered T Cells in Patients with Refractory Cancer",
-        "In Vivo Base Editing Corrects Hutchinson–Gilford Progeria Syndrome in Mice",
-        "Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials",
-        "Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research",
-        "Enzyme-Free Biosensor for Continuous Glucose Monitoring",
-        "Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome",
-        "Massively Parallel Screening of Protein Design Space Using Machine Learning",
-        "PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer"
+        "Hydrogen Fuel Cell System with Enhanced Power Density",
+        "Adaptive Aerodynamic System for Commercial Vehicles"
       ],
-      "similarity_score": 0.6326,
-      "subdomains": [
-        "Biotech",
-        "Oncology"
-      ],
+      "similarity_score": 0.6956,
+      "subdomains": ["Alternative Powertrains", "Commercial Vehicles"],
       "summary_text": "No summary available",
       "technologies": [],
-      "title": "Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment"
+      "title": "A Comprehensive Review of Hydrogen Fuel Cell Technologies for Heavy-Duty Transportation"
     },
     {
-      "assignees": [
-        "NanoTherapeutics, Inc."
-      ],
+      "assignees": ["HydroPower Mobility"],
       "authors": [],
       "country": "United States",
-      "cpcs": [
-        "A61K9/127",
-        "A61K47/24",
-        "C12N15/88"
-      ],
-      "data_quality_score": 0.95,
-      "domain": "Healthcare",
-      "id": "patents_BT-PAT-001",
-      "inventors": [
-        "Chen, Li-Qiang",
-        "Rodriguez, Maria",
-        "Patel, Amit K."
-      ],
-      "ipcs": [
-        "A61K9/127",
-        "A61K47/24",
-        "C12N15/88"
-      ],
-      "keywords": [
-        "mRNA delivery",
-        "LNP",
-        "nanoparticle",
-        "gene therapy"
-      ],
-      "knowledge_type": "patent",
-      "publication_date": "2020-05-12",
-      "publishers": [],
-      "related_titles": [
-        "Gene Therapy for Age-Related Macular Degeneration",
-        "In Vivo Base Editing Corrects Hutchinson–Gilford Progeria Syndrome in Mice",
-        "RNA-Based Vaccine Platform for Infectious Diseases",
-        "Continuous Manufacturing Process for mRNA Vaccines",
-        "CRISPR-Cas9 System for Targeted Gene Editing",
-        "Bispecific Antibodies Targeting PD-1 and CTLA-4",
-        "Engineered CAR-T Cells with Enhanced Tumor Targeting",
-        "Microbiome-Based Therapeutics for Inflammatory Bowel Disease",
-        "Scalable Process for Manufacturing Exosome Therapeutics",
-        "Synthetic Biology Platform for On-Demand Therapeutic Protein Production",
-        "AI-Based Platform for De Novo Protein Design",
-        "Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues",
-        "High-Throughput Screening Platform for Antibody Discovery",
-        "Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy",
-        "Organs-on-Chips for Drug Toxicity Testing",
-        "Machine Learning Platform for Predicting Drug-Target Interactions",
-        "Nanobody Therapeutics for Neurodegenerative Diseases",
-        "PROTAC Technology for Protein Degradation",
-        "Real-Time Pathogen Detection System Using Metagenomic Sequencing",
-        "Single-Cell Multi-omics Analysis of the Immune Response in COVID-19",
-        "CRISPR-Engineered T Cells in Patients with Refractory Cancer",
-        "Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment",
-        "Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials",
-        "Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research",
-        "Enzyme-Free Biosensor for Continuous Glucose Monitoring",
-        "Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome",
-        "Massively Parallel Screening of Protein Design Space Using Machine Learning",
-        "PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer"
-      ],
-      "similarity_score": 0.63,
-      "subdomains": [
-        "Biotech",
-        "Drug Delivery"
-      ],
-      "summary_text": "No summary available",
-      "technologies": [
-        "mRNA",
-        "lipid nanoparticles",
-        "drug delivery"
-      ],
-      "title": "Method for mRNA Delivery Using Lipid Nanoparticles"
-    },
-    {
-      "assignees": [
-        "BacteriaTx Inc."
-      ],
-      "authors": [],
-      "country": "United States",
-      "cpcs": [
-        "A61P35/00",
-        "A61K35/74",
-        "C12N1/21"
-      ],
-      "data_quality_score": 0.87,
-      "domain": "Healthcare",
-      "id": "patents_BT-PAT-011",
-      "inventors": [
-        "Danino, Tal",
-        "Leventhal, Daniel S.",
-        "Zhang, Shuyi"
-      ],
-      "ipcs": [
-        "A61P35/00",
-        "A61K35/74",
-        "C12N1/21"
-      ],
-      "keywords": [
-        "synthetic biology",
-        "engineered bacteria",
-        "cancer therapy",
-        "probiotic"
-      ],
-      "knowledge_type": "patent",
-      "publication_date": "2022-12-08",
-      "publishers": [],
-      "related_titles": [
-        "Method for mRNA Delivery Using Lipid Nanoparticles",
-        "CRISPR-Cas9 System for Targeted Gene Editing",
-        "Bispecific Antibodies Targeting PD-1 and CTLA-4",
-        "Engineered CAR-T Cells with Enhanced Tumor Targeting",
-        "Microbiome-Based Therapeutics for Inflammatory Bowel Disease",
-        "Scalable Process for Manufacturing Exosome Therapeutics",
-        "Synthetic Biology Platform for On-Demand Therapeutic Protein Production",
-        "AI-Based Platform for De Novo Protein Design",
-        "Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues",
-        "High-Throughput Screening Platform for Antibody Discovery",
-        "RNA-Based Vaccine Platform for Infectious Diseases",
-        "Organs-on-Chips for Drug Toxicity Testing",
-        "Machine Learning Platform for Predicting Drug-Target Interactions",
-        "Nanobody Therapeutics for Neurodegenerative Diseases",
-        "Gene Therapy for Age-Related Macular Degeneration",
-        "Continuous Manufacturing Process for mRNA Vaccines",
-        "PROTAC Technology for Protein Degradation",
-        "Real-Time Pathogen Detection System Using Metagenomic Sequencing",
-        "Single-Cell Multi-omics Analysis of the Immune Response in COVID-19",
-        "CRISPR-Engineered T Cells in Patients with Refractory Cancer",
-        "Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment",
-        "In Vivo Base Editing Corrects Hutchinson–Gilford Progeria Syndrome in Mice",
-        "Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials",
-        "Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research",
-        "Enzyme-Free Biosensor for Continuous Glucose Monitoring",
-        "Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome",
-        "Massively Parallel Screening of Protein Design Space Using Machine Learning",
-        "PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer"
-      ],
-      "similarity_score": 0.6247,
-      "subdomains": [
-        "Biotech",
-        "Microbiome"
-      ],
-      "summary_text": "No summary available",
-      "technologies": [
-        "genetic engineering",
-        "synthetic biology",
-        "bacterial therapeutics"
-      ],
-      "title": "Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy"
-    },
-    {
-      "assignees": [
-        "Continuous Biologics Inc."
-      ],
-      "authors": [],
-      "country": "United States",
-      "cpcs": [
-        "A61K9/127",
-        "C12P19/34",
-        "C12N15/10"
-      ],
-      "data_quality_score": 0.87,
-      "domain": "Healthcare",
-      "id": "patents_BT-PAT-017",
-      "inventors": [
-        "Trout, Bernhardt L.",
-        "Jensen, Klavs F.",
-        "Chakravarthy, Ankur"
-      ],
-      "ipcs": [
-        "A61K9/127",
-        "C12N15/10",
-        "C12P19/34"
-      ],
-      "keywords": [
-        "biomanufacturing",
-        "continuous manufacturing",
-        "mRNA vaccine",
-        "process intensification"
-      ],
-      "knowledge_type": "patent",
-      "publication_date": "2022-08-11",
-      "publishers": [],
-      "related_titles": [
-        "Method for mRNA Delivery Using Lipid Nanoparticles",
-        "CRISPR-Cas9 System for Targeted Gene Editing",
-        "Bispecific Antibodies Targeting PD-1 and CTLA-4",
-        "Engineered CAR-T Cells with Enhanced Tumor Targeting",
-        "Microbiome-Based Therapeutics for Inflammatory Bowel Disease",
-        "Scalable Process for Manufacturing Exosome Therapeutics",
-        "Synthetic Biology Platform for On-Demand Therapeutic Protein Production",
-        "AI-Based Platform for De Novo Protein Design",
-        "Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues",
-        "High-Throughput Screening Platform for Antibody Discovery",
-        "Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy",
-        "RNA-Based Vaccine Platform for Infectious Diseases",
-        "Organs-on-Chips for Drug Toxicity Testing",
-        "Machine Learning Platform for Predicting Drug-Target Interactions",
-        "Nanobody Therapeutics for Neurodegenerative Diseases",
-        "Gene Therapy for Age-Related Macular Degeneration",
-        "PROTAC Technology for Protein Degradation",
-        "Real-Time Pathogen Detection System Using Metagenomic Sequencing",
-        "Single-Cell Multi-omics Analysis of the Immune Response in COVID-19",
-        "CRISPR-Engineered T Cells in Patients with Refractory Cancer",
-        "Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment",
-        "In Vivo Base Editing Corrects Hutchinson–Gilford Progeria Syndrome in Mice",
-        "Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials",
-        "Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research",
-        "Enzyme-Free Biosensor for Continuous Glucose Monitoring",
-        "Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome",
-        "Massively Parallel Screening of Protein Design Space Using Machine Learning",
-        "PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer"
-      ],
-      "similarity_score": 0.6223,
-      "subdomains": [
-        "Biotech",
-        "Biologics Manufacturing"
-      ],
-      "summary_text": "No summary available",
-      "technologies": [
-        "continuous manufacturing",
-        "mRNA production",
-        "process intensification"
-      ],
-      "title": "Continuous Manufacturing Process for mRNA Vaccines"
-    },
-    {
-      "assignees": [],
-      "authors": [
-        "Burslem, George M.",
-        "Schultz, David C.",
-        "Bondeson, Daniel P.",
-        "Eide, Christopher A.",
-        "Crews, Craig M."
-      ],
-      "country": "United States",
-      "cpcs": [],
-      "data_quality_score": 0.93,
-      "domain": "Healthcare",
-      "id": "journals_BT-JRN-010",
-      "inventors": [],
-      "ipcs": [],
-      "keywords": [
-        "cancer therapy",
-        "PROTAC",
-        "undruggable targets",
-        "transcription factors",
-        "targeted protein degradation"
-      ],
-      "knowledge_type": "journal",
-      "publication_date": "2023-04-18",
-      "publishers": [
-        "Science Translational Medicine"
-      ],
-      "related_titles": [
-        "Method for mRNA Delivery Using Lipid Nanoparticles",
-        "CRISPR-Cas9 System for Targeted Gene Editing",
-        "Bispecific Antibodies Targeting PD-1 and CTLA-4",
-        "Engineered CAR-T Cells with Enhanced Tumor Targeting",
-        "Microbiome-Based Therapeutics for Inflammatory Bowel Disease",
-        "Scalable Process for Manufacturing Exosome Therapeutics",
-        "Synthetic Biology Platform for On-Demand Therapeutic Protein Production",
-        "AI-Based Platform for De Novo Protein Design",
-        "Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues",
-        "High-Throughput Screening Platform for Antibody Discovery",
-        "Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy",
-        "RNA-Based Vaccine Platform for Infectious Diseases",
-        "Organs-on-Chips for Drug Toxicity Testing",
-        "Machine Learning Platform for Predicting Drug-Target Interactions",
-        "Nanobody Therapeutics for Neurodegenerative Diseases",
-        "Gene Therapy for Age-Related Macular Degeneration",
-        "Continuous Manufacturing Process for mRNA Vaccines",
-        "PROTAC Technology for Protein Degradation",
-        "Real-Time Pathogen Detection System Using Metagenomic Sequencing",
-        "Single-Cell Multi-omics Analysis of the Immune Response in COVID-19",
-        "CRISPR-Engineered T Cells in Patients with Refractory Cancer",
-        "Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment",
-        "In Vivo Base Editing Corrects Hutchinson–Gilford Progeria Syndrome in Mice",
-        "Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials",
-        "Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research",
-        "Enzyme-Free Biosensor for Continuous Glucose Monitoring",
-        "Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome",
-        "Massively Parallel Screening of Protein Design Space Using Machine Learning"
-      ],
-      "similarity_score": 0.6203,
-      "subdomains": [
-        "Biotech",
-        "Drug Discovery"
-      ],
-      "summary_text": "No summary available",
-      "technologies": [],
-      "title": "PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer"
-    },
-    {
-      "assignees": [
-        "NeuroNano Therapeutics"
-      ],
-      "authors": [],
-      "country": "United States",
-      "cpcs": [
-        "C07K16/18",
-        "A61K39/395",
-        "A61P25/28"
-      ],
-      "data_quality_score": 0.86,
-      "domain": "Healthcare",
-      "id": "patents_BT-PAT-015",
-      "inventors": [
-        "Muyldermans, Serge",
-        "Steyaert, Jan",
-        "De Genst, Erwin"
-      ],
-      "ipcs": [
-        "A61K39/395",
-        "C07K16/18",
-        "A61P25/28"
-      ],
-      "keywords": [
-        "nanobody",
-        "neurodegenerative disease",
-        "blood-brain barrier",
-        "protein misfolding"
-      ],
-      "knowledge_type": "patent",
-      "publication_date": "2021-04-08",
-      "publishers": [],
-      "related_titles": [
-        "Method for mRNA Delivery Using Lipid Nanoparticles",
-        "CRISPR-Cas9 System for Targeted Gene Editing",
-        "Bispecific Antibodies Targeting PD-1 and CTLA-4",
-        "Engineered CAR-T Cells with Enhanced Tumor Targeting",
-        "Microbiome-Based Therapeutics for Inflammatory Bowel Disease",
-        "Scalable Process for Manufacturing Exosome Therapeutics",
-        "Synthetic Biology Platform for On-Demand Therapeutic Protein Production",
-        "AI-Based Platform for De Novo Protein Design",
-        "Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues",
-        "High-Throughput Screening Platform for Antibody Discovery",
-        "Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy",
-        "RNA-Based Vaccine Platform for Infectious Diseases",
-        "Organs-on-Chips for Drug Toxicity Testing",
-        "Machine Learning Platform for Predicting Drug-Target Interactions",
-        "Gene Therapy for Age-Related Macular Degeneration",
-        "Continuous Manufacturing Process for mRNA Vaccines",
-        "PROTAC Technology for Protein Degradation",
-        "Real-Time Pathogen Detection System Using Metagenomic Sequencing",
-        "Single-Cell Multi-omics Analysis of the Immune Response in COVID-19",
-        "CRISPR-Engineered T Cells in Patients with Refractory Cancer",
-        "Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment",
-        "In Vivo Base Editing Corrects Hutchinson–Gilford Progeria Syndrome in Mice",
-        "Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials",
-        "Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research",
-        "Enzyme-Free Biosensor for Continuous Glucose Monitoring",
-        "Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome",
-        "Massively Parallel Screening of Protein Design Space Using Machine Learning",
-        "PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer"
-      ],
-      "similarity_score": 0.6187,
-      "subdomains": [
-        "Biotech",
-        "Neuroscience"
-      ],
-      "summary_text": "No summary available",
-      "technologies": [
-        "nanobodies",
-        "blood-brain barrier",
-        "protein targeting"
-      ],
-      "title": "Nanobody Therapeutics for Neurodegenerative Diseases"
-    },
-    {
-      "assignees": [
-        "UrbanAir Systems"
-      ],
-      "authors": [],
-      "country": "United States",
-      "cpcs": [
-        "G08G5/0013",
-        "H04L67/12",
-        "G08G5/045"
-      ],
-      "data_quality_score": 0.87,
+      "cpcs": ["H01M8/04", "H01M8/0267", "H01M8/1011"],
+      "data_quality_score": 0.88,
       "domain": "Mobility",
-      "id": "patents_MB-PAT-004",
-      "inventors": [
-        "Yang, Xiaoqian",
-        "Kopardekar, Parimal",
-        "Johnson, Marcus"
-      ],
-      "ipcs": [
-        "G08G5/00",
-        "H04L67/12",
-        "G08G5/04"
-      ],
+      "id": "patents_MB-PAT-007",
+      "inventors": ["Yoshida, Takashi", "Miller, Sarah", "Weber, Andreas"],
+      "ipcs": ["H01M8/04", "H01M8/0267", "H01M8/1011"],
       "keywords": [
-        "urban air mobility",
-        "eVTOL",
-        "air traffic management",
-        "UAM"
+        "hydrogen",
+        "fuel cell",
+        "commercial vehicles",
+        "zero emission"
       ],
       "knowledge_type": "patent",
-      "publication_date": "2023-01-26",
+      "publication_date": "2022-10-13",
       "publishers": [],
       "related_titles": [
-        "Urban Air Mobility: Infrastructure Requirements and Operational Challenges",
-        "Sustainable Aviation Fuel Production from Municipal Waste",
-        "AI-Enabled Traffic Signal Control System",
-        "Machine Learning Approaches for Traffic Signal Control: A Comparative Analysis"
+        "Adaptive Aerodynamic System for Commercial Vehicles",
+        "A Comprehensive Review of Hydrogen Fuel Cell Technologies for Heavy-Duty Transportation",
+        "Dynamic Wireless Charging System for Electric Vehicles"
       ],
-      "similarity_score": 0.6166,
-      "subdomains": [
-        "Urban Air Mobility",
-        "Traffic Management"
-      ],
+      "similarity_score": 0.6925,
+      "subdomains": ["Alternative Powertrains", "Commercial Vehicles"],
       "summary_text": "No summary available",
-      "technologies": [
-        "urban air mobility",
-        "air traffic management",
-        "distributed systems"
-      ],
-      "title": "Urban Air Mobility Traffic Management System"
-    },
-    {
-      "assignees": [
-        "MedFly Systems"
-      ],
-      "authors": [],
-      "country": "United States",
-      "cpcs": [
-        "B64C39/024",
-        "G05D1/0088",
-        "A61G3/00"
-      ],
-      "data_quality_score": 0.85,
-      "domain": "Mobility",
-      "id": "patents_MB-PAT-014",
-      "inventors": [
-        "Nguyen, Thuy",
-        "Okonkwo, Chima",
-        "Ramos, Isabella"
-      ],
-      "ipcs": [
-        "B64C39/02",
-        "G05D1/00",
-        "A61G3/00"
-      ],
-      "keywords": [
-        "medical delivery",
-        "emergency response",
-        "drone delivery",
-        "healthcare logistics"
-      ],
-      "knowledge_type": "patent",
-      "publication_date": "2022-06-16",
-      "publishers": [],
-      "related_titles": [],
-      "similarity_score": 0.6164,
-      "subdomains": [
-        "Drone Technology",
-        "Healthcare Logistics"
-      ],
-      "summary_text": "No summary available",
-      "technologies": [
-        "autonomous drones",
-        "medical logistics",
-        "remote sensing"
-      ],
-      "title": "Drone-Based Emergency Medical Supply Delivery System"
+      "technologies": ["fuel cell", "hydrogen power", "power electronics"],
+      "title": "Hydrogen Fuel Cell System with Enhanced Power Density"
     }
   ],
-  "response_to_user_prompt": "",
+  "response_to_user_prompt": "The electric vehicle industry is trending towards advanced battery thermal management systems and vehicle-to-grid technology, improving energy efficiency and sustainability. Innovations like dynamic wireless charging and lightweight materials are enhancing vehicle performance. It's crucial for companies to invest in R&D and collaborate with partners to stay competitive.",
   "source": "neo4j",
-  "trend_summary": "- ID: patents_BT-PAT-020 | Title: Real-Time Pathogen Detection System Using Metagenomic Sequencing | Domain: Healthcare | Knowledge Type: patent | Publication Date: 2023-05-04 | Quality Score: 0.88 | Country: United States | Score: 0.6647\n  Assignees: RapidDx Genomics\n  Inventors: Schatz, Michael C., Phillippy, Adam M., Zimin, Aleksey V.\n  Technologies: metagenomic sequencing, nanopore technology, bioinformatics\n  Subdomains: Biotech, Diagnostics\n  Keywords: metagenomic, pathogen detection, antimicrobial resistance, nanopore sequencing\n  Related_titles: Method for mRNA Delivery Using Lipid Nanoparticles, CRISPR-Cas9 System for Targeted Gene Editing, Bispecific Antibodies Targeting PD-1 and CTLA-4, Engineered CAR-T Cells with Enhanced Tumor Targeting, Microbiome-Based Therapeutics for Inflammatory Bowel Disease, Scalable Process for Manufacturing Exosome Therapeutics, Synthetic Biology Platform for On-Demand Therapeutic Protein Production, AI-Based Platform for De Novo Protein Design, Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues, High-Throughput Screening Platform for Antibody Discovery, Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy, RNA-Based Vaccine Platform for Infectious Diseases, Organs-on-Chips for Drug Toxicity Testing, Machine Learning Platform for Predicting Drug-Target Interactions, Nanobody Therapeutics for Neurodegenerative Diseases, Gene Therapy for Age-Related Macular Degeneration, Continuous Manufacturing Process for mRNA Vaccines, PROTAC Technology for Protein Degradation, Single-Cell Multi-omics Analysis of the Immune Response in COVID-19, CRISPR-Engineered T Cells in Patients with Refractory Cancer, Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment, In Vivo Base Editing Corrects Hutchinson–Gilford Progeria Syndrome in Mice, Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials, Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research, Enzyme-Free Biosensor for Continuous Glucose Monitoring, Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome, Massively Parallel Screening of Protein Design Space Using Machine Learning, PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer\n- ID: patents_BT-PAT-012 | Title: RNA-Based Vaccine Platform for Infectious Diseases | Domain: Healthcare | Knowledge Type: patent | Publication Date: 2019-09-05 | Quality Score: 0.93 | Country: United States | Score: 0.6376\n  Assignees: RapidVax Inc.\n  Inventors: Karikó, Katalin, Weissman, Drew, Pardi, Norbert\n  Technologies: lipid nanoparticles, mRNA vaccines, infectious disease\n  Subdomains: Biotech, Vaccines\n  Keywords: mRNA, vaccine, infectious disease, lipid nanoparticle\n  Related_titles: Method for mRNA Delivery Using Lipid Nanoparticles, CRISPR-Cas9 System for Targeted Gene Editing, Bispecific Antibodies Targeting PD-1 and CTLA-4, Engineered CAR-T Cells with Enhanced Tumor Targeting, Microbiome-Based Therapeutics for Inflammatory Bowel Disease, Scalable Process for Manufacturing Exosome Therapeutics, Synthetic Biology Platform for On-Demand Therapeutic Protein Production, AI-Based Platform for De Novo Protein Design, Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues, High-Throughput Screening Platform for Antibody Discovery, Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy, Organs-on-Chips for Drug Toxicity Testing, Machine Learning Platform for Predicting Drug-Target Interactions, Nanobody Therapeutics for Neurodegenerative Diseases, Gene Therapy for Age-Related Macular Degeneration, Continuous Manufacturing Process for mRNA Vaccines, PROTAC Technology for Protein Degradation, Real-Time Pathogen Detection System Using Metagenomic Sequencing, Single-Cell Multi-omics Analysis of the Immune Response in COVID-19, CRISPR-Engineered T Cells in Patients with Refractory Cancer, Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment, In Vivo Base Editing Corrects Hutchinson–Gilford Progeria Syndrome in Mice, Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials, Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research, Enzyme-Free Biosensor for Continuous Glucose Monitoring, Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome, Massively Parallel Screening of Protein Design Space Using Machine Learning, PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer\n- ID: journals_BT-JRN-003 | Title: Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment | Domain: Healthcare | Knowledge Type: journal | Publication Date: 2022-09-15 | Quality Score: 0.92 | Country: United States | Score: 0.6326\n  Subdomains: Biotech, Oncology\n  Keywords: spatial transcriptomics, tumor microenvironment, cancer, gene expression, precision medicine\n  Related_titles: Method for mRNA Delivery Using Lipid Nanoparticles, CRISPR-Cas9 System for Targeted Gene Editing, Bispecific Antibodies Targeting PD-1 and CTLA-4, Engineered CAR-T Cells with Enhanced Tumor Targeting, Microbiome-Based Therapeutics for Inflammatory Bowel Disease, Scalable Process for Manufacturing Exosome Therapeutics, Synthetic Biology Platform for On-Demand Therapeutic Protein Production, AI-Based Platform for De Novo Protein Design, Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues, High-Throughput Screening Platform for Antibody Discovery, Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy, RNA-Based Vaccine Platform for Infectious Diseases, Organs-on-Chips for Drug Toxicity Testing, Machine Learning Platform for Predicting Drug-Target Interactions, Nanobody Therapeutics for Neurodegenerative Diseases, Gene Therapy for Age-Related Macular Degeneration, Continuous Manufacturing Process for mRNA Vaccines, PROTAC Technology for Protein Degradation, Real-Time Pathogen Detection System Using Metagenomic Sequencing, Single-Cell Multi-omics Analysis of the Immune Response in COVID-19, CRISPR-Engineered T Cells in Patients with Refractory Cancer, In Vivo Base Editing Corrects Hutchinson–Gilford Progeria Syndrome in Mice, Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials, Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research, Enzyme-Free Biosensor for Continuous Glucose Monitoring, Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome, Massively Parallel Screening of Protein Design Space Using Machine Learning, PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer\n- ID: patents_BT-PAT-001 | Title: Method for mRNA Delivery Using Lipid Nanoparticles | Domain: Healthcare | Knowledge Type: patent | Publication Date: 2020-05-12 | Quality Score: 0.95 | Country: United States | Score: 0.63\n  Assignees: NanoTherapeutics, Inc.\n  Inventors: Chen, Li-Qiang, Rodriguez, Maria, Patel, Amit K.\n  Technologies: mRNA, lipid nanoparticles, drug delivery\n  Subdomains: Biotech, Drug Delivery\n  Keywords: mRNA delivery, LNP, nanoparticle, gene therapy\n  Related_titles: Gene Therapy for Age-Related Macular Degeneration, In Vivo Base Editing Corrects Hutchinson–Gilford Progeria Syndrome in Mice, RNA-Based Vaccine Platform for Infectious Diseases, Continuous Manufacturing Process for mRNA Vaccines, CRISPR-Cas9 System for Targeted Gene Editing, Bispecific Antibodies Targeting PD-1 and CTLA-4, Engineered CAR-T Cells with Enhanced Tumor Targeting, Microbiome-Based Therapeutics for Inflammatory Bowel Disease, Scalable Process for Manufacturing Exosome Therapeutics, Synthetic Biology Platform for On-Demand Therapeutic Protein Production, AI-Based Platform for De Novo Protein Design, Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues, High-Throughput Screening Platform for Antibody Discovery, Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy, Organs-on-Chips for Drug Toxicity Testing, Machine Learning Platform for Predicting Drug-Target Interactions, Nanobody Therapeutics for Neurodegenerative Diseases, PROTAC Technology for Protein Degradation, Real-Time Pathogen Detection System Using Metagenomic Sequencing, Single-Cell Multi-omics Analysis of the Immune Response in COVID-19, CRISPR-Engineered T Cells in Patients with Refractory Cancer, Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment, Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials, Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research, Enzyme-Free Biosensor for Continuous Glucose Monitoring, Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome, Massively Parallel Screening of Protein Design Space Using Machine Learning, PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer\n- ID: patents_BT-PAT-011 | Title: Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy | Domain: Healthcare | Knowledge Type: patent | Publication Date: 2022-12-08 | Quality Score: 0.87 | Country: United States | Score: 0.6247\n  Assignees: BacteriaTx Inc.\n  Inventors: Danino, Tal, Leventhal, Daniel S., Zhang, Shuyi\n  Technologies: genetic engineering, synthetic biology, bacterial therapeutics\n  Subdomains: Biotech, Microbiome\n  Keywords: synthetic biology, engineered bacteria, cancer therapy, probiotic\n  Related_titles: Method for mRNA Delivery Using Lipid Nanoparticles, CRISPR-Cas9 System for Targeted Gene Editing, Bispecific Antibodies Targeting PD-1 and CTLA-4, Engineered CAR-T Cells with Enhanced Tumor Targeting, Microbiome-Based Therapeutics for Inflammatory Bowel Disease, Scalable Process for Manufacturing Exosome Therapeutics, Synthetic Biology Platform for On-Demand Therapeutic Protein Production, AI-Based Platform for De Novo Protein Design, Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues, High-Throughput Screening Platform for Antibody Discovery, RNA-Based Vaccine Platform for Infectious Diseases, Organs-on-Chips for Drug Toxicity Testing, Machine Learning Platform for Predicting Drug-Target Interactions, Nanobody Therapeutics for Neurodegenerative Diseases, Gene Therapy for Age-Related Macular Degeneration, Continuous Manufacturing Process for mRNA Vaccines, PROTAC Technology for Protein Degradation, Real-Time Pathogen Detection System Using Metagenomic Sequencing, Single-Cell Multi-omics Analysis of the Immune Response in COVID-19, CRISPR-Engineered T Cells in Patients with Refractory Cancer, Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment, In Vivo Base Editing Corrects Hutchinson–Gilford Progeria Syndrome in Mice, Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials, Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research, Enzyme-Free Biosensor for Continuous Glucose Monitoring, Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome, Massively Parallel Screening of Protein Design Space Using Machine Learning, PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer\n- ID: patents_BT-PAT-017 | Title: Continuous Manufacturing Process for mRNA Vaccines | Domain: Healthcare | Knowledge Type: patent | Publication Date: 2022-08-11 | Quality Score: 0.87 | Country: United States | Score: 0.6223\n  Assignees: Continuous Biologics Inc.\n  Inventors: Trout, Bernhardt L., Jensen, Klavs F., Chakravarthy, Ankur\n  Technologies: continuous manufacturing, mRNA production, process intensification\n  Subdomains: Biotech, Biologics Manufacturing\n  Keywords: biomanufacturing, continuous manufacturing, mRNA vaccine, process intensification\n  Related_titles: Method for mRNA Delivery Using Lipid Nanoparticles, CRISPR-Cas9 System for Targeted Gene Editing, Bispecific Antibodies Targeting PD-1 and CTLA-4, Engineered CAR-T Cells with Enhanced Tumor Targeting, Microbiome-Based Therapeutics for Inflammatory Bowel Disease, Scalable Process for Manufacturing Exosome Therapeutics, Synthetic Biology Platform for On-Demand Therapeutic Protein Production, AI-Based Platform for De Novo Protein Design, Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues, High-Throughput Screening Platform for Antibody Discovery, Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy, RNA-Based Vaccine Platform for Infectious Diseases, Organs-on-Chips for Drug Toxicity Testing, Machine Learning Platform for Predicting Drug-Target Interactions, Nanobody Therapeutics for Neurodegenerative Diseases, Gene Therapy for Age-Related Macular Degeneration, PROTAC Technology for Protein Degradation, Real-Time Pathogen Detection System Using Metagenomic Sequencing, Single-Cell Multi-omics Analysis of the Immune Response in COVID-19, CRISPR-Engineered T Cells in Patients with Refractory Cancer, Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment, In Vivo Base Editing Corrects Hutchinson–Gilford Progeria Syndrome in Mice, Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials, Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research, Enzyme-Free Biosensor for Continuous Glucose Monitoring, Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome, Massively Parallel Screening of Protein Design Space Using Machine Learning, PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer\n- ID: journals_BT-JRN-010 | Title: PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer | Domain: Healthcare | Knowledge Type: journal | Publication Date: 2023-04-18 | Quality Score: 0.93 | Country: United States | Score: 0.6203\n  Subdomains: Biotech, Drug Discovery\n  Keywords: cancer therapy, PROTAC, undruggable targets, transcription factors, targeted protein degradation\n  Related_titles: Method for mRNA Delivery Using Lipid Nanoparticles, CRISPR-Cas9 System for Targeted Gene Editing, Bispecific Antibodies Targeting PD-1 and CTLA-4, Engineered CAR-T Cells with Enhanced Tumor Targeting, Microbiome-Based Therapeutics for Inflammatory Bowel Disease, Scalable Process for Manufacturing Exosome Therapeutics, Synthetic Biology Platform for On-Demand Therapeutic Protein Production, AI-Based Platform for De Novo Protein Design, Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues, High-Throughput Screening Platform for Antibody Discovery, Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy, RNA-Based Vaccine Platform for Infectious Diseases, Organs-on-Chips for Drug Toxicity Testing, Machine Learning Platform for Predicting Drug-Target Interactions, Nanobody Therapeutics for Neurodegenerative Diseases, Gene Therapy for Age-Related Macular Degeneration, Continuous Manufacturing Process for mRNA Vaccines, PROTAC Technology for Protein Degradation, Real-Time Pathogen Detection System Using Metagenomic Sequencing, Single-Cell Multi-omics Analysis of the Immune Response in COVID-19, CRISPR-Engineered T Cells in Patients with Refractory Cancer, Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment, In Vivo Base Editing Corrects Hutchinson–Gilford Progeria Syndrome in Mice, Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials, Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research, Enzyme-Free Biosensor for Continuous Glucose Monitoring, Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome, Massively Parallel Screening of Protein Design Space Using Machine Learning\n- ID: patents_BT-PAT-015 | Title: Nanobody Therapeutics for Neurodegenerative Diseases | Domain: Healthcare | Knowledge Type: patent | Publication Date: 2021-04-08 | Quality Score: 0.86 | Country: United States | Score: 0.6187\n  Assignees: NeuroNano Therapeutics\n  Inventors: Muyldermans, Serge, Steyaert, Jan, De Genst, Erwin\n  Technologies: nanobodies, blood-brain barrier, protein targeting\n  Subdomains: Biotech, Neuroscience\n  Keywords: nanobody, neurodegenerative disease, blood-brain barrier, protein misfolding\n  Related_titles: Method for mRNA Delivery Using Lipid Nanoparticles, CRISPR-Cas9 System for Targeted Gene Editing, Bispecific Antibodies Targeting PD-1 and CTLA-4, Engineered CAR-T Cells with Enhanced Tumor Targeting, Microbiome-Based Therapeutics for Inflammatory Bowel Disease, Scalable Process for Manufacturing Exosome Therapeutics, Synthetic Biology Platform for On-Demand Therapeutic Protein Production, AI-Based Platform for De Novo Protein Design, Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues, High-Throughput Screening Platform for Antibody Discovery, Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy, RNA-Based Vaccine Platform for Infectious Diseases, Organs-on-Chips for Drug Toxicity Testing, Machine Learning Platform for Predicting Drug-Target Interactions, Gene Therapy for Age-Related Macular Degeneration, Continuous Manufacturing Process for mRNA Vaccines, PROTAC Technology for Protein Degradation, Real-Time Pathogen Detection System Using Metagenomic Sequencing, Single-Cell Multi-omics Analysis of the Immune Response in COVID-19, CRISPR-Engineered T Cells in Patients with Refractory Cancer, Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment, In Vivo Base Editing Corrects Hutchinson–Gilford Progeria Syndrome in Mice, Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials, Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research, Enzyme-Free Biosensor for Continuous Glucose Monitoring, Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome, Massively Parallel Screening of Protein Design Space Using Machine Learning, PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer\n- ID: patents_MB-PAT-004 | Title: Urban Air Mobility Traffic Management System | Domain: Mobility | Knowledge Type: patent | Publication Date: 2023-01-26 | Quality Score: 0.87 | Country: United States | Score: 0.6166\n  Assignees: UrbanAir Systems\n  Inventors: Yang, Xiaoqian, Kopardekar, Parimal, Johnson, Marcus\n  Technologies: urban air mobility, air traffic management, distributed systems\n  Subdomains: Urban Air Mobility, Traffic Management\n  Keywords: urban air mobility, eVTOL, air traffic management, UAM\n  Related_titles: Urban Air Mobility: Infrastructure Requirements and Operational Challenges, Sustainable Aviation Fuel Production from Municipal Waste, AI-Enabled Traffic Signal Control System, Machine Learning Approaches for Traffic Signal Control: A Comparative Analysis\n- ID: patents_MB-PAT-014 | Title: Drone-Based Emergency Medical Supply Delivery System | Domain: Mobility | Knowledge Type: patent | Publication Date: 2022-06-16 | Quality Score: 0.85 | Country: United States | Score: 0.6164\n  Assignees: MedFly Systems\n  Inventors: Nguyen, Thuy, Okonkwo, Chima, Ramos, Isabella\n  Technologies: autonomous drones, medical logistics, remote sensing\n  Subdomains: Drone Technology, Healthcare Logistics\n  Keywords: medical delivery, emergency response, drone delivery, healthcare logistics\n"
+  "trend_summary": "- ID: patents_MB-PAT-002 | Title: Electric Vehicle Battery Thermal Management System | Domain: Mobility | Knowledge Type: patent | Publication Date: 2021-08-12 | Quality Score: 0.94 | Country: United States | Score: 0.7886\n  Assignees: EnergyTech Solutions\n  Inventors: Chen, Jian, Patel, Nisha, Schmidt, Erik\n  Technologies: battery technology, thermal management, electric vehicles\n  Subdomains: Automotive Technology, Electrification\n  Keywords: battery cooling, thermal management, electric vehicle, battery longevity\n  Related_titles: Dynamic Wireless Charging System for Electric Vehicles, Solid-State Battery with Silicon-Carbon Composite Anode, Lightweight Composite Materials for Electric Vehicle Structures, Robotic Autonomous Charging System for Electric Vehicles, Comprehensive Analysis of Electric Vehicle Battery Degradation Across Multiple Vehicle Models and Usage Patterns, Secure and Efficient Vehicle-to-Grid Integration for Electric Vehicle Fleets, Quantifying Environmental Benefits of Electric Last-Mile Delivery: A Life Cycle Assessment, Advanced LiDAR System for Autonomous Vehicle Navigation, Machine Learning System for Predictive Vehicle Maintenance, Adaptive Vehicle Crash Avoidance System\n- ID: journals_MB-JRN-006 | Title: Secure and Efficient Vehicle-to-Grid Integration for Electric Vehicle Fleets | Domain: Mobility | Knowledge Type: journal | Publication Date: 2023-02-20 | Quality Score: 0.89 | Country: United States | Score: 0.7851\n  Subdomains: Electrification, Energy Systems\n  Keywords: electric vehicles, vehicle-to-grid, V2G, fleet management, grid services\n  Related_titles: Electric Vehicle Battery Thermal Management System, Solid-State Battery with Silicon-Carbon Composite Anode, Dynamic Wireless Charging System for Electric Vehicles, Robotic Autonomous Charging System for Electric Vehicles, Comprehensive Analysis of Electric Vehicle Battery Degradation Across Multiple Vehicle Models and Usage Patterns, Quantifying Environmental Benefits of Electric Last-Mile Delivery: A Life Cycle Assessment\n- ID: patents_MB-PAT-009 | Title: Dynamic Wireless Charging System for Electric Vehicles | Domain: Mobility | Knowledge Type: patent | Publication Date: 2021-05-20 | Quality Score: 0.9 | Country: United States | Score: 0.7829\n  Assignees: ElectroRoad Systems\n  Inventors: Choi, Sung-Yul, Bennett, Rebecca, Lombardi, Francesco\n  Technologies: electric vehicles, power electronics, wireless charging\n  Subdomains: Electrification, Infrastructure\n  Keywords: electric vehicle, dynamic charging, wireless power transfer, charging infrastructure\n  Related_titles: Robotic Autonomous Charging System for Electric Vehicles, Electric Vehicle Battery Thermal Management System, Solid-State Battery with Silicon-Carbon Composite Anode, Lightweight Composite Materials for Electric Vehicle Structures, Comprehensive Analysis of Electric Vehicle Battery Degradation Across Multiple Vehicle Models and Usage Patterns, Secure and Efficient Vehicle-to-Grid Integration for Electric Vehicle Fleets, Quantifying Environmental Benefits of Electric Last-Mile Delivery: A Life Cycle Assessment, Smart Infrastructure for Connected and Autonomous Vehicles, Hyperloop Capsule Suspension and Propulsion System, Urban Air Mobility: Infrastructure Requirements and Operational Challenges, Hydrogen Fuel Cell System with Enhanced Power Density\n- ID: patents_MB-PAT-020 | Title: Robotic Autonomous Charging System for Electric Vehicles | Domain: Mobility | Knowledge Type: patent | Publication Date: 2023-04-06 | Quality Score: 0.88 | Country: United States | Score: 0.7656\n  Assignees: AutoCharge Robotics\n  Inventors: Lindholm, Erik, Gupta, Anjali, Torres, Miguel\n  Technologies: computer vision, robotics, electric vehicle charging\n  Subdomains: Electrification, Robotics\n  Keywords: electric vehicle, charging infrastructure, robotic charging, autonomous charging\n  Related_titles: Dynamic Wireless Charging System for Electric Vehicles, Electric Vehicle Battery Thermal Management System, Solid-State Battery with Silicon-Carbon Composite Anode, Lightweight Composite Materials for Electric Vehicle Structures, Modular Autonomous Delivery Robot System, Comprehensive Analysis of Electric Vehicle Battery Degradation Across Multiple Vehicle Models and Usage Patterns, Secure and Efficient Vehicle-to-Grid Integration for Electric Vehicle Fleets, Quantifying Environmental Benefits of Electric Last-Mile Delivery: A Life Cycle Assessment, Autonomous Navigation in Unstructured Dynamic Environments: Challenges and Recent Advances\n- ID: patents_MB-PAT-013 | Title: Lightweight Composite Materials for Electric Vehicle Structures | Domain: Mobility | Knowledge Type: patent | Publication Date: 2021-12-09 | Quality Score: 0.9 | Country: United States | Score: 0.7297\n  Assignees: LightweightEV Materials\n  Inventors: Wu, Hong, Johannson, Lars, Matthews, Catherine\n  Technologies: composite materials, lightweight structures, manufacturing processes\n  Subdomains: Materials Technology, Vehicle Structures\n  Keywords: electric vehicle, carbon fiber, lightweight materials, battery protection\n  Related_titles: Electric Vehicle Battery Thermal Management System, Solid-State Battery with Silicon-Carbon Composite Anode, Dynamic Wireless Charging System for Electric Vehicles, Robotic Autonomous Charging System for Electric Vehicles\n- ID: journals_MB-JRN-001 | Title: Comprehensive Analysis of Electric Vehicle Battery Degradation Across Multiple Vehicle Models and Usage Patterns | Domain: Mobility | Knowledge Type: journal | Publication Date: 2022-06-10 | Quality Score: 0.93 | Country: Netherlands | Score: 0.7291\n  Subdomains: Electrification, Battery Technology\n  Keywords: electric vehicles, battery degradation, lithium-ion, battery lifetime, usage patterns\n  Related_titles: Electric Vehicle Battery Thermal Management System, Solid-State Battery with Silicon-Carbon Composite Anode, Dynamic Wireless Charging System for Electric Vehicles, Robotic Autonomous Charging System for Electric Vehicles, Secure and Efficient Vehicle-to-Grid Integration for Electric Vehicle Fleets, Quantifying Environmental Benefits of Electric Last-Mile Delivery: A Life Cycle Assessment\n- ID: journals_MB-JRN-008 | Title: Quantifying Environmental Benefits of Electric Last-Mile Delivery: A Life Cycle Assessment | Domain: Mobility | Knowledge Type: journal | Publication Date: 2022-12-08 | Quality Score: 0.91 | Country: Netherlands | Score: 0.7066\n  Subdomains: Electrification, Last-Mile Delivery\n  Keywords: last-mile logistics, electric delivery vehicles, life cycle assessment, urban freight, sustainability\n  Related_titles: Electric Vehicle Battery Thermal Management System, Solid-State Battery with Silicon-Carbon Composite Anode, Dynamic Wireless Charging System for Electric Vehicles, Robotic Autonomous Charging System for Electric Vehicles, Comprehensive Analysis of Electric Vehicle Battery Degradation Across Multiple Vehicle Models and Usage Patterns, Secure and Efficient Vehicle-to-Grid Integration for Electric Vehicle Fleets, Modular Autonomous Delivery Robot System\n- ID: patents_MB-PAT-012 | Title: Smart Infrastructure for Connected and Autonomous Vehicles | Domain: Mobility | Knowledge Type: patent | Publication Date: 2022-07-28 | Quality Score: 0.89 | Country: United States | Score: 0.7027\n  Assignees: SmartRoad Technologies\n  Inventors: Zhang, Wei, Thompson, Sarah, Ochieng, Washington\n  Technologies: connected infrastructure, V2I communication, edge computing\n  Subdomains: Connected Vehicles, Infrastructure\n  Keywords: connected vehicles, V2I, smart infrastructure, cooperative perception\n  Related_titles: V2X Communication System with Enhanced Security Protocol, Adaptive Vehicle Crash Avoidance System, Dynamic Wireless Charging System for Electric Vehicles, Hyperloop Capsule Suspension and Propulsion System, Urban Air Mobility: Infrastructure Requirements and Operational Challenges\n- ID: journals_MB-JRN-004 | Title: A Comprehensive Review of Hydrogen Fuel Cell Technologies for Heavy-Duty Transportation | Domain: Mobility | Knowledge Type: journal | Publication Date: 2021-06-15 | Quality Score: 0.92 | Country: United Kingdom | Score: 0.6956\n  Subdomains: Alternative Powertrains, Commercial Vehicles\n  Keywords: commercial vehicles, zero emission, hydrogen fuel cell, heavy-duty transportation, sustainable mobility\n  Related_titles: Hydrogen Fuel Cell System with Enhanced Power Density, Adaptive Aerodynamic System for Commercial Vehicles\n- ID: patents_MB-PAT-007 | Title: Hydrogen Fuel Cell System with Enhanced Power Density | Domain: Mobility | Knowledge Type: patent | Publication Date: 2022-10-13 | Quality Score: 0.88 | Country: United States | Score: 0.6925\n  Assignees: HydroPower Mobility\n  Inventors: Yoshida, Takashi, Miller, Sarah, Weber, Andreas\n  Technologies: fuel cell, hydrogen power, power electronics\n  Subdomains: Alternative Powertrains, Commercial Vehicles\n  Keywords: hydrogen, fuel cell, commercial vehicles, zero emission\n  Related_titles: Adaptive Aerodynamic System for Commercial Vehicles, A Comprehensive Review of Hydrogen Fuel Cell Technologies for Heavy-Duty Transportation, Dynamic Wireless Charging System for Electric Vehicles\n"
 }

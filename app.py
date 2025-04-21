@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from flask_socketio import SocketIO
 import logging
 import json
+import time
 
 # Initialize Flask app and SocketIO
 app = Flask(__name__)
@@ -24,7 +25,7 @@ analyst = AnalystAgent(socket_instance=socketio)
 
 # Store recent scout results
 recent_scout_results = []
-MAX_STORED_RESULTS = 10
+MAX_STORED_RESULTS = 20  # Increased max results to store
 
 #________________SOCKET.IO EVENT HANDLERS_________________
 
@@ -81,11 +82,13 @@ def run_scout_query():
         logger.info(f"Processing scout query: {data.get('prompt')[:50]}...")
         socketio.emit('scout_log', {'message': 'Initiating Scout Agent query...'})
         
-        # Process query and store result if successful
+        # Process query
         response, status_code = scout.process_scout_query(data)
         
         if status_code == 200:
+            # Add timestamp and prompt
             response['prompt'] = data.get('prompt')
+            response['timestamp'] = int(time.time())
             
             # Store result
             global recent_scout_results
@@ -106,7 +109,7 @@ def run_scout_query():
         logger.error(error_msg)
         socketio.emit('scout_log', {'message': f'⚠️ Error: {error_msg}'})
         return jsonify({"error": error_msg}), 500
-    
+
 #___________________ANALYST AGENT ENDPOINTS____________________
 
 @app.route("/agent/analyst/process", methods=["POST"])

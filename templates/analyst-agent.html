@@ -58,7 +58,7 @@
                 Paste Scout Data
               </button>
               <button class="tab-btn" data-tab="scout-results-tab">
-                Scout Results
+                Scout Results History
               </button>
             </div>
 
@@ -88,14 +88,13 @@
             </div>
 
             <div class="tab-content" id="scout-results-tab">
-              <!-- Scout Results Selection -->
-              <div class="form-group">
-                <label for="scout-results-select"
-                  >Select Scout Query Result</label
-                >
-                <select id="scout-results-select" class="scout-select">
-                  <option value="">Select a previous Scout query...</option>
-                </select>
+              <!-- Scout Results History -->
+              <div class="scout-results-container" id="scout-results-container">
+                <!-- Dynamic scout results will be loaded here -->
+                <div class="no-results-message">
+                  <i class="fas fa-search"></i>
+                  <p>No Scout results available. Run some queries first.</p>
+                </div>
               </div>
 
               <div id="scout-result-preview" class="scout-preview">
@@ -103,17 +102,6 @@
                   <i class="fas fa-search"></i>
                   <p>Select a Scout result to preview</p>
                 </div>
-              </div>
-
-              <div class="form-actions">
-                <button
-                  id="analyze-selected-button"
-                  class="primary-button"
-                  onclick="processSelectedScoutData()"
-                  disabled
-                >
-                  <i class="fas fa-chart-line"></i> Analyze Selected Data
-                </button>
               </div>
             </div>
 
@@ -126,10 +114,7 @@
                 </button>
               </div>
               <div id="console-log" class="console-log">
-                <div class="log-message system">
-                  <span class="log-timestamp">System</span> Analyst Agent ready
-                  to process data
-                </div>
+                <div class="log-message system"><span class="log-timestamp">System</span> Analyst Agent ready to process data</div>
               </div>
             </div>
           </div>

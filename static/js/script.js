@@ -9,7 +9,9 @@ let graphData = null;
 let forceGraph = null;
 let selectedNodeId = null;
 let currentNodeSize = 8;
-const scoutResults = [];
+
+// Scout results storage
+let scoutResults = [];
 
 // ==================================================
 // CORE UTILITY FUNCTIONS (SHARED ACROSS ALL TEMPLATES)
@@ -224,9 +226,7 @@ function connectSocket() {
 
   // Listen for scout results
   socket.on("scout_result", (data) => {
-    if (window.addScoutResult && typeof window.addScoutResult === "function") {
-      addScoutResult(data);
-    }
+    addScoutResult(data);
   });
 }
 
@@ -326,6 +326,10 @@ function sendScoutQuery() {
       document.getElementById("scout-response").innerHTML =
         formatJsonResponse(data);
       displayStructuredData(data);
+
+      // Store result (now handled by the socket)
+      // The socket will receive the result and call addScoutResult
+
       logToConsole("Results displayed successfully", "system");
 
       // Re-enable run button
@@ -492,34 +496,34 @@ function switchTab(tabId) {
     .classList.add("active");
 }
 
-// Add a new scout result to the selection
+/**
+ * Add a new scout result to storage and UI
+ */
 function addScoutResult(data) {
   if (!data || !data.prompt) return;
 
+  // Create a unique ID and timestamp
   const timestamp = new Date().toLocaleTimeString();
   const resultId = "scout-" + Date.now();
+  const date = new Date().toLocaleDateString();
 
-  // Add to storage array
-  scoutResults.push({
+  // Create result object
+  const resultObject = {
     id: resultId,
     timestamp: timestamp,
+    date: date,
     prompt: data.prompt,
     data: data,
-  });
+  };
 
-  // Add to dropdown
-  const select = document.getElementById("scout-results-select");
-  const option = document.createElement("option");
-  option.value = resultId;
-  option.textContent = `${timestamp}: "${data.prompt.substring(0, 30)}${
-    data.prompt.length > 30 ? "..." : ""
-  }"`;
-  select.appendChild(option);
+  // Add to storage array
+  scoutResults.push(resultObject);
 
-  // Enable select if this is the first result
-  if (scoutResults.length === 1) {
-    document.getElementById("analyze-selected-button").disabled = false;
-  }
+  // Save to localStorage
+  saveScoutResultsToLocalStorage();
+
+  // Update UI if we're on the Analyst page
+  updateScoutResultsUI();
 
   logToConsole(
     `Added Scout result for "${data.prompt.substring(0, 20)}..."`,
@@ -527,162 +531,341 @@ function addScoutResult(data) {
   );
 }
 
-// Handle when user selects a scout result
-function handleScoutResultSelection() {
-  const select = document.getElementById("scout-results-select");
-  const resultId = select.value;
+/**
+ * Save scout results to localStorage
+ */
+function saveScoutResultsToLocalStorage() {
+  try {
+    // Create a version suitable for storage
+    const storageData = scoutResults.map((result) => ({
+      id: result.id,
+      timestamp: result.timestamp,
+      date: result.date,
+      prompt: result.prompt,
+      // Only store essential data to save space
+      summary: result.data.response_to_user_prompt || "",
+      trendsCount: result.data.relevant_trends?.length || 0,
+    }));
 
-  if (!resultId) {
-    document.getElementById("scout-result-preview").innerHTML = `
-            <div class="placeholder-message">
-              <i class="fas fa-search"></i>
-              <p>Select a Scout result to preview</p>
-            </div>
-          `;
-    document.getElementById("analyze-selected-button").disabled = true;
+    localStorage.setItem("scoutResultsIndex", JSON.stringify(storageData));
+
+    // Store each full result separately to avoid size limits
+    scoutResults.forEach((result) => {
+      localStorage.setItem(
+        `scoutResult_${result.id}`,
+        JSON.stringify(result.data)
+      );
+    });
+
+    logToConsole("Scout results saved to localStorage", "system");
+  } catch (e) {
+    logToConsole(`Error saving to localStorage: ${e.message}`, "error");
+  }
+}
+
+/**
+ * Load scout results from localStorage
+ */
+function loadScoutResultsFromLocalStorage() {
+  try {
+    const storedIndex = localStorage.getItem("scoutResultsIndex");
+    if (!storedIndex) return;
+
+    const indexData = JSON.parse(storedIndex);
+
+    // Clear current results
+    scoutResults = [];
+
+    // Load each result
+    indexData.forEach((item) => {
+      const storedData = localStorage.getItem(`scoutResult_${item.id}`);
+      if (storedData) {
+        scoutResults.push({
+          id: item.id,
+          timestamp: item.timestamp,
+          date: item.date,
+          prompt: item.prompt,
+          data: JSON.parse(storedData),
+        });
+      }
+    });
+
+    logToConsole(
+      `Loaded ${scoutResults.length} scout results from localStorage`,
+      "system"
+    );
+
+    // Update UI if we're on the right page
+    updateScoutResultsUI();
+  } catch (e) {
+    logToConsole(`Error loading from localStorage: ${e.message}`, "error");
+  }
+}
+
+/**
+ * Delete a scout result
+ */
+function deleteScoutResult(resultId) {
+  // Remove from array
+  scoutResults = scoutResults.filter((result) => result.id !== resultId);
+
+  // Remove from localStorage
+  localStorage.removeItem(`scoutResult_${resultId}`);
+
+  // Update index
+  saveScoutResultsToLocalStorage();
+
+  // Update UI
+  updateScoutResultsUI();
+
+  logToConsole(`Deleted scout result ${resultId}`, "info");
+  showToast("Result deleted");
+}
+
+/**
+ * Update Scout Results UI in Analyst Agent page
+ */
+function updateScoutResultsUI() {
+  // Check if we're on the analyst page
+  const resultsContainer = document.getElementById("scout-results-container");
+  if (!resultsContainer) return;
+
+  // Clear container
+  resultsContainer.innerHTML = "";
+
+  if (scoutResults.length === 0) {
+    resultsContainer.innerHTML = `
+      <div class="no-results-message">
+        <i class="fas fa-search"></i>
+        <p>No Scout results available. Run some queries first.</p>
+      </div>
+    `;
     return;
   }
 
-  // Find the selected result
-  const result = scoutResults.find((r) => r.id === resultId);
-  if (!result) return;
-
-  // Show preview
-  const previewEl = document.getElementById("scout-result-preview");
-  previewEl.innerHTML = `
-          <div class="scout-preview-content">
-            <div class="preview-item">
-              <strong>Prompt:</strong> 
-              <p>${result.data.prompt}</p>
-            </div>
-            <div class="preview-item">
-              <strong>Trends Found:</strong> 
-              <p>${result.data.relevant_trends?.length || 0} items</p>
-            </div>
-            <div class="preview-item">
-              <strong>Timestamp:</strong> 
-              <p>${result.timestamp}</p>
-            </div>
-          </div>
-        `;
-
-  document.getElementById("analyze-selected-button").disabled = false;
-}
-
-// Process the selected scout data
-function processSelectedScoutData() {
-  const select = document.getElementById("scout-results-select");
-  const resultId = select.value;
-
-  if (!resultId) {
-    logToConsole("No Scout result selected", "warning");
-    return;
-  }
-
-  const result = scoutResults.find((r) => r.id === resultId);
-  if (!result) {
-    logToConsole("Selected result not found", "error");
-    return;
-  }
-
-  logToConsole(
-    `Processing Scout data from "${result.data.prompt.substring(0, 20)}..."`,
-    "info"
-  );
-  processAnalystQuery(result.data);
-}
-
-// Logging Function
-function logToConsole(message, type = "info") {
-  const consoleLog = document.getElementById("console-log");
-  const now = new Date();
-  const timestamp = now.toLocaleTimeString();
-
-  const logDiv = document.createElement("div");
-  logDiv.className = `log-message ${type}`;
-  logDiv.innerHTML = `<span class="log-timestamp">${timestamp}</span> ${message}`;
-
-  consoleLog.appendChild(logDiv);
-  consoleLog.scrollTop = consoleLog.scrollHeight;
-}
-
-// Clear Logs
-function clearLogs() {
-  const consoleLog = document.getElementById("console-log");
-  consoleLog.innerHTML = "";
-  logToConsole("Logs cleared", "system");
-}
-
-// Clear Form
-function clearForm() {
-  document.getElementById("scout-data-input").value = "";
-  document.getElementById("graph-container").innerHTML = `
-          <div class="placeholder-message">
-            <i class="fas fa-project-diagram"></i>
-            <p>Analyze Scout data to generate Knowledge Graph</p>
-          </div>
-        `;
-  document.getElementById("insights-container").innerHTML = `
-          <div class="placeholder-message">
-            <i class="fas fa-lightbulb"></i>
-            <p>Insights will appear after analysis</p>
-          </div>
-        `;
-  document.getElementById("data-cards-container").innerHTML = "";
-  logToConsole("Form cleared", "info");
-}
-
-// Tab switching
-function switchTab(tabId) {
-  // Hide all tab contents
-  document.querySelectorAll(".tab-content").forEach((tab) => {
-    tab.classList.remove("active");
+  // Sort results by timestamp (newest first)
+  const sortedResults = [...scoutResults].sort((a, b) => {
+    return (
+      new Date(b.date + " " + b.timestamp) -
+      new Date(a.date + " " + a.timestamp)
+    );
   });
 
-  // Deactivate all tab buttons
-  document.querySelectorAll(".tab-btn").forEach((btn) => {
-    btn.classList.remove("active");
+  // Group by date
+  const resultsByDate = {};
+  sortedResults.forEach((result) => {
+    if (!resultsByDate[result.date]) {
+      resultsByDate[result.date] = [];
+    }
+    resultsByDate[result.date].push(result);
   });
 
-  // Activate selected tab
-  document.getElementById(tabId).classList.add("active");
-  document
-    .querySelector(`.tab-btn[data-tab="${tabId}"]`)
-    .classList.add("active");
+  // Create date groups
+  Object.keys(resultsByDate)
+    .sort((a, b) => new Date(b) - new Date(a))
+    .forEach((date) => {
+      // Create date header
+      const dateHeader = document.createElement("div");
+      dateHeader.className = "results-date-header";
+      dateHeader.textContent = date;
+      resultsContainer.appendChild(dateHeader);
+
+      // Create results grid for this date
+      const resultsGrid = document.createElement("div");
+      resultsGrid.className = "scout-results-grid";
+
+      // Add result cards
+      resultsByDate[date].forEach((result) => {
+        const card = createScoutResultCard(result);
+        resultsGrid.appendChild(card);
+      });
+
+      resultsContainer.appendChild(resultsGrid);
+    });
 }
 
-// Process Analyst Query
-function processAnalystQuery(predefinedData = null) {
-  // Either use predefined data or get from textarea
-  let scoutData;
+/**
+ * Create a Scout Result Card
+ */
+function createScoutResultCard(result) {
+  const card = document.createElement("div");
+  card.className = "scout-result-card";
+  card.setAttribute("data-id", result.id);
 
-  if (predefinedData) {
-    scoutData = predefinedData;
-  } else {
-    const scoutDataInput = document.getElementById("scout-data-input").value;
+  // Determine color based on domain (if available)
+  let mainDomain = "Unknown";
+  let domainColor = "#6c757d"; // default gray
 
-    // Validate input
-    if (!scoutDataInput.trim()) {
+  if (result.data.relevant_trends && result.data.relevant_trends.length > 0) {
+    // Count domains to find the most common one
+    const domainCounts = {};
+    result.data.relevant_trends.forEach((trend) => {
+      if (trend.domain) {
+        domainCounts[trend.domain] = (domainCounts[trend.domain] || 0) + 1;
+      }
+    });
+
+    // Find the most common domain
+    let maxCount = 0;
+    Object.keys(domainCounts).forEach((domain) => {
+      if (domainCounts[domain] > maxCount) {
+        maxCount = domainCounts[domain];
+        mainDomain = domain;
+      }
+    });
+
+    // Set color based on domain
+    switch (mainDomain.toLowerCase()) {
+      case "healthcare":
+        domainColor = "#28a745"; // green
+        break;
+      case "mobility":
+        domainColor = "#fd7e14"; // orange
+        break;
+      case "technology":
+        domainColor = "#17a2b8"; // teal
+        break;
+    }
+  }
+
+  // Format timestamp
+  const formattedTime = result.timestamp;
+
+  // Get number of trends
+  const trendsCount = result.data.relevant_trends?.length || 0;
+
+  // Truncate prompt for display
+  const promptDisplay =
+    result.prompt.length > 60
+      ? result.prompt.substring(0, 60) + "..."
+      : result.prompt;
+
+  // Generate card HTML
+  card.innerHTML = `
+    <div class="card-header" style="border-color: ${domainColor}">
+      <div class="card-time">${formattedTime}</div>
+      <div class="card-actions">
+        <button class="card-action-btn analyze-btn" title="Analyze with Analyst Agent">
+          <i class="fas fa-chart-line"></i>
+        </button>
+        <button class="card-action-btn delete-btn" title="Delete this result">
+          <i class="fas fa-trash"></i>
+        </button>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="card-prompt">${promptDisplay}</div>
+      <div class="card-stats">
+        <span class="card-domain" style="background-color: ${domainColor}">${mainDomain}</span>
+        <span class="card-trends-count">${trendsCount} trends</span>
+      </div>
+    </div>
+  `;
+
+  // Add event listeners
+  card.querySelector(".analyze-btn").addEventListener("click", () => {
+    processScoutResultById(result.id);
+  });
+
+  card.querySelector(".delete-btn").addEventListener("click", (e) => {
+    e.stopPropagation(); // Prevent card click
+    deleteScoutResult(result.id);
+  });
+
+  // Make whole card clickable to preview
+  card.addEventListener("click", () => {
+    previewScoutResult(result);
+  });
+
+  return card;
+}
+
+/**
+ * Preview a Scout Result
+ */
+function previewScoutResult(result) {
+  console.log("[result.id:]", result.id);
+  const previewElement = document.getElementById("scout-result-preview");
+  if (!previewElement) return;
+
+  previewElement.innerHTML = `
+      <div class="preview-header">
+        <h4>Query: "${result.prompt}"</h4>
+        <span class="preview-timestamp">${result.date} at ${
+    result.timestamp
+  }</span>
+      </div>
+      <div class="preview-content">
+        <div class="preview-response">
+          ${
+            result.data.response_to_user_prompt ||
+            "No direct response available"
+          }
+        </div>
+        <div class="preview-stats">
+          <div class="preview-stat">
+            <span class="stat-label">Trends Found:</span>
+            <span class="stat-value">${
+              result.data.relevant_trends?.length || 0
+            }</span>
+          </div>
+          <div class="preview-stat">
+            <span class="stat-label">Data Available:</span>
+            <span class="stat-value">${result.data.isData ? "Yes" : "No"}</span>
+          </div>
+        </div>
+        <div class="preview-actions">
+          <button class="primary-button" onclick="processScoutResultById('${
+            result.id
+          }')">
+            <i class="fas fa-chart-line"></i> Analyze This Data
+          </button>
+        </div>
+      </div>
+    `;
+
+  // Check if analyze button exists before trying to enable it
+  const analyzeButton = document.getElementById("analyze-selected-button");
+  if (analyzeButton) {
+    analyzeButton.disabled = false;
+  }
+}
+
+function processAnalystQuery(scoutData) {
+  // If no data was passed, try to get it from the textarea
+  if (!scoutData) {
+    const scoutDataInput = document.getElementById("scout-data-input");
+    if (!scoutDataInput || !scoutDataInput.value.trim()) {
       logToConsole("Please enter Scout Agent data", "warning");
       return;
     }
 
-    // Parse JSON
+    // Parse JSON input
     try {
-      scoutData = JSON.parse(scoutDataInput);
+      scoutData = JSON.parse(scoutDataInput.value);
     } catch (error) {
       logToConsole("Invalid JSON input: " + error.message, "error");
       return;
     }
   }
 
+  // Validate input
+  if (
+    !scoutData ||
+    !scoutData.relevant_trends ||
+    scoutData.relevant_trends.length === 0
+  ) {
+    logToConsole("Invalid scout data - no trends found", "warning");
+    return;
+  }
+
   // Show loading state
   document.getElementById("graph-container").innerHTML = `
-          <div class="loading">
-            <div class="spinner"></div>
-            <p>Generating Knowledge Graph...</p>
-          </div>
-        `;
+      <div class="loading">
+        <div class="spinner"></div>
+        <p>Generating Knowledge Graph...</p>
+      </div>
+    `;
 
   // Send to Analyst Agent
   logToConsole("Sending data to Analyst Agent for processing...", "info");
@@ -718,13 +901,101 @@ function processAnalystQuery(predefinedData = null) {
     .catch((error) => {
       logToConsole(`Analysis error: ${error}`, "error");
       document.getElementById("graph-container").innerHTML = `
-              <div class="error-message">
-                <i class="fas fa-exclamation-circle"></i>
-                <p>Error processing data: ${error.message}</p>
-              </div>
-            `;
+          <div class="error-message">
+            <i class="fas fa-exclamation-circle"></i>
+            <p>Error processing data: ${error.message}</p>
+          </div>
+        `;
     });
 }
+
+/**
+ * Process a Scout Result by ID
+ */
+function processScoutResultById(resultId) {
+  const result = scoutResults.find((r) => r.id === resultId);
+  if (!result) {
+    logToConsole(`Result with ID ${resultId} not found`, "error");
+    return;
+  }
+
+  logToConsole(
+    `Processing Scout result: ${result.prompt.substring(0, 30)}...`,
+    "info"
+  );
+  processAnalystQuery(result.data);
+
+  // Switch to the analysis tab
+  switchTab("paste-tab");
+}
+
+// Process Analyst Query
+function processAnalystQuery() {
+      const scoutDataInput = document.getElementById("scout-data-input").value;
+  
+      // Validate input
+      if (!scoutDataInput.trim()) {
+        logToConsole("Please enter Scout Agent data", "warning");
+        return;
+      }
+  
+      // Parse JSON
+      try {
+        scoutData = JSON.parse(scoutDataInput);
+      } catch (error) {
+        logToConsole("Invalid JSON input: " + error.message, "error");
+        return;
+      }
+  
+    // Show loading state
+    document.getElementById("graph-container").innerHTML = `
+      <div class="loading">
+        <div class="spinner"></div>
+        <p>Generating Knowledge Graph...</p>
+      </div>
+    `;
+  
+    // Send to Analyst Agent
+    logToConsole("Sending data to Analyst Agent for processing...", "info");
+    fetch(`${apiUrl}/agent/analyst/process`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(scoutData),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Server responded with status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        logToConsole("Analysis complete", "system");
+        graphData = data;
+  
+        // Populate domain filter
+        populateDomainFilter(data);
+  
+        // Render Graph with Force Graph
+        renderForceGraph(data);
+  
+        // Render Insights
+        renderInsights(data);
+  
+        // Generate data cards
+        generateDataCards(data);
+      })
+      .catch((error) => {
+        logToConsole(`Analysis error: ${error}`, "error");
+        document.getElementById("graph-container").innerHTML = `
+          <div class="error-message">
+            <i class="fas fa-exclamation-circle"></i>
+            <p>Error processing data: ${error.message}</p>
+          </div>
+        `;
+      });
+  }
 
 // Populate domain filter based on data
 function populateDomainFilter(data) {
@@ -779,7 +1050,6 @@ function filterByDomain(domain) {
 // Search for nodes
 function searchNodes() {
   const searchTerm = document.getElementById("node-search").value.toLowerCase();
-
   if (!searchTerm || !forceGraph) return;
 
   logToConsole(`Searching for: ${searchTerm}`, "info");
@@ -811,7 +1081,24 @@ function searchNodes() {
 
     // Highlight the node
     selectedNodeId = firstMatch.id;
-    forceGraph.refresh();
+
+    forceGraph.nodeColor((node) => {
+      if (node.id === selectedNodeId) {
+        return "#ff5252"; // Highlighted node color
+      }
+
+      // Default node colors
+      switch (node.type) {
+        case "trend":
+          return "#4a6de5";
+        case "technology":
+          return "#28a745";
+        case "keyword":
+          return "#fd7e14";
+        default:
+          return "#6c757d";
+      }
+    });
 
     // Show node details
     showNodeDetails(firstMatch);
@@ -1042,60 +1329,60 @@ function showNodeDetails(node) {
     node.title || "Node Details";
 
   let detailsHtml = `
-          <div class="node-details">
-            <p><strong>Type:</strong> ${node.type || "Unknown"}</p>
-            <p><strong>Domain:</strong> ${node.domain || "Not specified"}</p>
-        `;
+            <div class="node-details">
+              <p><strong>Type:</strong> ${node.type || "Unknown"}</p>
+              <p><strong>Domain:</strong> ${node.domain || "Not specified"}</p>
+          `;
 
   // Add additional details based on node type
   if (node.type === "trend") {
     const trend = node.data || {};
     detailsHtml += `
-            <p><strong>Knowledge Type:</strong> ${
-              trend.knowledge_type || "Not specified"
-            }</p>
-            <p><strong>Publication Date:</strong> ${
-              trend.publication_date || "Not specified"
-            }</p>
-            <p><strong>Similarity Score:</strong> ${(
-              trend.similarity_score || 0
-            ).toFixed(4)}</p>
-            <p><strong>Data Quality Score:</strong> ${(
-              trend.data_quality_score || 0
-            ).toFixed(2)}</p>
-            
-            <div class="details-section">
-              <h5>Summary</h5>
-              <p>${trend.summary_text || "No summary available"}</p>
-            </div>
-          `;
+              <p><strong>Knowledge Type:</strong> ${
+                trend.knowledge_type || "Not specified"
+              }</p>
+              <p><strong>Publication Date:</strong> ${
+                trend.publication_date || "Not specified"
+              }</p>
+              <p><strong>Similarity Score:</strong> ${(
+                trend.similarity_score || 0
+              ).toFixed(4)}</p>
+              <p><strong>Data Quality Score:</strong> ${(
+                trend.data_quality_score || 0
+              ).toFixed(2)}</p>
+              
+              <div class="details-section">
+                <h5>Summary</h5>
+                <p>${trend.summary_text || "No summary available"}</p>
+              </div>
+            `;
 
     // Add technologies if available
     if (trend.technologies && trend.technologies.length > 0) {
       detailsHtml += `
-              <div class="details-section">
-                <h5>Technologies</h5>
-                <ul>
-                  ${trend.technologies
-                    .map((tech) => `<li>${tech}</li>`)
-                    .join("")}
-                </ul>
-              </div>
-            `;
+                <div class="details-section">
+                  <h5>Technologies</h5>
+                  <ul>
+                    ${trend.technologies
+                      .map((tech) => `<li>${tech}</li>`)
+                      .join("")}
+                  </ul>
+                </div>
+              `;
     }
 
     // Add keywords if available
     if (trend.keywords && trend.keywords.length > 0) {
       detailsHtml += `
-              <div class="details-section">
-                <h5>Keywords</h5>
-                <ul>
-                  ${trend.keywords
-                    .map((keyword) => `<li>${keyword}</li>`)
-                    .join("")}
-                </ul>
-              </div>
-            `;
+                <div class="details-section">
+                  <h5>Keywords</h5>
+                  <ul>
+                    ${trend.keywords
+                      .map((keyword) => `<li>${keyword}</li>`)
+                      .join("")}
+                  </ul>
+                </div>
+              `;
     }
   }
 
@@ -1109,12 +1396,45 @@ function showNodeDetails(node) {
   document.querySelector(".close-modal").onclick = function () {
     modal.style.display = "none";
     selectedNodeId = null;
-    forceGraph.refresh();
+
+    // Instead of forceGraph.refresh();
+    // Use nodeColor to reset highlighting
+    if (forceGraph) {
+      forceGraph.nodeColor((node) => {
+        switch (node.type) {
+          case "trend":
+            return "#4a6de5";
+          case "technology":
+            return "#28a745";
+          case "keyword":
+            return "#fd7e14";
+          default:
+            return "#6c757d";
+        }
+      });
+    }
   };
+
   document.querySelector(".close-button").onclick = function () {
     modal.style.display = "none";
     selectedNodeId = null;
-    forceGraph.refresh();
+
+    // Instead of forceGraph.refresh();
+    // Use nodeColor to reset highlighting
+    if (forceGraph) {
+      forceGraph.nodeColor((node) => {
+        switch (node.type) {
+          case "trend":
+            return "#4a6de5";
+          case "technology":
+            return "#28a745";
+          case "keyword":
+            return "#fd7e14";
+          default:
+            return "#6c757d";
+        }
+      });
+    }
   };
 
   // Close when clicking outside
@@ -1122,7 +1442,23 @@ function showNodeDetails(node) {
     if (event.target === modal) {
       modal.style.display = "none";
       selectedNodeId = null;
-      forceGraph.refresh();
+
+      // Instead of forceGraph.refresh();
+      // Use nodeColor to reset highlighting
+      if (forceGraph) {
+        forceGraph.nodeColor((node) => {
+          switch (node.type) {
+            case "trend":
+              return "#4a6de5";
+            case "technology":
+              return "#28a745";
+            case "keyword":
+              return "#fd7e14";
+            default:
+              return "#6c757d";
+          }
+        });
+      }
     }
   };
 }
@@ -1191,50 +1527,54 @@ function showRelatedNodes() {
 
   logToConsole(`Found ${connectedNodeIds.size} related nodes`, "info");
 
-  // Highlight the connected nodes
-  forceGraph
-    .nodeColor((node) => {
-      if (node.id === selectedNodeId) {
-        return "#ff5252"; // Selected node
-      } else if (connectedNodeIds.has(node.id)) {
-        return "#ffab00"; // Connected nodes
-      }
+  // Update visual properties individually instead of chaining with .refresh()
 
-      // Default colors
-      switch (node.type) {
-        case "trend":
-          return "#4a6de5";
-        case "technology":
-          return "#28a745";
-        case "keyword":
-          return "#fd7e14";
-        default:
-          return "#6c757d";
-      }
-    })
-    .linkWidth((link) => {
-      const sourceId =
-        typeof link.source === "object" ? link.source.id : link.source;
-      const targetId =
-        typeof link.target === "object" ? link.target.id : link.target;
+  // Update node colors
+  forceGraph.nodeColor((node) => {
+    if (node.id === selectedNodeId) {
+      return "#ff5252"; // Selected node
+    } else if (connectedNodeIds.has(node.id)) {
+      return "#ffab00"; // Connected nodes
+    }
 
-      if (sourceId === selectedNodeId || targetId === selectedNodeId) {
-        return 4; // Highlight connected links
-      }
-      return link.value || 1;
-    })
-    .linkDirectionalParticles((link) => {
-      const sourceId =
-        typeof link.source === "object" ? link.source.id : link.source;
-      const targetId =
-        typeof link.target === "object" ? link.target.id : link.target;
+    // Default colors
+    switch (node.type) {
+      case "trend":
+        return "#4a6de5";
+      case "technology":
+        return "#28a745";
+      case "keyword":
+        return "#fd7e14";
+      default:
+        return "#6c757d";
+    }
+  });
 
-      if (sourceId === selectedNodeId || targetId === selectedNodeId) {
-        return 4;
-      }
-      return 0;
-    })
-    .refresh();
+  // Update link widths
+  forceGraph.linkWidth((link) => {
+    const sourceId =
+      typeof link.source === "object" ? link.source.id : link.source;
+    const targetId =
+      typeof link.target === "object" ? link.target.id : link.target;
+
+    if (sourceId === selectedNodeId || targetId === selectedNodeId) {
+      return 4; // Highlight connected links
+    }
+    return link.value || 1;
+  });
+
+  // Update link particles
+  forceGraph.linkDirectionalParticles((link) => {
+    const sourceId =
+      typeof link.source === "object" ? link.source.id : link.source;
+    const targetId =
+      typeof link.target === "object" ? link.target.id : link.target;
+
+    if (sourceId === selectedNodeId || targetId === selectedNodeId) {
+      return 4;
+    }
+    return 0;
+  });
 
   // Close the modal
   document.getElementById("node-details-modal").style.display = "none";
@@ -1425,173 +1765,195 @@ function showCardDetails(trendId) {
 }
 
 // Render Insights
-/**
- * Render insights
- */
-/**
- * Render insights
- */
 function renderInsights(data) {
-    const insightsContainer = document.getElementById("insights-container");
-    if (!insightsContainer) return;
-  
-    insightsContainer.innerHTML = ""; // Clear previous content
-  
-    // Check for error
-    if (data.error) {
-      insightsContainer.innerHTML = `
+  const insightsContainer = document.getElementById("insights-container");
+  if (!insightsContainer) return;
+
+  insightsContainer.innerHTML = ""; // Clear previous content
+
+  // Check for error
+  if (data.error) {
+    insightsContainer.innerHTML = `
         <div class="error-message">
           <i class="fas fa-exclamation-circle"></i>
           <p>${data.error}</p>
         </div>
       `;
-      return;
-    }
-  
-    const insights = data.graph_insights || {};
-  
-    // Create insights section
-    const insightsDiv = document.createElement("div");
-    insightsDiv.classList.add("insights-details");
-  
-    // Add central technologies section
-    if (insights.central_technologies) {
-      const techSection = document.createElement("div");
-      techSection.classList.add("insight-section");
-      
-      const titleEl = document.createElement("h4");
-      titleEl.innerHTML = `<i class="fas fa-microchip"></i> Central Technologies`;
-      techSection.appendChild(titleEl);
-      
-      const contentEl = document.createElement("div");
-      contentEl.classList.add("insight-content");
-      
-      // Format central technologies content
-      const techData = insights.central_technologies;
-      let techHTML = '';
-      
-      // Check if it's a string (older format) or object (new format)
-      if (typeof techData === 'string') {
-        techHTML = techData;
-      } else if (typeof techData === 'object') {
-        // Main analysis
-        if (techData.analysis) {
-          techHTML += `<div class="section-overview"><p>${techData.analysis}</p></div>`;
-        }
-        
-        // Individual technologies
-        if (Array.isArray(techData.technologies) && techData.technologies.length > 0) {
-          techHTML += `<ul class="tech-list">`;
-          techData.technologies.forEach(tech => {
-            techHTML += `
+    return;
+  }
+
+  const insights = data.graph_insights || {};
+
+  // Create insights section
+  const insightsDiv = document.createElement("div");
+  insightsDiv.classList.add("insights-details");
+
+  // Add central technologies section
+  if (insights.central_technologies) {
+    const techSection = document.createElement("div");
+    techSection.classList.add("insight-section");
+
+    const titleEl = document.createElement("h4");
+    titleEl.innerHTML = `<i class="fas fa-microchip"></i> Central Technologies`;
+    techSection.appendChild(titleEl);
+
+    const contentEl = document.createElement("div");
+    contentEl.classList.add("insight-content");
+
+    // Format central technologies content
+    const techData = insights.central_technologies;
+    let techHTML = "";
+
+    // Check if it's a string (older format) or object (new format)
+    if (typeof techData === "string") {
+      techHTML = techData;
+    } else if (typeof techData === "object") {
+      // Main analysis
+      if (techData.analysis) {
+        techHTML += `<div class="section-overview"><p>${techData.analysis}</p></div>`;
+      }
+
+      // Individual technologies
+      if (
+        Array.isArray(techData.technologies) &&
+        techData.technologies.length > 0
+      ) {
+        techHTML += `<ul class="tech-list">`;
+        techData.technologies.forEach((tech) => {
+          techHTML += `
               <li>
-                <div class="tech-name"><strong>${tech.title || 'Unnamed Technology'}</strong></div>
-                <div class="tech-analysis">${tech.analysis || 'No analysis available'}</div>
-                ${tech.impact ? `<div class="tech-impact"><em>Impact: ${tech.impact}</em></div>` : ''}
+                <div class="tech-name"><strong>${
+                  tech.title || "Unnamed Technology"
+                }</strong></div>
+                <div class="tech-analysis">${
+                  tech.analysis || "No analysis available"
+                }</div>
+                ${
+                  tech.impact
+                    ? `<div class="tech-impact"><em>Impact: ${tech.impact}</em></div>`
+                    : ""
+                }
               </li>
             `;
-          });
-          techHTML += `</ul>`;
-        }
+        });
+        techHTML += `</ul>`;
       }
-      
-      contentEl.innerHTML = techHTML || 'No detailed central technologies information available';
-      techSection.appendChild(contentEl);
-      insightsDiv.appendChild(techSection);
     }
-    
-    // Add cross-domain connections section
-    if (insights.cross_domain_connections) {
-      const connectionSection = document.createElement("div");
-      connectionSection.classList.add("insight-section");
-      
-      const titleEl = document.createElement("h4");
-      titleEl.innerHTML = `<i class="fas fa-link"></i> Cross-Domain Connections`;
-      connectionSection.appendChild(titleEl);
-      
-      const contentEl = document.createElement("div");
-      contentEl.classList.add("insight-content");
-      
-      // Format cross domain connections
-      const connectionData = insights.cross_domain_connections;
-      let connectionHTML = '';
-      
-      // Check if it's a string (older format) or object (new format)
-      if (typeof connectionData === 'string') {
-        connectionHTML = connectionData;
-      } else if (typeof connectionData === 'object') {
-        // Main analysis
-        if (connectionData.analysis) {
-          connectionHTML += `<div class="section-overview"><p>${connectionData.analysis}</p></div>`;
-        }
-        
-        // Individual opportunities
-        if (Array.isArray(connectionData.opportunities) && connectionData.opportunities.length > 0) {
-          connectionHTML += `<ul class="connection-list">`;
-          connectionData.opportunities.forEach(conn => {
-            connectionHTML += `
+
+    contentEl.innerHTML =
+      techHTML || "No detailed central technologies information available";
+    techSection.appendChild(contentEl);
+    insightsDiv.appendChild(techSection);
+  }
+
+  // Add cross-domain connections section
+  if (insights.cross_domain_connections) {
+    const connectionSection = document.createElement("div");
+    connectionSection.classList.add("insight-section");
+
+    const titleEl = document.createElement("h4");
+    titleEl.innerHTML = `<i class="fas fa-link"></i> Cross-Domain Connections`;
+    connectionSection.appendChild(titleEl);
+
+    const contentEl = document.createElement("div");
+    contentEl.classList.add("insight-content");
+
+    // Format cross domain connections
+    const connectionData = insights.cross_domain_connections;
+    let connectionHTML = "";
+
+    // Check if it's a string (older format) or object (new format)
+    if (typeof connectionData === "string") {
+      connectionHTML = connectionData;
+    } else if (typeof connectionData === "object") {
+      // Main analysis
+      if (connectionData.analysis) {
+        connectionHTML += `<div class="section-overview"><p>${connectionData.analysis}</p></div>`;
+      }
+
+      // Individual opportunities
+      if (
+        Array.isArray(connectionData.opportunities) &&
+        connectionData.opportunities.length > 0
+      ) {
+        connectionHTML += `<ul class="connection-list">`;
+        connectionData.opportunities.forEach((conn) => {
+          connectionHTML += `
               <li>
-                <div class="connection-item"><strong>${conn.connection || 'Unnamed Connection'}</strong></div>
-                <div class="connection-potential">${conn.potential || 'No potential identified'}</div>
+                <div class="connection-item"><strong>${
+                  conn.connection || "Unnamed Connection"
+                }</strong></div>
+                <div class="connection-potential">${
+                  conn.potential || "No potential identified"
+                }</div>
               </li>
             `;
-          });
-          connectionHTML += `</ul>`;
-        }
+        });
+        connectionHTML += `</ul>`;
       }
-      
-      contentEl.innerHTML = connectionHTML || 'No cross-domain connections information available';
-      connectionSection.appendChild(contentEl);
-      insightsDiv.appendChild(connectionSection);
     }
-    
-    // Add innovation pathways section
-    if (insights.innovation_pathways) {
-      const pathwaySection = document.createElement("div");
-      pathwaySection.classList.add("insight-section");
-      
-      const titleEl = document.createElement("h4");
-      titleEl.innerHTML = `<i class="fas fa-road"></i> Innovation Pathways`;
-      pathwaySection.appendChild(titleEl);
-      
-      const contentEl = document.createElement("div");
-      contentEl.classList.add("insight-content");
-      
-      // Format innovation pathways
-      const pathwayData = insights.innovation_pathways;
-      let pathwayHTML = '';
-      
-      // Check if it's a string (older format) or object (new format)
-      if (typeof pathwayData === 'string') {
-        pathwayHTML = pathwayData;
-      } else if (typeof pathwayData === 'object') {
-        // Main analysis
-        if (pathwayData.analysis) {
-          pathwayHTML += `<div class="section-overview"><p>${pathwayData.analysis}</p></div>`;
-        }
-        
-        // Individual implications
-        if (Array.isArray(pathwayData.implications) && pathwayData.implications.length > 0) {
-          pathwayHTML += `<ul class="pathway-list">`;
-          pathwayData.implications.forEach(path => {
-            pathwayHTML += `
+
+    contentEl.innerHTML =
+      connectionHTML || "No cross-domain connections information available";
+    connectionSection.appendChild(contentEl);
+    insightsDiv.appendChild(connectionSection);
+  }
+
+  // Add innovation pathways section
+  if (insights.innovation_pathways) {
+    const pathwaySection = document.createElement("div");
+    pathwaySection.classList.add("insight-section");
+
+    const titleEl = document.createElement("h4");
+    titleEl.innerHTML = `<i class="fas fa-road"></i> Innovation Pathways`;
+    pathwaySection.appendChild(titleEl);
+
+    const contentEl = document.createElement("div");
+    contentEl.classList.add("insight-content");
+
+    // Format innovation pathways
+    const pathwayData = insights.innovation_pathways;
+    let pathwayHTML = "";
+
+    // Check if it's a string (older format) or object (new format)
+    if (typeof pathwayData === "string") {
+      pathwayHTML = pathwayData;
+    } else if (typeof pathwayData === "object") {
+      // Main analysis
+      if (pathwayData.analysis) {
+        pathwayHTML += `<div class="section-overview"><p>${pathwayData.analysis}</p></div>`;
+      }
+
+      // Individual implications
+      if (
+        Array.isArray(pathwayData.implications) &&
+        pathwayData.implications.length > 0
+      ) {
+        pathwayHTML += `<ul class="pathway-list">`;
+        pathwayData.implications.forEach((path) => {
+          pathwayHTML += `
               <li>
-                <div class="pathway-path"><strong>${path.path || 'Unnamed Pathway'}</strong></div>
-                <div class="pathway-implication">${path.implication || 'No implication identified'}</div>
+                <div class="pathway-path"><strong>${
+                  path.path || "Unnamed Pathway"
+                }</strong></div>
+                <div class="pathway-implication">${
+                  path.implication || "No implication identified"
+                }</div>
               </li>
             `;
-          });
-          pathwayHTML += `</ul>`;
-        }
+        });
+        pathwayHTML += `</ul>`;
       }
-      
-      contentEl.innerHTML = pathwayHTML || 'No innovation pathways information available';
-      pathwaySection.appendChild(contentEl);
-      insightsDiv.appendChild(pathwaySection);
     }
-    
-    // Add the insights to the container
-    insightsContainer.appendChild(insightsDiv);
+
+    contentEl.innerHTML =
+      pathwayHTML || "No innovation pathways information available";
+    pathwaySection.appendChild(contentEl);
+    insightsDiv.appendChild(pathwaySection);
+  }
+
+  // Add the insights to the container
+  insightsContainer.appendChild(insightsDiv);
 }
 
 // Navigation
@@ -1603,30 +1965,20 @@ function navigateTo(page) {
 document.addEventListener("DOMContentLoaded", () => {
   connectSocket();
 
-  // Setup tab switching
-  document.querySelectorAll(".tab-btn").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      switchTab(btn.dataset.tab);
-    });
-  });
+  // Get current page
+  const currentPage = getCurrentPage();
 
-  // Setup scout result selection
-  document
-    .getElementById("scout-results-select")
-    .addEventListener("change", handleScoutResultSelection);
-
-  // Check for stored scout results in localStorage
-  try {
-    const storedResults = localStorage.getItem("scoutResults");
-    if (storedResults) {
-      JSON.parse(storedResults).forEach((result) => {
-        if (result && result.data && result.data.prompt) {
-          addScoutResult(result.data);
-        }
+  // Page-specific initialization
+  if (currentPage === "analyst") {
+    // Setup tab switching
+    document.querySelectorAll(".tab-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        switchTab(btn.dataset.tab);
       });
-    }
-  } catch (e) {
-    console.error("Error loading stored scout results:", e);
+    });
+
+    // Load saved scout results
+    loadScoutResultsFromLocalStorage();
   }
 });
 

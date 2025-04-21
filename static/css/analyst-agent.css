@@ -499,48 +499,6 @@
     color: white;
 }
 
-/* Tabs for input methods */
-.input-tabs {
-    display: flex;
-    flex-direction: column;
-    background-color: var(--gray-50);
-    border-radius: var(--border-radius);
-    padding: 1.5rem;
-    box-shadow: var(--shadow-sm);
-}
-
-.tab-header {
-    display: flex;
-    margin-bottom: 1rem;
-    border-bottom: 1px solid var(--gray-300);
-}
-
-.tab-btn {
-    padding: 0.75rem 1.25rem;
-    background-color: transparent;
-    border: none;
-    border-bottom: 3px solid transparent;
-    margin-right: 0.5rem;
-    cursor: pointer;
-    color: var(--gray-600);
-    font-weight: 500;
-    transition: var(--transition);
-}
-
-.tab-btn.active {
-    color: var(--primary-color);
-    border-bottom-color: var(--primary-color);
-}
-
-.tab-content {
-    display: none;
-}
-
-.tab-content.active {
-    display: block;
-    animation: fadeIn 0.3s ease forwards;
-}
-
 /* Enhanced insight sections */
 .insights-content {
     background-color: white;
@@ -791,7 +749,7 @@
     /* Green for pathways */
 }
 
-.tech-list li{
+.tech-list li {
     border-left-color: #5928a7;
 }
 
@@ -825,4 +783,204 @@
     font-style: italic;
     margin-bottom: 1rem;
     color: var(--gray-600);
+}
+
+.scout-result-card .card-action-btn:hover {
+    color: var(--primary-color);
+}
+
+.scout-result-card .analyze-btn:hover {
+    color: var(--primary-color);
+}
+
+.scout-result-card .delete-btn:hover {
+    color: var(--danger-color);
+}
+
+.scout-result-card .card-body {
+    padding: 0.75rem;
+}
+
+.scout-result-card .card-prompt {
+    font-size: 0.85rem;
+    color: var(--gray-800);
+    margin-bottom: 0.75rem;
+    line-height: 1.4;
+    max-height: 2.8em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.scout-result-card .card-stats {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.scout-result-card .card-domain {
+    font-size: 0.7rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 12px;
+    color: white;
+}
+
+.scout-result-card .card-trends-count {
+    font-size: 0.7rem;
+    color: var(--gray-600);
+}
+
+.no-results-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    color: var(--gray-500);
+    text-align: center;
+}
+
+.no-results-message i {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+/* Scout Result Preview */
+.preview-header {
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.preview-header h4 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1rem;
+}
+
+.preview-timestamp {
+    font-size: 0.8rem;
+    color: var(--gray-600);
+}
+
+.preview-content {
+    color: var(--gray-800);
+}
+
+.preview-response {
+    background-color: var(--gray-50);
+    padding: 0.75rem;
+    border-radius: var(--border-radius);
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    border-left: 3px solid var(--primary-color);
+}
+
+.preview-stats {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.preview-stat {
+    background-color: var(--gray-100);
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--border-radius);
+    font-size: 0.85rem;
+}
+
+.stat-label {
+    color: var(--gray-600);
+    margin-right: 0.5rem;
+}
+
+.stat-value {
+    font-weight: 500;
+    color: var(--gray-800);
+}
+
+.preview-actions {
+    display: flex;
+}
+
+/* Scout Results Container */
+.scout-results-container {
+    max-height: 400px;
+    overflow-y: auto;
+    background-color: white;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--gray-300);
+    margin-bottom: 1rem;
+}
+
+.results-date-header {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+    background-color: var(--gray-100);
+    color: var(--gray-700);
+    font-weight: 500;
+    border-bottom: 1px solid var(--gray-200);
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.scout-results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1rem;
+    padding: 1rem;
+}
+
+.scout-result-card {
+    background-color: white;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--gray-200);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    transition: var(--transition);
+    cursor: pointer;
+}
+
+.scout-result-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow);
+}
+
+.scout-result-card .card-header {
+    padding: 0.5rem 0.75rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--gray-200);
+    font-size: 0.75rem;
+    color: var(--gray-600);
+}
+
+.scout-result-card .card-time {
+    font-weight: 500;
+}
+
+.scout-result-card .card-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.scout-result-card .card-action-btn {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    border-bottom: 3px solid transparent;
+    margin-right: 0.5rem;
+    cursor: pointer;
+    color: var(--gray-600);
+    font-weight: 500;
+    transition: var(--transition);
 }
