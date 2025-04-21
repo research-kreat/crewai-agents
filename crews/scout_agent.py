@@ -333,7 +333,7 @@ class ScoutAgent:
             # Add related titles (deduped)
             if t.get('related_titles'):
                 unique_titles = list(dict.fromkeys(t['related_titles']))
-                trend_summary_for_prompt += f"  Related_titles: {', '.join(unique_titles)}\n"
+        trend_summary_for_prompt += f"  Related_titles: {', '.join(unique_titles)}\n"
 
         # Create prompt for generating insights
         self.emit_log("Preparing prompt for LLM analysis...")
