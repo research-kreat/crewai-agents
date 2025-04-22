@@ -1,0 +1,241 @@
+/* Context Agent specific styles */
+.context-interface {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+.context-input-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.context-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.context-card {
+    background-color: white;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--gray-200);
+    padding: 1rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.context-card h4 {
+    margin: 0 0 0.75rem 0;
+    font-size: 1rem;
+    color: var(--gray-700);
+    border-bottom: 1px solid var(--gray-200);
+    padding-bottom: 0.5rem;
+}
+
+.context-card-content {
+    font-size: 0.9rem;
+    color: var(--gray-800);
+}
+
+.context-results {
+    background-color: var(--gray-50);
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.results-header h3 {
+    font-size: 1.1rem;
+    color: var(--gray-700);
+    margin: 0;
+}
+
+.context-panel {
+    background-color: white;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--gray-300);
+    margin-bottom: 1rem;
+}
+
+.panel-header {
+    padding: 1rem;
+    background-color: var(--gray-100);
+    border-bottom: 1px solid var(--gray-200);
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.panel-header h4 {
+    margin: 0;
+    font-size: 1rem;
+    color: var(--gray-700);
+}
+
+.panel-score {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.score-badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 16px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: white;
+}
+
+.score-high {
+    background-color: #28a745;
+}
+
+.score-medium {
+    background-color: #ffc107;
+}
+
+.score-low {
+    background-color: #dc3545;
+}
+
+.panel-content {
+    padding: 1rem;
+}
+
+.panel-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.panel-list li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--gray-100);
+}
+
+.panel-list li:last-child {
+    border-bottom: none;
+}
+
+.panel-item {
+    display: flex;
+    justify-content: space-between;
+}
+
+.panel-label {
+    font-weight: 500;
+    color: var(--gray-700);
+}
+
+.panel-value {
+    color: var(--gray-900);
+}
+
+.panel-rationale {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--gray-200);
+    font-style: italic;
+    color: var(--gray-600);
+}
+
+.assessment-summary {
+    background-color: var(--gray-800);
+    color: white;
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.summary-heading {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    padding-bottom: 0.5rem;
+}
+
+.summary-scores {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.summary-score {
+    text-align: center;
+}
+
+.score-title {
+    font-size: 0.8rem;
+    margin-bottom: 0.25rem;
+    opacity: 0.8;
+}
+
+.score-value {
+    font-size: 1.75rem;
+    font-weight: bold;
+}
+
+.summary-recommendation {
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.summary-approach {
+    font-size: 0.9rem;
+    opacity: 0.9;
+    margin-bottom: 1rem;
+}
+
+.considerations-section h5,
+.next-steps-section h5 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+.considerations-list,
+.next-steps-list {
+    padding-left: 1.25rem;
+    margin: 0 0 1rem 0;
+    font-size: 0.85rem;
+}
+
+.considerations-list li,
+.next-steps-list li {
+    margin-bottom: 0.25rem;
+}
+
+/* Scout result select styles */
+.scout-select {
+    margin-bottom: 1rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+    .context-interface {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .context-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .summary-scores {
+        grid-template-columns: 1fr 1fr;
+    }
+}

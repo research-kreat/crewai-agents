@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Context Agent - API Console</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/main.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/styles.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/context-agent.css') }}"
+    />
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/context-agent.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
+</head>
+<body>
+    <div class="page-container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-code"></i>
+                <h1>API Agent Console</h1>
+            </div>
+            <nav>
+                <button class="back-button" onclick="navigateTo('/')">
+                    <i class="fas fa-arrow-left"></i> Back to Agents
+                </button>
+            </nav>
+        </header>
+
+        <main class="agent-page">
+            <div class="agent-header">
+                <div class="agent-icon large">
+                    <i class="fas fa-sitemap"></i>
+                </div>
+                <div class="agent-title">
+                    <h2>Context Agent</h2>
+                    <p>Analyze technology trends in business context</p>
+                </div>
+            </div>
+
+            <div class="context-interface">
+                <div class="context-input-section">
+                    <div class="form-group">
+                        <label for="company-profile">
+                            Company Profile
+                            <span class="tooltip" data-tooltip="Enter or upload your company profile JSON">
+                                <i class="fas fa-info-circle"></i>
+                            </span>
+                        </label>
+                        <textarea id="company-profile" rows="8" placeholder="Paste your company profile JSON here..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="competitor-data">
+                            Competitor Data
+                            <span class="tooltip" data-tooltip="Enter or upload competitor information JSON">
+                                <i class="fas fa-info-circle"></i>
+                            </span>
+                        </label>
+                        <textarea id="competitor-data" rows="8" placeholder="Paste your competitor data JSON here..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="scout-result">
+                            Scout Result
+                            <span class="tooltip" data-tooltip="Select from recent Scout Agent results or paste JSON">
+                                <i class="fas fa-info-circle"></i>
+                            </span>
+                        </label>
+                        <select id="scout-select" class="scout-select" onchange="loadScoutResult()">
+                            <option value="">Select a recent Scout Agent result...</option>
+                        </select>
+                        <textarea id="scout-result" rows="8" placeholder="Paste Scout Agent result JSON here..."></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button id="analyze-button" class="primary-button" onclick="runContextAnalysis()">
+                            <i class="fas fa-sitemap"></i> Run Context Analysis
+                        </button>
+                        <button class="secondary-button" onclick="clearForm()">
+                            <i class="fas fa-eraser"></i> Clear
+                        </button>
+                    </div>
+
+                    <!-- Console Log Panel -->
+                    <div class="console-log-panel">
+                        <div class="console-header">
+                            <h3>Process Log</h3>
+                            <button class="log-clear-btn" onclick="clearLogs()">
+                                Clear Logs
+                            </button>
+                        </div>
+                        <div id="console-log" class="console-log">
+                            <div class="log-message system">
+                                <span class="log-timestamp">System</span> Context Agent ready to analyze trends
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="context-results">
+                    <div class="results-header">
+                        <h3>Analysis Results</h3>
+                        <div class="controls">
+                            <button class="icon-button" onclick="copyResults()" title="Copy to clipboard">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                            <button class="icon-button" onclick="downloadResults()" title="Download as JSON">
+                                <i class="fas fa-download"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="loading" class="loading hidden">
+                        <div class="spinner"></div>
+                        <p>Analyzing trend in business context...</p>
+                    </div>
+
+                    <div id="results-container" class="hidden">
+                        <!-- Overall Assessment -->
+                        <div id="assessment-summary" class="assessment-summary">
+                            <h3 class="summary-heading">Overall Assessment</h3>
+                            <div class="summary-scores">
+                                <div class="summary-score">
+                                    <div class="score-title">Relevance</div>
+                                    <div id="relevance-score" class="score-value">0.00</div>
+                                </div>
+                                <div class="summary-score">
+                                    <div class="score-title">Strategic</div>
+                                    <div id="strategic-score" class="score-value">0.00</div>
+                                </div>
+                                <div class="summary-score">
+                                    <div class="score-title">Capability</div>
+                                    <div id="capability-score" class="score-value">0.00</div>
+                                </div>
+                                <div class="summary-score">
+                                    <div class="score-title">Competitive</div>
+                                    <div id="competitive-score" class="score-value">0.00</div>
+                                </div>
+                            </div>
+                            <div id="recommendation" class="summary-recommendation">Recommendation: Analyzing...</div>
+                            <div id="approach" class="summary-approach">Recommended Approach: Analyzing...</div>
+                            
+                            <div class="considerations-section">
+                                <h5>Key Considerations</h5>
+                                <ul id="considerations-list" class="considerations-list">
+                                    <li>Analyzing key factors...</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="next-steps-section">
+                                <h5>Next Steps</h5>
+                                <ul id="next-steps-list" class="next-steps-list">
+                                    <li>Determining next steps...</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Strategic Alignment -->
+                        <div class="context-panel">
+                            <div class="panel-header">
+                                <h4>Strategic Alignment</h4>
+                                <div class="panel-score">
+                                    Score: <span id="strategic-alignment-score" class="score-badge score-medium">0.00</span>
+                                </div>
+                            </div>
+                            <div class="panel-content">
+                                <ul id="aligned-priorities" class="panel-list">
+                                    <li>Loading aligned priorities...</li>
+                                </ul>
+                                <div id="strategic-rationale" class="panel-rationale">
+                                    Analyzing strategic alignment...
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Capability Assessment -->
+                        <div class="context-panel">
+                            <div class="panel-header">
+                                <h4>Capability Assessment</h4>
+                                <div class="panel-score">
+                                    Score: <span id="capability-assessment-score" class="score-badge score-medium">0.00</span>
+                                </div>
+                            </div>
+                            <div class="panel-content">
+                                <h5>Existing Capabilities</h5>
+                                <ul id="existing-capabilities" class="panel-list">
+                                    <li>Loading capabilities...</li>
+                                </ul>
+                                
+                                <h5>Capability Gaps</h5>
+                                <ul id="capability-gaps" class="panel-list">
+                                    <li>Identifying capability gaps...</li>
+                                </ul>
+                                
+                                <div id="capability-rationale" class="panel-rationale">
+                                    Analyzing capability fit...
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Competitive Landscape -->
+                        <div class="context-panel">
+                            <div class="panel-header">
+                                <h4>Competitive Landscape</h4>
+                                <div class="panel-score">
+                                    Score: <span id="competitive-landscape-score" class="score-badge score-medium">0.00</span>
+                                </div>
+                            </div>
+                            <div class="panel-content">
+                                <div class="panel-item">
+                                    <span class="panel-label">Position:</span>
+                                    <span id="competitive-position" class="panel-value">Analyzing...</span>
+                                </div>
+                                
+                                <h5>Key Competitors</h5>
+                                <ul id="key-competitors" class="panel-list">
+                                    <li>Analyzing competitors...</li>
+                                </ul>
+                                
+                                <div class="panel-item">
+                                    <span class="panel-label">Market Opportunity:</span>
+                                    <span id="market-opportunity" class="panel-value">Analyzing...</span>
+                                </div>
+                                
+                                <div id="competitive-rationale" class="panel-rationale">
+                                    Analyzing competitive landscape...
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Integration Opportunities -->
+                        <div class="context-panel">
+                            <div class="panel-header">
+                                <h4>Integration Opportunities</h4>
+                                <div class="panel-score">
+                                    Score: <span id="integration-opportunities-score" class="score-badge score-medium">0.00</span>
+                                </div>
+                            </div>
+                            <div class="panel-content">
+                                <h5>Project Synergies</h5>
+                                <ul id="project-synergies" class="panel-list">
+                                    <li>Identifying integration opportunities...</li>
+                                </ul>
+                                
+                                <div id="integration-rationale" class="panel-rationale">
+                                    Analyzing integration opportunities...
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Resource Requirements -->
+                        <div class="context-panel">
+                            <div class="panel-header">
+                                <h4>Resource Requirements</h4>
+                            </div>
+                            <div class="panel-content">
+                                <h5>Estimated Investment</h5>
+                                <ul id="estimated-investment" class="panel-list">
+                                    <li>Calculating investment needs...</li>
+                                </ul>
+                                
+                                <h5>Talent Needs</h5>
+                                <ul id="talent-needs" class="panel-list">
+                                    <li>Identifying talent requirements...</li>
+                                </ul>
+                                
+                                <h5>Timeline</h5>
+                                <ul id="timeline" class="panel-list">
+                                    <li>Calculating timeline...</li>
+                                </ul>
+                                
+                                <div class="panel-item">
+                                    <span class="panel-label">Feasibility:</span>
+                                    <span id="feasibility" class="panel-value">Analyzing...</span>
+                                </div>
+                                
+                                <div id="resource-rationale" class="panel-rationale">
+                                    Analyzing resource requirements...
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="no-results" class="placeholder-message">
+                        <i class="fas fa-sitemap"></i>
+                        <p>Run a context analysis to see results</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

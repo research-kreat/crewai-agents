@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Orchestrator Agent - API Console</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/main.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/styles.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/orchestrator-agent.css') }}"
+    />
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/orchestrator-agent.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
+</head>
+<body>
+    <div class="page-container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-code"></i>
+                <h1>API Agent Console</h1>
+            </div>
+            <nav>
+                <button class="back-button" onclick="navigateTo('/')">
+                    <i class="fas fa-arrow-left"></i> Back to Agents
+                </button>
+            </nav>
+        </header>
+
+        <main class="agent-page">
+            <div class="agent-header">
+                <div class="agent-icon large">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <div class="agent-title">
+                    <h2>Orchestrator Agent</h2>
+                    <p>Coordinate multi-agent workflows for comprehensive analysis</p>
+                </div>
+            </div>
+
+            <div class="orchestrator-interface">
+                <div class="orchestration-panel">
+                    <div class="form-group">
+                        <label for="workflow-type">
+                            Workflow Type
+                            <span class="tooltip" data-tooltip="Select the type of analysis workflow to run">
+                                <i class="fas fa-info-circle"></i>
+                            </span>
+                        </label>
+                        <select id="workflow-type" class="scout-select" onchange="updateWorkflowOptions()">
+                            <option value="">Select a workflow type...</option>
+                            <option value="trend-context">Trend Context Analysis</option>
+                            <option value="competitive-landscape">Competitive Landscape Analysis</option>
+                            <option value="technology-roadmap">Technology Roadmap</option>
+                            <option value="custom">Custom Workflow</option>
+                        </select>
+                    </div>
+
+                    <div id="workflow-options" class="form-group hidden">
+                        <label for="workflow-config">Workflow Configuration</label>
+                        <textarea id="workflow-config" rows="8" placeholder="Workflow configuration will appear here..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="company-profile">
+                            Company Profile
+                            <span class="tooltip" data-tooltip="Enter or upload your company profile JSON">
+                                <i class="fas fa-info-circle"></i>
+                            </span>
+                        </label>
+                        <textarea id="company-profile" rows="6" placeholder="Paste your company profile JSON here..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="trend-query">
+                            Trend Query
+                            <span class="tooltip" data-tooltip="Enter your trend search query or select a recent Scout result">
+                                <i class="fas fa-info-circle"></i>
+                            </span>
+                        </label>
+                        <input type="text" id="trend-query" placeholder="Enter a trend query or technology to analyze...">
+                        <select id="scout-select" class="scout-select" onchange="loadScoutResult()">
+                            <option value="">Or select a recent Scout Agent result...</option>
+                        </select>
+                    </div>
+
+                    <div class="form-actions">
+                        <button id="run-workflow-button" class="primary-button" onclick="runWorkflow()">
+                            <i class="fas fa-play"></i> Run Workflow
+                        </button>
+                        <button class="secondary-button" onclick="clearForm()">
+                            <i class="fas fa-eraser"></i> Clear
+                        </button>
+                    </div>
+
+                    <div class="workflow-container">
+                        <div class="workflow-header">
+                            <h3>Workflow Status</h3>
+                            <div class="workflow-status">
+                                <span id="workflow-status-badge" class="status-badge status-pending">Pending</span>
+                                <span id="workflow-time">00:00</span>
+                            </div>
+                        </div>
+
+                        <div class="workflow-steps">
+                            <div class="workflow-step">
+                                <div class="step-icon pending">
+                                    <i class="fas fa-search"></i>
+                                </div>
+                                <div class="step-content">
+                                    <div class="step-header">
+                                        <div class="step-name">Scout Agent</div>
+                                        <div class="step-time" id="scout-time">Pending</div>
+                                    </div>
+                                    <div class="step-description">Retrieve relevant trends and technology data</div>
+                                    <div id="scout-details" class="step-details hidden">
+                                        No details available yet
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="workflow-step">
+                                <div class="step-icon pending">
+                                    <i class="fas fa-sitemap"></i>
+                                </div>
+                                <div class="step-content">
+                                    <div class="step-header">
+                                        <div class="step-name">Context Agent</div>
+                                        <div class="step-time" id="context-time">Pending</div>
+                                    </div>
+                                    <div class="step-description">Analyze trends in business context</div>
+                                    <div id="context-details" class="step-details hidden">
+                                        No details available yet
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="workflow-step">
+                                <div class="step-icon pending">
+                                    <i class="fas fa-chart-pie"></i>
+                                </div>
+                                <div class="step-content">
+                                    <div class="step-header">
+                                        <div class="step-name">Visualization Agent</div>
+                                        <div class="step-time" id="viz-time">Pending</div>
+                                    </div>
+                                    <div class="step-description">Generate data visualizations and insights</div>
+                                    <div id="viz-details" class="step-details hidden">
+                                        No details available yet
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="workflow-step">
+                                <div class="step-icon pending">
+                                    <i class="fas fa-brain"></i>
+                                </div>
+                                <div class="step-content">
+                                    <div class="step-header">
+                                        <div class="step-name">Orchestrator</div>
+                                        <div class="step-time" id="orchestrator-time">Pending</div>
+                                    </div>
+                                    <div class="step-description">Generate final integrated report</div>
+                                    <div id="orchestrator-details" class="step-details hidden">
+                                        No details available yet
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Console Log Panel -->
+                    <div class="console-log-panel">
+                        <div class="console-header">
+                            <h3>Process Log</h3>
+                            <button class="log-clear-btn" onclick="clearLogs()">
+                                Clear Logs
+                            </button>
+                        </div>
+                        <div id="console-log" class="console-log">
+                            <div class="log-message system">
+                                <span class="log-timestamp">System</span> Orchestrator Agent ready
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="orchestrator-results">
+                    <div class="results-view">
+                        <div class="agent-tabs">
+                            <button class="agent-tab active" onclick="switchTab('overview')">Overview</button>
+                            <button class="agent-tab" onclick="switchTab('scout')">Scout Data</button>
+                            <button class="agent-tab" onclick="switchTab('context')">Context Analysis</button>
+                            <button class="agent-tab" onclick="switchTab('visualization')">Visualization</button>
+                            <button class="agent-tab" onclick="switchTab('report')">Final Report</button>
+                        </div>
+
+                        <div id="tab-overview" class="tab-content active">
+                            <div class="placeholder-message">
+                                <i class="fas fa-brain"></i>
+                                <p>Run a workflow to see results overview</p>
+                            </div>
+                        </div>
+
+                        <div id="tab-scout" class="tab-content">
+                            <div class="placeholder-message">
+                                <i class="fas fa-search"></i>
+                                <p>Scout Agent data will appear here</p>
+                            </div>
+                        </div>
+
+                        <div id="tab-context" class="tab-content">
+                            <div class="placeholder-message">
+                                <i class="fas fa-sitemap"></i>
+                                <p>Context Analysis will appear here</p>
+                            </div>
+                        </div>
+
+                        <div id="tab-visualization" class="tab-content">
+                            <div class="placeholder-message">
+                                <i class="fas fa-chart-pie"></i>
+                                <p>Visualizations will appear here</p>
+                            </div>
+                        </div>
+
+                        <div id="tab-report" class="tab-content">
+                            <div class="placeholder-message">
+                                <i class="fas fa-file-alt"></i>
+                                <p>Final integrated report will appear here</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="orchestrator-actions">
+                        <button id="download-report-btn" class="primary-button" disabled onclick="downloadReport()">
+                            <i class="fas fa-download"></i> Download Report
+                        </button>
+                        <button id="share-results-btn" class="secondary-button" disabled onclick="shareResults()">
+                            <i class="fas fa-share-alt"></i> Share Results
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

@@ -54,25 +54,59 @@
                 </div>
             </div>
 
-            <!-- Disabled Agents -->
-            <div class="agent-card disabled">
+            <div class="agent-card active" onclick="navigateTo('context-agent')">
                 <div class="agent-icon">
-                    <i class="fas fa-search"></i>
+                    <i class="fas fa-sitemap"></i>
                 </div>
                 <div class="agent-info">
-                    <h2>Process Agent</h2>
-                    <p>Process and analyze datasets</p>
+                    <h2>Context Agent</h2>
+                    <p>Analyze trends in business context</p>
+                    <span class="status active">Active</span>
+                </div>
+            </div>
+
+            <div class="agent-card active" onclick="navigateTo('visualization-agent')">
+                <div class="agent-icon">
+                    <i class="fas fa-chart-pie"></i>
+                </div>
+                <div class="agent-info">
+                    <h2>Visualization Agent</h2>
+                    <p>Generate custom trend visualizations</p>
+                    <span class="status active">Active</span>
+                </div>
+            </div>
+
+            <div class="agent-card active" onclick="navigateTo('orchestrator-agent')">
+                <div class="agent-icon">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <div class="agent-info">
+                    <h2>Orchestrator Agent</h2>
+                    <p>Coordinate multi-agent workflows</p>
+                    <span class="status active">Active</span>
+                </div>
+            </div>
+
+            <!-- Coming Soon Agents -->
+
+            <div class="agent-card disabled">
+                <div class="agent-icon">
+                    <i class="fas fa-book"></i>
+                </div>
+                <div class="agent-info">
+                    <h2>News Agent</h2>
+                    <p>Gather News URL and Title</p>
                     <span class="status">Coming Soon</span>
                 </div>
             </div>
 
             <div class="agent-card disabled">
                 <div class="agent-icon">
-                    <i class="fas fa-code"></i>
+                    <i class="fas fa-search"></i>
                 </div>
                 <div class="agent-info">
-                    <h2>Code Agent</h2>
-                    <p>Generate and analyze code</p>
+                    <h2>Search Agent</h2>
+                    <p>Search and Scrape Data</p>
                     <span class="status">Coming Soon</span>
                 </div>
             </div>

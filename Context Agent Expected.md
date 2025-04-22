@@ -2,127 +2,214 @@
 
 ## 1. Company Profile Data
 
-```json
-{
-  "company_id": "your-company-123",
-  "name": "TechHealth Innovations",
-  "primary_domains": ["Healthcare", "Digital Health"],
-  "secondary_domains": ["Mobility"],
-  "core_capabilities": [
-    { "name": "AI-powered diagnostics", "maturity": 0.8, "patents": 12 },
-    { "name": "Remote patient monitoring", "maturity": 0.7, "patents": 8 },
-    { "name": "Wearable medical devices", "maturity": 0.6, "patents": 5 }
-  ],
-  "strategic_priorities": [
-    {
-      "name": "Expand telemedicine platform",
-      "weight": 0.9,
-      "timeframe": "1-2 years"
-    },
-    {
-      "name": "Develop predictive health analytics",
-      "weight": 0.8,
-      "timeframe": "2-3 years"
-    },
-    {
-      "name": "Enter elderly care market",
-      "weight": 0.7,
-      "timeframe": "3-5 years"
-    }
-  ],
-  "active_projects": [
-    {
-      "id": "PRJ-001",
-      "name": "NextGen Patient Monitor",
-      "domain": "Digital Health",
-      "stage": "Development"
-    },
-    {
-      "id": "PRJ-002",
-      "name": "AI Diagnostic Assistant",
-      "domain": "Healthcare",
-      "stage": "Testing"
-    }
-  ],
-  "resource_constraints": {
-    "r_and_d_budget": 15000000,
-    "technical_staff": 45,
-    "manufacturing_capabilities": ["Electronics", "Sensors"]
-  }
-}
-```
-
-## 2. Competitor
-
-```json
-[
   {
-    "competitor_id": "comp-456",
-    "name": "MediTech Solutions",
-    "market_share": 0.18,
-    "primary_domains": ["Healthcare", "Digital Health"],
-    "key_products": [
-      {
-        "name": "MediTrack Patient Monitor",
-        "market_position": "Leader",
-        "strength": 0.85
-      },
-      {
-        "name": "DiagnosticAI",
-        "market_position": "Challenger",
-        "strength": 0.7
+    "name": "",
+    "founded": "",
+    "founders": [],
+    "headquarters": "",
+    "type": "",
+    "industry": [],
+    "website": "",
+    "numberOfEmployees": 0,
+    "products": [],
+    "focusAreas": [],
+    "initiatives": [],
+    "researchAndDevelopment": {
+      "facilities": [],
+      "recentInvestmentsUSD": 0,
+      "annualInvestment": {
+        "amountINR": 0,
+        "fiscalYear": "",
+        "percentageOfTurnover": 0
       }
-    ],
-    "recent_moves": [
+    },
+    "latestNews": [
       {
-        "type": "Acquisition",
-        "target": "SensorHealth Inc",
-        "date": "2024-11-10",
-        "estimated_value": 120000000
-      },
-      {
-        "type": "Product Launch",
-        "name": "HealthTrack Pro",
-        "date": "2025-01-15",
-        "category": "Wearables"
-      }
-    ],
-    "patents": [
-      {
-        "id": "US123456789",
-        "title": "Real-time health monitoring system",
-        "filing_date": "2023-05-12"
-      },
-      {
-        "id": "US234567890",
-        "title": "AI-based diagnostic method",
-        "filing_date": "2023-08-22"
+        "title": "",
+        "url": ""
       }
     ]
-  },
+  }
+
+
+## 2. Competitors
+
+[
   {
-    "competitor_id": "comp-789",
-    "name": "HealthMobility Inc",
-    "market_share": 0.12,
-    "primary_domains": ["Healthcare", "Mobility"],
-    "key_products": [
-      { "name": "MediTransport", "market_position": "Leader", "strength": 0.9 },
+    "name": "",
+    "founded": "",
+    "founders": [],
+    "headquarters": "",
+    "type": "",
+    "industry": [],
+    "website": "",
+    "numberOfEmployees": 0,
+    "products": [],
+    "focusAreas": [],
+    "initiatives": [],
+    "researchAndDevelopment": {
+      "facilities": [],
+      "recentInvestmentsUSD": 0,
+      "annualInvestment": {
+        "amountINR": 0,
+        "fiscalYear": "",
+        "percentageOfTurnover": 0
+      }
+    },
+    "latestNews": [
       {
-        "name": "PatientMove Platform",
-        "market_position": "Leader",
-        "strength": 0.8
+        "title": "",
+        "url": ""
       }
     ]
   }
 ]
-```
 
-## 3. Trend Data (from Scout Agent)
-   {
-   // REFER THE RESPONSE FROM SCOUT
-   }
 
-## 4. Output Expected
+## 3. Trend Data (from Analyst agent)
+{
+  "graph_data": {
+    "links": [
+      {
+        "source": "",
+        "target": "",
+        "type": "",
+        "weight": 0
+      }
+    ],
+    "nodes": [
+      {
+        "color": "",
+        "data": {
+          "assignees": [],
+          "authors": [],
+          "country": "",
+          "cpcs": [],
+          "data_quality_score": 0,
+          "domain": "",
+          "id": "",
+          "inventors": [],
+          "ipcs": [],
+          "keywords": [],
+          "knowledge_type": "",
+          "publication_date": "",
+          "publishers": [],
+          "related_titles": [],
+          "similarity_score": 0,
+          "subdomains": [],
+          "summary_text": "",
+          "technologies": [],
+          "title": ""
+        },
+        "domain": "",
+        "id": "",
+        "knowledge_type": "",
+        "publication_date": "",
+        "similarity_score": 0,
+        "size": 0,
+        "title": "",
+        "type": ""
+      }
+    ]
+  },
+  "graph_insights": {
+    "central_technologies": {
+      "analysis": "",
+      "technologies": [
+        {
+          "analysis": "",
+          "impact": "",
+          "title": ""
+        }
+      ]
+    },
+    "cross_domain_connections": {
+      "analysis": "",
+      "opportunities": [
+        {
+          "connection": "",
+          "potential": ""
+        }
+      ]
+    },
+    "innovation_pathways": {
+      "analysis": "",
+      "implications": [
+        {
+          "implication": "",
+          "path": ""
+        }
+      ]
+    }
+  },
+  "original_scout_data": {
+    "data_from_source": [
+      {
+        "assignees": [],
+        "authors": [],
+        "country": "",
+        "cpcs": [],
+        "data_quality_score": 0,
+        "domain": "",
+        "id": "",
+        "inventors": [],
+        "ipcs": [],
+        "keywords": [],
+        "knowledge_type": "",
+        "publication_date": "",
+        "publishers": [],
+        "related_titles": [],
+        "similarity_score": 0,
+        "subdomains": [],
+        "summary_text": "",
+        "technologies": [],
+        "title": ""
+      }
+    ],
+    "insights": [],
+    "isData": true,
+    "message": "",
+    "notes": "",
+    "prompt": "",
+    "recommendations": [],
+    "relevant_trends": [],
+    "response_to_user_prompt": "",
+    "source": "",
+    "timestamp": 0,
+    "trend_summary": ""
+  },
+  "s_curve_data": {
+    "domains": [],
+    "max_year": 0,
+    "min_year": 0,
+    "technologies": [
+      {
+        "data": [
+          {
+            "count": 0,
+            "cumulative": 0,
+            "year": 0
+          }
+        ],
+        "domains": [],
+        "growth_data": [
+          {
+            "growth": 0,
+            "year": 0
+          }
+        ],
+        "stage": "",
+        "technology": "",
+        "total_mentions": 0
+      }
+    ],
+    "years": []
+  },
+  "timestamp": 0
+}
+// EVERY IMPORTANT THING IN THIS DATA IS CONSIDERED EXCEPT graph_data and link and nodes to process output in context
+
+## 4. Output Expected (CONTEXT AGENT DOES COMPANY-COMPITATOR DATA ANALYSIS)
 
 ```json
 {
@@ -224,7 +311,6 @@
     }
   },
   "overall_assessment": {
-    "relevance_score": 0.76,
     "pursuit_recommendation": "Strategic Opportunity",
     "recommended_approach": "Partner or Acquire",
     "priority_level": "High",

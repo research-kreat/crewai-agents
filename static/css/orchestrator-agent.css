@@ -1,0 +1,217 @@
+/* Orchestrator Agent specific styles */
+.orchestrator-interface {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+.orchestration-panel {
+    background-color: var(--gray-50);
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.workflow-container {
+    background-color: white;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--gray-300);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.workflow-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.workflow-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: var(--gray-700);
+}
+
+.workflow-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+}
+
+.status-badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 16px;
+    font-weight: 500;
+}
+
+.status-pending {
+    background-color: var(--gray-500);
+    color: white;
+}
+
+.status-running {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.status-complete {
+    background-color: var(--success-color);
+    color: white;
+}
+
+.status-error {
+    background-color: var(--danger-color);
+    color: white;
+}
+
+.workflow-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1rem 0;
+}
+
+.workflow-step {
+    display: flex;
+    gap: 1rem;
+}
+
+.step-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: var(--gray-200);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gray-700);
+    font-size: 0.8rem;
+}
+
+.step-icon.complete {
+    background-color: var(--success-color);
+    color: white;
+}
+
+.step-icon.running {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.step-icon.pending {
+    background-color: var(--gray-300);
+    color: var(--gray-700);
+}
+
+.step-icon.error {
+    background-color: var(--danger-color);
+    color: white;
+}
+
+.step-line {
+    position: absolute;
+    left: 15px;
+    top: 30px;
+    bottom: 0;
+    width: 2px;
+    background-color: var(--gray-300);
+}
+
+.step-content {
+    flex: 1;
+}
+
+.step-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.step-name {
+    font-weight: 500;
+    color: var(--gray-800);
+    font-size: 0.95rem;
+}
+
+.step-time {
+    font-size: 0.75rem;
+    color: var(--gray-600);
+}
+
+.step-description {
+    font-size: 0.85rem;
+    color: var(--gray-700);
+    margin-bottom: 0.5rem;
+}
+
+.step-details {
+    background-color: var(--gray-100);
+    border-radius: var(--border-radius);
+    padding: 0.75rem;
+    font-size: 0.85rem;
+    color: var(--gray-700);
+    margin-top: 0.5rem;
+}
+
+.orchestrator-results {
+    background-color: var(--gray-50);
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.results-view {
+    background-color: white;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--gray-300);
+    height: 600px;
+    overflow: auto;
+}
+
+.agent-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--gray-300);
+}
+
+.agent-tab {
+    padding: 0.75rem 1.25rem;
+    font-size: 0.9rem;
+    color: var(--gray-700);
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+}
+
+.agent-tab.active {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+    font-weight: 500;
+}
+
+.tab-content {
+    padding: 1.5rem;
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.orchestrator-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+    .orchestrator-interface {
+        grid-template-columns: 1fr;
+    }
+}

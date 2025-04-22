@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Visualization Agent - API Console</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/main.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/styles.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/visualization-agent.css') }}"
+    />
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/visualization-agent.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+    <div class="page-container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-code"></i>
+                <h1>API Agent Console</h1>
+            </div>
+            <nav>
+                <button class="back-button" onclick="navigateTo('/')">
+                    <i class="fas fa-arrow-left"></i> Back to Agents
+                </button>
+            </nav>
+        </header>
+
+        <main class="agent-page">
+            <div class="agent-header">
+                <div class="agent-icon large">
+                    <i class="fas fa-chart-pie"></i>
+                </div>
+                <div class="agent-title">
+                    <h2>Visualization Agent</h2>
+                    <p>Generate custom data visualizations from trends</p>
+                </div>
+            </div>
+
+            <div class="viz-interface">
+                <div class="viz-control-panel">
+                    <div class="form-group">
+                        <label for="scout-select">
+                            Data Source
+                            <span class="tooltip" data-tooltip="Select a data source for visualization">
+                                <i class="fas fa-info-circle"></i>
+                            </span>
+                        </label>
+                        <select id="viz-data-source" class="scout-select" onchange="loadDataSource()">
+                            <option value="">Select a data source...</option>
+                            <option value="scout">Scout Agent Results</option>
+                            <option value="context">Context Agent Results</option>
+                            <option value="custom">Custom Data Input</option>
+                        </select>
+                    </div>
+
+                    <div id="scout-source-container" class="form-group hidden">
+                        <label for="scout-select">Scout Result</label>
+                        <select id="scout-select" class="scout-select" onchange="loadScoutData()">
+                            <option value="">Select a Scout Agent result...</option>
+                        </select>
+                    </div>
+
+                    <div id="context-source-container" class="form-group hidden">
+                        <label for="context-select">Context Analysis</label>
+                        <select id="context-select" class="scout-select" onchange="loadContextData()">
+                            <option value="">Select a Context Analysis result...</option>
+                        </select>
+                    </div>
+
+                    <div id="custom-source-container" class="form-group hidden">
+                        <label for="custom-data">Custom Data</label>
+                        <textarea id="custom-data" rows="8" placeholder="Paste your JSON data here..."></textarea>
+                    </div>
+
+                    <div class="viz-type-selector">
+                        <button class="viz-type-btn active" data-viztype="treemap" onclick="selectVizType('treemap')">
+                            <i class="fas fa-th-large"></i> Treemap
+                        </button>
+                        <button class="viz-type-btn" data-viztype="network" onclick="selectVizType('network')">
+                            <i class="fas fa-project-diagram"></i> Network
+                        </button>
+                        <button class="viz-type-btn" data-viztype="timeline" onclick="selectVizType('timeline')">
+                            <i class="fas fa-stream"></i> Timeline
+                        </button>
+                        <button class="viz-type-btn" data-viztype="radar" onclick="selectVizType('radar')">
+                            <i class="fas fa-spider"></i> Radar
+                        </button>
+                    </div>
+
+                    <div class="viz-options">
+                        <div class="filter-group">
+                            <label>Group By</label>
+                            <select id="group-by" onchange="updateVizOptions()">
+                                <option value="domain">Domain</option>
+                                <option value="knowledge_type">Knowledge Type</option>
+                                <option value="publication_date">Publication Date</option>
+                                <option value="country">Country</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label>Color By</label>
+                            <select id="color-by" onchange="updateVizOptions()">
+                                <option value="domain">Domain</option>
+                                <option value="knowledge_type">Knowledge Type</option>
+                                <option value="similarity_score">Similarity Score</option>
+                                <option value="data_quality_score">Data Quality</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label>Size By</label>
+                            <select id="size-by" onchange="updateVizOptions()">
+                                <option value="similarity_score">Similarity Score</option>
+                                <option value="data_quality_score">Data Quality</option>
+                                <option value="count">Count</option>
+                                <option value="equal">Equal Size</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label>Domain Filter</label>
+                            <div id="domain-filters" class="viz-checkbox-group">
+                                <div class="viz-checkbox-item">
+                                    <input type="checkbox" id="domain-all" checked onchange="toggleAllDomains()">
+                                    <label for="domain-all">All Domains</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button id="generate-button" class="primary-button" onclick="generateVisualization()">
+                            <i class="fas fa-chart-pie"></i> Generate Visualization
+                        </button>
+                        <button class="secondary-button" onclick="clearForm()">
+                            <i class="fas fa-eraser"></i> Clear
+                        </button>
+                    </div>
+
+                    <!-- Console Log Panel -->
+                    <div class="console-log-panel">
+                        <div class="console-header">
+                            <h3>Process Log</h3>
+                            <button class="log-clear-btn" onclick="clearLogs()">
+                                Clear Logs
+                            </button>
+                        </div>
+                        <div id="console-log" class="console-log">
+                            <div class="log-message system">
+                                <span class="log-timestamp">System</span> Visualization Agent ready
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="viz-results">
+                    <div class="viz-visualization">
+                        <div class="viz-controls">
+                            <h3>Visualization</h3>
+                            <div>
+                                <button class="icon-button" onclick="downloadVisualization()" title="Download visualization">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                                <button class="icon-button" onclick="toggleFullscreen()" title="Toggle fullscreen">
+                                    <i class="fas fa-expand"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="loading" class="loading hidden">
+                            <div class="spinner"></div>
+                            <p>Generating visualization...</p>
+                        </div>
+
+                        <div id="viz-container" class="viz-container">
+                            <div class="placeholder-message">
+                                <i class="fas fa-chart-pie"></i>
+                                <p>Generate a visualization to see results</p>
+                            </div>
+                        </div>
+
+                        <div id="viz-tooltip" class="viz-tooltip"></div>
+
+                        <div id="color-legend" class="color-legend">
+                            <!-- Legend items will be dynamically generated -->
+                        </div>
+
+                        <div class="viz-action-btns">
+                            <button class="viz-action-btn" onclick="resetVisualization()">
+                                <i class="fas fa-undo"></i> Reset View
+                            </button>
+                            <button class="viz-action-btn" onclick="toggleLabels()">
+                                <i class="fas fa-tags"></i> Toggle Labels
+                            </button>
+                            <button class="viz-action-btn primary" onclick="generateVizInsights()">
+                                <i class="fas fa-lightbulb"></i> Generate Insights
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="viz-insights">
+                        <div class="insights-header">
+                            <h3>Visualization Insights</h3>
+                            <button class="icon-button" onclick="copyInsights()" title="Copy insights">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+
+                        <div id="insights-loading" class="loading hidden">
+                            <div class="spinner"></div>
+                            <p>Generating insights...</p>
+                        </div>
+
+                        <div id="insights-content" class="insights-content">
+                            <div class="placeholder-message">
+                                <i class="fas fa-lightbulb"></i>
+                                <p>Generate a visualization and insights to see analysis</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
