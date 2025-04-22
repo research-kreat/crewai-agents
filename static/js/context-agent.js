@@ -573,107 +573,11 @@ function downloadResults() {
 
 // Initialize on page load if this is the context agent page
 document.addEventListener("DOMContentLoaded", () => {
-  if (
-    document.getElementById("company-profile") &&
-    document.getElementById("scout-select")
-  ) {
+  if (document.getElementById("scout-select")) {
     logToConsole("Context Agent initialized", "system");
 
     // Load scout results
     loadScoutResultsFromLocalStorage();
-
-    // Add example data
-    const companyProfile = document.getElementById("company-profile");
-    if (companyProfile && !companyProfile.value) {
-      // Load example company profile
-      fetch("/jsons/company-data-struct.json")
-        .then((response) => response.text())
-        .then((data) => {
-          companyProfile.value = data;
-        })
-        .catch((error) => {
-          logToConsole(
-            `Could not load example data: ${error.message}`,
-            "warning"
-          );
-          // Add fallback example
-          const exampleCompany = {
-            name: "Mahindra & Mahindra Ltd.",
-            founded: "1945-10-02",
-            founders: [
-              "Jagdish Chandra Mahindra",
-              "Kailash Chandra Mahindra",
-              "Malik Ghulam Muhammad",
-            ],
-            headquarters: "Mumbai, Maharashtra, India",
-            type: "Public",
-            industry: [
-              "Automotive",
-              "Farm Equipment",
-              "Information Technology",
-              "Financial Services",
-              "Renewable Energy",
-              "Logistics",
-              "Hospitality",
-              "Real Estate",
-            ],
-            website: "https://auto.mahindra.com",
-            numberOfEmployees: 260000,
-            products: [
-              "Passenger Vehicles",
-              "Commercial Vehicles",
-              "Tractors",
-              "Motorcycles",
-              "Electric Vehicles",
-              "Agricultural Implements",
-              "Automotive Components",
-            ],
-            focusAreas: [
-              "Electric Vehicle Development",
-              "Sustainable Farming Solutions",
-              "Digital Farming Technologies",
-              "Precision Agriculture",
-              "Autonomous Driving",
-              "Connected Vehicles",
-              "Sustainability",
-            ],
-            initiatives: [
-              "Electric SUV Launch",
-              "EV Expansion Plan",
-              "Precision Agriculture Partnerships",
-            ],
-            researchAndDevelopment: {
-              facilities: [
-                "Mahindra Research Valley (India)",
-                "Mahindra North American Technical Centre (USA)",
-                "Mahindra Advanced Design Europe (UK)",
-                "Pininfarina (Italy)",
-              ],
-              recentInvestmentsUSD: 1440000000,
-              annualInvestment: {
-                amountINR: 29700000000,
-                fiscalYear: "2019-20",
-                percentageOfTurnover: 6.3,
-              },
-            },
-            latestNews: [
-              {
-                title: "Mahindra unveils global electric SUV lineup",
-                url: "https://www.autocarindia.com/car-news/mahindra-unveils-global-electric-suv-lineup-427958",
-              },
-              {
-                title: "Mahindra to invest ₹12,000 crore in EVs by 2027",
-                url: "https://www.business-standard.com/article/companies/mahindra-to-invest-rs-12-000-cr-in-evs-by-2027-says-anish-shah-124032300968_1.html",
-              },
-              {
-                title: "Mahindra reports record tractor sales in Q4 FY24",
-                url: "https://economictimes.indiatimes.com/industry/auto/auto-news/mahindra-reports-record-tractor-sales-in-q4-fy24/articleshow/108412014.cms",
-              },
-            ],
-          };
-          companyProfile.value = JSON.stringify([exampleCompany], null, 2);
-        });
-    }
 
     // Connect to socket if available
     if (typeof io !== "undefined") {
