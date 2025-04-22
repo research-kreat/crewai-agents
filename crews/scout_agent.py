@@ -132,7 +132,6 @@ class ScoutAgent:
             RETURN 
                 k.id AS id,
                 k.title AS title,
-                COALESCE(k.abstract, "No summary available") AS summary_text,
                 similarity_score,
                 k.domain AS domain,
                 k.knowledge_type AS knowledge_type,
@@ -183,7 +182,6 @@ class ScoutAgent:
                     RETURN 
                         COALESCE(k.id, toString(k.id)) AS id,
                         k.title AS title,
-                        COALESCE(k.abstract, "No summary available") AS summary_text,
                         0.5 AS similarity_score,
                         k.domain AS domain,
                         k.knowledge_type AS knowledge_type,
@@ -291,7 +289,6 @@ class ScoutAgent:
                 "data_quality_score": item.get("data_quality_score", 0.0),
                 "similarity_score": round(item.get("similarity_score", 0.0), 4),
                 "country": item.get("country", "No country specified"),
-                "summary_text": item.get("summary_text", "No summary available"),
                 "assignees": item.get("assignees", []),
                 "authors": item.get("authors", []),
                 "cpcs": item.get("cpcs", []),

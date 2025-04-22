@@ -361,8 +361,6 @@ class AnalystAgent:
                     tech_detail["knowledge_type"] = data["knowledge_type"]
                 if "publication_date" in data:
                     tech_detail["publication_date"] = data["publication_date"]
-                if "summary_text" in data and data["summary_text"] and data["summary_text"] != "No summary available":
-                    tech_detail["summary"] = data["summary_text"][:200] + "..." if len(data["summary_text"]) > 200 else data["summary_text"]
             
             central_tech_details.append(tech_detail)
         
@@ -480,6 +478,7 @@ class AnalystAgent:
         
         try:
             # Generate insights
+            self.emit_log(f"TASK PROMPT FOR ANALYST: {analysis_task.description}")
             self.emit_log("Generating comprehensive insights using CrewAI...")
             insights_str = str(crew.kickoff())
             self.emit_log("Insights generation complete")

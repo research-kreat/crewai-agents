@@ -963,11 +963,6 @@ function showNodeDetails(node) {
       <p><strong>Data Quality Score:</strong> ${(
         trend.data_quality_score || 0
       ).toFixed(2)}</p>
-      
-      <div class="details-section">
-        <h5>Summary</h5>
-        <p>${trend.summary_text || "No summary available"}</p>
-      </div>
     `;
 
     // Add technologies if available
@@ -1294,9 +1289,6 @@ function generateDataCards(data) {
     }</span>
       </div>
       <div class="card-body">
-        <p class="card-summary">${
-          trend.summary_text || "No summary available"
-        }</p>
         <div class="card-details">
           <div class="detail-item">
             <span class="detail-label">Type:</span>

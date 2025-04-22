@@ -125,7 +125,6 @@ function displayStructuredData(data) {
           (trend) => `
       <li>
         <strong>Title:</strong> ${isValidValue(trend.title) ? trend.title : "No title available"}<br>
-        <strong>Summary:</strong> ${isValidValue(trend.summary_text) ? trend.summary_text : "No summary available"}<br>
         <strong>Similarity Score:</strong> ${isValidValue(trend.similarity_score) ? trend.similarity_score : "No score available"}<br>
         <strong>Domain:</strong> ${isValidValue(trend.domain) ? trend.domain : "No domain specified"}<br>
         <strong>Knowledge Type:</strong> ${isValidValue(trend.knowledge_type) ? trend.knowledge_type : "No knowledge type"}<br>

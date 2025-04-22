@@ -33,7 +33,6 @@
       ],
       "similarity_score": 0.788557767868042,
       "subdomains": ["Automotive Technology", "Electrification"],
-      "summary_text": "No summary available",
       "technologies": [
         "battery technology",
         "thermal management",
@@ -77,7 +76,6 @@
       ],
       "similarity_score": 0.7850584983825684,
       "subdomains": ["Electrification", "Energy Systems"],
-      "summary_text": "No summary available",
       "technologies": [],
       "title": "Secure and Efficient Vehicle-to-Grid Integration for Electric Vehicle Fleets"
     },
@@ -119,7 +117,6 @@
       ],
       "similarity_score": 0.7828657627105713,
       "subdomains": ["Electrification", "Infrastructure"],
-      "summary_text": "No summary available",
       "technologies": [
         "electric vehicles",
         "power electronics",
@@ -159,7 +156,6 @@
       ],
       "similarity_score": 0.7656238079071045,
       "subdomains": ["Electrification", "Robotics"],
-      "summary_text": "No summary available",
       "technologies": [
         "computer vision",
         "robotics",
@@ -194,7 +190,6 @@
       ],
       "similarity_score": 0.7297444343566895,
       "subdomains": ["Materials Technology", "Vehicle Structures"],
-      "summary_text": "No summary available",
       "technologies": [
         "composite materials",
         "lightweight structures",
@@ -238,7 +233,6 @@
       ],
       "similarity_score": 0.7290563583374023,
       "subdomains": ["Electrification", "Battery Technology"],
-      "summary_text": "No summary available",
       "technologies": [],
       "title": "Comprehensive Analysis of Electric Vehicle Battery Degradation Across Multiple Vehicle Models and Usage Patterns"
     },
@@ -279,7 +273,6 @@
       ],
       "similarity_score": 0.7065787315368652,
       "subdomains": ["Electrification", "Last-Mile Delivery"],
-      "summary_text": "No summary available",
       "technologies": [],
       "title": "Quantifying Environmental Benefits of Electric Last-Mile Delivery: A Life Cycle Assessment"
     },
@@ -311,7 +304,6 @@
       ],
       "similarity_score": 0.7026660442352295,
       "subdomains": ["Connected Vehicles", "Infrastructure"],
-      "summary_text": "No summary available",
       "technologies": [
         "connected infrastructure",
         "V2I communication",
@@ -351,7 +343,6 @@
       ],
       "similarity_score": 0.6956276893615723,
       "subdomains": ["Alternative Powertrains", "Commercial Vehicles"],
-      "summary_text": "No summary available",
       "technologies": [],
       "title": "A Comprehensive Review of Hydrogen Fuel Cell Technologies for Heavy-Duty Transportation"
     },
@@ -381,7 +372,6 @@
       ],
       "similarity_score": 0.6924519538879395,
       "subdomains": ["Alternative Powertrains", "Commercial Vehicles"],
-      "summary_text": "No summary available",
       "technologies": ["fuel cell", "hydrogen power", "power electronics"],
       "title": "Hydrogen Fuel Cell System with Enhanced Power Density"
     }
@@ -436,7 +426,6 @@
       ],
       "similarity_score": 0.7886,
       "subdomains": ["Automotive Technology", "Electrification"],
-      "summary_text": "No summary available",
       "technologies": [
         "battery technology",
         "thermal management",
@@ -480,7 +469,6 @@
       ],
       "similarity_score": 0.7851,
       "subdomains": ["Electrification", "Energy Systems"],
-      "summary_text": "No summary available",
       "technologies": [],
       "title": "Secure and Efficient Vehicle-to-Grid Integration for Electric Vehicle Fleets"
     },
@@ -522,7 +510,6 @@
       ],
       "similarity_score": 0.7829,
       "subdomains": ["Electrification", "Infrastructure"],
-      "summary_text": "No summary available",
       "technologies": [
         "electric vehicles",
         "power electronics",
@@ -562,7 +549,6 @@
       ],
       "similarity_score": 0.7656,
       "subdomains": ["Electrification", "Robotics"],
-      "summary_text": "No summary available",
       "technologies": [
         "computer vision",
         "robotics",
@@ -597,7 +583,6 @@
       ],
       "similarity_score": 0.7297,
       "subdomains": ["Materials Technology", "Vehicle Structures"],
-      "summary_text": "No summary available",
       "technologies": [
         "composite materials",
         "lightweight structures",
@@ -641,7 +626,6 @@
       ],
       "similarity_score": 0.7291,
       "subdomains": ["Electrification", "Battery Technology"],
-      "summary_text": "No summary available",
       "technologies": [],
       "title": "Comprehensive Analysis of Electric Vehicle Battery Degradation Across Multiple Vehicle Models and Usage Patterns"
     },
@@ -682,7 +666,6 @@
       ],
       "similarity_score": 0.7066,
       "subdomains": ["Electrification", "Last-Mile Delivery"],
-      "summary_text": "No summary available",
       "technologies": [],
       "title": "Quantifying Environmental Benefits of Electric Last-Mile Delivery: A Life Cycle Assessment"
     },
@@ -714,7 +697,6 @@
       ],
       "similarity_score": 0.7027,
       "subdomains": ["Connected Vehicles", "Infrastructure"],
-      "summary_text": "No summary available",
       "technologies": [
         "connected infrastructure",
         "V2I communication",
@@ -754,7 +736,6 @@
       ],
       "similarity_score": 0.6956,
       "subdomains": ["Alternative Powertrains", "Commercial Vehicles"],
-      "summary_text": "No summary available",
       "technologies": [],
       "title": "A Comprehensive Review of Hydrogen Fuel Cell Technologies for Heavy-Duty Transportation"
     },
@@ -784,7 +765,6 @@
       ],
       "similarity_score": 0.6925,
       "subdomains": ["Alternative Powertrains", "Commercial Vehicles"],
-      "summary_text": "No summary available",
       "technologies": ["fuel cell", "hydrogen power", "power electronics"],
       "title": "Hydrogen Fuel Cell System with Enhanced Power Density"
     }
