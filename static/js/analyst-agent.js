@@ -349,8 +349,7 @@ function previewScoutResult(result) {
 }
 
 /**
- * Process Analyst Query with either predefined data or from input field
- * Updated to use safe S-Curve rendering
+ * Process Analyst Query with proper button handling
  */
 function processAnalystQuery(predefinedData = null) {
   // Either use predefined data or get from textarea
@@ -364,6 +363,7 @@ function processAnalystQuery(predefinedData = null) {
     // Validate input
     if (!scoutDataInput.trim()) {
       logToConsole("Please enter Scout Agent data", "warning");
+      showToast("Please enter Scout Agent data");
       return;
     }
 
@@ -372,14 +372,38 @@ function processAnalystQuery(predefinedData = null) {
       scoutData = JSON.parse(scoutDataInput);
     } catch (error) {
       logToConsole("Invalid JSON input: " + error.message, "error");
+      showToast("Invalid JSON format: " + error.message);
       return;
     }
   }
 
-  // Disable all analyze buttons immediately
-  handleButtonState("#analyze-button", true, "Analyzing...");
-  handleButtonState("#analyze-id-btn", true, "Analyzing...");
-  handleButtonState(".analyze-btn", true);
+  // IMPORTANT FIX: Disable buttons directly without using the utility function
+  // This ensures buttons are definitely disabled regardless of any state tracking issues
+  const analyzeButton = document.getElementById("analyze-button");
+  if (analyzeButton) {
+    analyzeButton.disabled = true;
+    analyzeButton.innerHTML =
+      '<i class="fas fa-circle-notch fa-spin"></i> Analyzing...';
+    analyzeButton.style.opacity = "0.7";
+    analyzeButton.style.cursor = "not-allowed";
+  }
+
+  const analyzeIdButton = document.getElementById("analyze-id-btn");
+  if (analyzeIdButton) {
+    analyzeIdButton.disabled = true;
+    analyzeIdButton.innerHTML =
+      '<i class="fas fa-circle-notch fa-spin"></i> Analyzing...';
+    analyzeIdButton.style.opacity = "0.7";
+    analyzeIdButton.style.cursor = "not-allowed";
+  }
+
+  // Disable all analyze buttons in result cards
+  document.querySelectorAll(".analyze-btn").forEach((btn) => {
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
+    btn.style.opacity = "0.7";
+    btn.style.cursor = "not-allowed";
+  });
 
   // Show loading state for graph
   document.getElementById("graph-container").innerHTML = `
@@ -394,6 +418,14 @@ function processAnalystQuery(predefinedData = null) {
     <div class="loading">
       <div class="spinner"></div>
       <p>Generating S-Curve Visualization...</p>
+    </div>
+  `;
+
+  // Show loading state for insights
+  document.getElementById("insights-container").innerHTML = `
+    <div class="loading">
+      <div class="spinner"></div>
+      <p>Generating insights...</p>
     </div>
   `;
 
@@ -422,7 +454,7 @@ function processAnalystQuery(predefinedData = null) {
       // Render Knowledge Graph
       renderForceGraph(data);
 
-      // Render S-Curve Visualization using the safe renderer
+      // Render S-Curve Visualization
       try {
         safeRenderSCurve(data);
       } catch (error) {
@@ -444,10 +476,32 @@ function processAnalystQuery(predefinedData = null) {
       // Generate data cards
       generateDataCards(data);
 
-      // Re-enable all buttons
-      handleButtonState("#analyze-button", false);
-      handleButtonState("#analyze-id-btn", false);
-      handleButtonState(".analyze-btn", false);
+      // IMPORTANT FIX: Re-enable buttons directly
+      if (analyzeButton) {
+        analyzeButton.disabled = false;
+        analyzeButton.innerHTML =
+          '<i class="fas fa-chart-line"></i> Analyze Trends';
+        analyzeButton.style.opacity = "";
+        analyzeButton.style.cursor = "";
+      }
+
+      if (analyzeIdButton) {
+        analyzeIdButton.disabled = false;
+        analyzeIdButton.innerHTML =
+          '<i class="fas fa-chart-line"></i> Analyze This Data';
+        analyzeIdButton.style.opacity = "";
+        analyzeIdButton.style.cursor = "";
+      }
+
+      // Re-enable all analyze buttons in result cards
+      document.querySelectorAll(".analyze-btn").forEach((btn) => {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-chart-line"></i>';
+        btn.style.opacity = "";
+        btn.style.cursor = "";
+      });
+
+      showToast("Analysis completed successfully");
     })
     .catch((error) => {
       logToConsole(`Analysis error: ${error}`, "error");
@@ -468,54 +522,90 @@ function processAnalystQuery(predefinedData = null) {
         </div>
       `;
 
-      // Re-enable all buttons
-      handleButtonState("#analyze-button", false);
-      handleButtonState("#analyze-id-btn", false);
-      handleButtonState(".analyze-btn", false);
+      // Show error message for insights
+      document.getElementById("insights-container").innerHTML = `
+        <div class="error-message">
+          <i class="fas fa-exclamation-circle"></i>
+          <p>Error generating insights: ${error.message}</p>
+        </div>
+      `;
+
+      showToast("Analysis failed: " + error.message);
+
+      // IMPORTANT FIX: Re-enable buttons directly even in case of error
+      if (analyzeButton) {
+        analyzeButton.disabled = false;
+        analyzeButton.innerHTML =
+          '<i class="fas fa-chart-line"></i> Analyze Trends';
+        analyzeButton.style.opacity = "";
+        analyzeButton.style.cursor = "";
+      }
+
+      if (analyzeIdButton) {
+        analyzeIdButton.disabled = false;
+        analyzeIdButton.innerHTML =
+          '<i class="fas fa-chart-line"></i> Analyze This Data';
+        analyzeIdButton.style.opacity = "";
+        analyzeIdButton.style.cursor = "";
+      }
+
+      // Re-enable all analyze buttons in result cards
+      document.querySelectorAll(".analyze-btn").forEach((btn) => {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-chart-line"></i>';
+        btn.style.opacity = "";
+        btn.style.cursor = "";
+      });
     });
 }
 
 /**
- * Process a Scout Result by ID
+ * Process a Scout Result by ID with proper button handling
  */
 function processScoutResultById(resultId) {
   const result = scoutResults.find((r) => r.id === resultId);
   if (!result) {
     logToConsole(`Result with ID ${resultId} not found`, "error");
+    showToast(`Result with ID ${resultId} not found`);
     return;
   }
 
-  // Explicitly disable the button that was clicked
+  // IMPORTANT FIX: Directly disable the clicked button
   const clickedButton = document.getElementById("analyze-id-btn");
   if (clickedButton) {
     clickedButton.disabled = true;
     clickedButton.innerHTML =
       '<i class="fas fa-circle-notch fa-spin"></i> Analyzing...';
+    clickedButton.style.opacity = "0.7";
+    clickedButton.style.cursor = "not-allowed";
   }
 
-  // Also disable any other analyze buttons
+  // Disable analyze buttons in the cards
   document.querySelectorAll(".analyze-btn").forEach((btn) => {
     btn.disabled = true;
     btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
+    btn.style.opacity = "0.7";
+    btn.style.cursor = "not-allowed";
   });
+
+  // Disable the main analyze button as well
+  const analyzeButton = document.getElementById("analyze-button");
+  if (analyzeButton) {
+    analyzeButton.disabled = true;
+    analyzeButton.innerHTML =
+      '<i class="fas fa-circle-notch fa-spin"></i> Analyzing...';
+    analyzeButton.style.opacity = "0.7";
+    analyzeButton.style.cursor = "not-allowed";
+  }
 
   logToConsole(
     `Processing Scout result: ${result.prompt.substring(0, 30)}...`,
     "info"
   );
 
-  // Now also disable the main analyze button as we've switched tabs
-  const analyzeButton = document.getElementById("analyze-button");
-  if (analyzeButton) {
-    analyzeButton.disabled = true;
-    analyzeButton.innerHTML =
-      '<i class="fas fa-circle-notch fa-spin"></i> Analyzing...';
-  }
-
+  // Process the data
   processAnalystQuery(result.data);
-
-  // Note: The buttons will be re-enabled in the processAnalystQuery function's
-  // .then and .catch blocks
+  // Note: The buttons will be re-enabled in the processAnalystQuery function
 }
 
 // Populate domain filter based on data

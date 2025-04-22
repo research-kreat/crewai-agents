@@ -1,0 +1,4338 @@
+{
+    "graph_data": {
+      "links": [
+        {
+          "source": "patents_BT-PAT-017",
+          "target": "tech_continuous_manufacturing",
+          "type": "uses_technology",
+          "weight": 1.0
+        },
+        {
+          "source": "patents_BT-PAT-017",
+          "target": "tech_mrna_production",
+          "type": "uses_technology",
+          "weight": 1.0
+        },
+        {
+          "source": "patents_BT-PAT-017",
+          "target": "tech_process_intensification",
+          "type": "uses_technology",
+          "weight": 1.0
+        },
+        {
+          "source": "patents_BT-PAT-017",
+          "target": "keyword_biomanufacturing",
+          "type": "has_keyword",
+          "weight": 0.7
+        },
+        {
+          "source": "patents_BT-PAT-017",
+          "target": "keyword_continuous_manufacturing",
+          "type": "has_keyword",
+          "weight": 0.7
+        },
+        {
+          "source": "patents_BT-PAT-017",
+          "target": "keyword_mrna_vaccine",
+          "type": "has_keyword",
+          "weight": 0.7
+        },
+        {
+          "source": "patents_BT-PAT-017",
+          "target": "keyword_process_intensification",
+          "type": "has_keyword",
+          "weight": 0.7
+        },
+        {
+          "reasons": [
+            "same_domain",
+            "similar_relevance"
+          ],
+          "source": "patents_BT-PAT-017",
+          "target": "patents_BT-PAT-001",
+          "type": "related",
+          "weight": 0.8
+        },
+        {
+          "reasons": [
+            "same_domain",
+            "similar_relevance"
+          ],
+          "source": "patents_BT-PAT-017",
+          "target": "journals_BT-JRN-003",
+          "type": "related",
+          "weight": 0.8
+        },
+        {
+          "reasons": [
+            "same_domain",
+            "similar_relevance"
+          ],
+          "source": "patents_BT-PAT-017",
+          "target": "patents_BT-PAT-012",
+          "type": "related",
+          "weight": 0.8
+        },
+        {
+          "reasons": [
+            "same_domain",
+            "similar_relevance"
+          ],
+          "source": "patents_BT-PAT-017",
+          "target": "patents_BT-PAT-008",
+          "type": "related",
+          "weight": 0.8
+        },
+        {
+          "reasons": [
+            "same_domain",
+            "similar_relevance"
+          ],
+          "source": "patents_BT-PAT-017",
+          "target": "patents_BT-PAT-020",
+          "type": "related",
+          "weight": 0.8
+        },
+        {
+          "reasons": [
+            "same_domain",
+            "similar_relevance"
+          ],
+          "source": "patents_BT-PAT-017",
+          "target": "journals_BT-JRN-010",
+          "type": "related",
+          "weight": 0.8
+        },
+        {
+          "reasons": [
+            "same_domain",
+            "similar_relevance"
+          ],
+          "source": "patents_BT-PAT-017",
+          "target": "patents_BT-PAT-019",
+          "type": "related",
+          "weight": 0.8
+        },
+        {
+          "reasons": [
+            "same_domain",
+            "similar_relevance"
+          ],
+          "source": "patents_BT-PAT-017",
+          "target": "patents_BT-PAT-006",
+          "type": "related",
+          "weight": 0.8
+        },
+        {
+          "reasons": [
+            "same_domain",
+            "similar_relevance",
+            "shared_keywords"
+          ],
+          "source": "patents_BT-PAT-017",
+          "target": "patents_BT-PAT-007",
+          "type": "related",
+          "weight": 1.3
+        },
+        {
+          "source": "patents_BT-PAT-001",
+          "target": "tech_mrna",
+          "type": "uses_technology",
+          "weight": 1.0
+        },
+        {
+          "source": "patents_BT-PAT-001",
+          "target": "tech_lipid_nanoparticles",
+          "type": "uses_technology",
+          "weight": 1.0
+        },
+        {
+          "source": "patents_BT-PAT-001",
+          "target": "tech_drug_delivery",
+          "type": "uses_technology",
+          "weight": 1.0
+        },
+        {
+          "source": "patents_BT-PAT-001",
+          "target": "keyword_mrna_delivery",
+          "type": "has_keyword",
+          "weight": 0.7
+        },
+        {
+          "source": "patents_BT-PAT-001",
+          "target": "keyword_lnp",
+          "type": "has_keyword",
+          "weight": 0.7
+        },
+        {
+          "source": "patents_BT-PAT-001",
+          "target": "keyword_nanoparticle",
+          "type": "has_keyword",
+          "weight": 0.7
+        },
+        {
+          "source": "patents_BT-PAT-001",
+          "target": "keyword_gene_therapy",
+          "type": "has_keyword",
+          "weight": 0.7
+        },
+        {
+          "reasons": [
+            "same_domain",
+            "similar_relevance"
+          ],
+          "source": "patents_BT-PAT-001",
+          "target": "journals_BT-JRN-003",
+          "type": "related",
+          "weight": 0.8
+        },
+        {
+          "reasons": [
+            "same_domain",
+            "similar_relevance",
+            "shared_technologies"
+          ],
+          "source": "patents_BT-PAT-001",
+          "target": "patents_BT-PAT-012",
+          "type": "related",
+          "weight": 1.5
+        },
+        {
+          "reasons": [
+            "same_domain",
+            "similar_relevance"
+          ],
+          "source": "patents_BT-PAT-001",
+          "target": "patents_BT-PAT-008",
+          "type": "related",
+          "weight": 0.8
+        },
+        {
+          "reasons": [
+            "same_domain",
+            "similar_relevance"
+          ],
+          "source": "patents_BT-PAT-001",
+          "target": "patents_BT-PAT-020",
+          "type": "related",
+          "weight": 0.8
+        },
+        {
+          "reasons": [
+            "same_domain",
+            "similar_relevance"
+          ],
+          "source": "patents_BT-PAT-001",
+          "target": "journals_BT-JRN-010",
+          "type": "related",
+          "weight": 0.8
+        },
+        {
+          "reasons": [
+            "same_domain",
+            "similar_relevance"
+          ],
+          "source": "patents_BT-PAT-001",
+          "target": "patents_BT-PAT-019",
+          "type": "related",
+          "weight": 0.8
+        },
+        {
+          "reasons": [
+            "same_domain",
+            "similar_relevance"
+          ],
+          "source": "patents_BT-PAT-001",
+          "target": "patents_BT-PAT-006",
+          "type": "related",
+          "weight": 0.8
+        },
+        {
+          "reasons": [
+            "same_domain",
+            "similar_relevance"
+          ],
+          "source": "patents_BT-PAT-001",
+          "target": "patents_BT-PAT-007",
+          "type": "related",
+          "weight": 0.8
+        },
+        {
+          "source": "journals_BT-JRN-003",
+          "target": "keyword_spatial_transcriptomics",
+          "type": "has_keyword",
+          "weight": 0.7
+        },
+        {
+          "source": "journals_BT-JRN-003",
+          "target": "keyword_tumor_microenvironment",
+          "type": "has_keyword",
+          "weight": 0.7
+        },
+        {
+          "source": "journals_BT-JRN-003",
+          "target": "keyword_cancer",
+          "type": "has_keyword",
+          "weight": 0.7
+        },
+        {
+          "source": "journals_BT-JRN-003",
+          "target": "keyword_gene_expression",
+          "type": "has_keyword",
+          "weight": 0.7
+        },
+        {
+          "source": "journals_BT-JRN-003",
+          "target": "keyword_precision_medicine",
+          "type": "has_keyword",
+          "weight": 0.7
+        },
+        {
+          "reasons": [
+            "same_domain",
+            "similar_relevance"
+          ],
+          "source": "journals_BT-JRN-003",
+          "target": "patents_BT-PAT-012",
+          "type": "related",
+          "weight": 0.8
+        },
+        {
+          "reasons": [
+            "same_domain",
+            "similar_relevance"
+          ],
+          "source": "journals_BT-JRN-003",
+          "target": "patents_BT-PAT-008",
+          "type": "related",
+          "weight": 0.8
+        },
+        {
+          "reasons": [
+            "same_domain",
+            "similar_relevance"
+          ],
+          "source": "journals_BT-JRN-003",
+          "target": "patents_BT-PAT-020",
+          "type": "related",
+          "weight": 0.8
+        },
+        {
+          "reasons": [
+            "same_domain",
+            "similar_relevance"
+          ],
+          "source": "journals_BT-JRN-003",
+          "target": "journals_BT-JRN-010",
+          "type": "related",
+          "weight": 0.8
+        },
+        {
+          "reasons": [
+            "same_domain",
+            "similar_relevance"
+          ],
+          "source": "journals_BT-JRN-003",
+          "target": "patents_BT-PAT-019",
+          "type": "related",
+          "weight": 0.8
+        },
+        {
+          "reasons": [
+            "same_domain",
+            "similar_relevance"
+          ],
+          "source": "journals_BT-JRN-003",
+          "target": "patents_BT-PAT-006",
+          "type": "related",
+          "weight": 0.8
+        },
+        {
+          "reasons": [
+            "same_domain",
+            "similar_relevance"
+          ],
+          "source": "journals_BT-JRN-003",
+          "target": "patents_BT-PAT-007",
+          "type": "related",
+          "weight": 0.8
+        },
+        {
+          "source": "patents_BT-PAT-012",
+          "target": "tech_lipid_nanoparticles",
+          "type": "uses_technology",
+          "weight": 1.0
+        },
+        {
+          "source": "patents_BT-PAT-012",
+          "target": "tech_mrna_vaccines",
+          "type": "uses_technology",
+          "weight": 1.0
+        },
+        {
+          "source": "patents_BT-PAT-012",
+          "target": "tech_infectious_disease",
+          "type": "uses_technology",
+          "weight": 1.0
+        },
+        {
+          "source": "patents_BT-PAT-012",
+          "target": "keyword_mrna",
+          "type": "has_keyword",
+          "weight": 0.7
+        },
+        {
+          "source": "patents_BT-PAT-012",
+          "target": "keyword_vaccine",
+          "type": "has_keyword",
+          "weight": 0.7
+        },
+        {
+          "source": "patents_BT-PAT-012",
+          "target": "keyword_infectious_disease",
+          "type": "has_keyword",
+          "weight": 0.7
+        },
+        {
+          "source": "patents_BT-PAT-012",
+          "target": "keyword_lipid_nanoparticle",
+          "type": "has_keyword",
+          "weight": 0.7
+        },
+        {
+          "reasons": [
+            "same_domain",
+            "similar_relevance"
+          ],
+          "source": "patents_BT-PAT-012",
+          "target": "patents_BT-PAT-008",
+          "type": "related",
+          "weight": 0.8
+        },
+        {
+          "reasons": [
+            "same_domain",
+            "similar_relevance"
+          ],
+          "source": "patents_BT-PAT-012",
+          "target": "patents_BT-PAT-020",
+          "type": "related",
+          "weight": 0.8
+        },
+        {
+          "reasons": [
+            "same_domain",
+            "similar_relevance"
+          ],
+          "source": "patents_BT-PAT-012",
+          "target": "journals_BT-JRN-010",
+          "type": "related",
+          "weight": 0.8
+        },
+        {
+          "reasons": [
+            "same_domain",
+            "similar_relevance"
+          ],
+          "source": "patents_BT-PAT-012",
+          "target": "patents_BT-PAT-019",
+          "type": "related",
+          "weight": 0.8
+        },
+        {
+          "reasons": [
+            "same_domain",
+            "similar_relevance"
+          ],
+          "source": "patents_BT-PAT-012",
+          "target": "patents_BT-PAT-006",
+          "type": "related",
+          "weight": 0.8
+        },
+        {
+          "reasons": [
+            "same_domain",
+            "similar_relevance"
+          ],
+          "source": "patents_BT-PAT-012",
+          "target": "patents_BT-PAT-007",
+          "type": "related",
+          "weight": 0.8
+        },
+        {
+          "source": "patents_BT-PAT-008",
+          "target": "tech_artificial_intelligence",
+          "type": "uses_technology",
+          "weight": 1.0
+        },
+        {
+          "source": "patents_BT-PAT-008",
+          "target": "tech_protein_design",
+          "type": "uses_technology",
+          "weight": 1.0
+        },
+        {
+          "source": "patents_BT-PAT-008",
+          "target": "tech_computational_biology",
+          "type": "uses_technology",
+          "weight": 1.0
+        },
+        {
+          "source": "patents_BT-PAT-008",
+          "target": "keyword_ai",
+          "type": "has_keyword",
+          "weight": 0.7
+        },
+        {
+          "source": "patents_BT-PAT-008",
+          "target": "keyword_machine_learning",
+          "type": "has_keyword",
+          "weight": 0.7
+        },
+        {
+          "source": "patents_BT-PAT-008",
+          "target": "keyword_protein_design",
+          "type": "has_keyword",
+          "weight": 0.7
+        },
+        {
+          "source": "patents_BT-PAT-008",
+          "target": "keyword_computational_protein_engineering",
+          "type": "has_keyword",
+          "weight": 0.7
+        },
+        {
+          "reasons": [
+            "same_domain",
+            "similar_relevance"
+          ],
+          "source": "patents_BT-PAT-008",
+          "target": "patents_BT-PAT-020",
+          "type": "related",
+          "weight": 0.8
+        },
+        {
+          "reasons": [
+            "same_domain",
+            "similar_relevance"
+          ],
+          "source": "patents_BT-PAT-008",
+          "target": "journals_BT-JRN-010",
+          "type": "related",
+          "weight": 0.8
+        },
+        {
+          "reasons": [
+            "same_domain",
+            "similar_relevance"
+          ],
+          "source": "patents_BT-PAT-008",
+          "target": "patents_BT-PAT-019",
+          "type": "related",
+          "weight": 0.8
+        },
+        {
+          "reasons": [
+            "same_domain",
+            "similar_relevance"
+          ],
+          "source": "patents_BT-PAT-008",
+          "target": "patents_BT-PAT-006",
+          "type": "related",
+          "weight": 0.8
+        },
+        {
+          "reasons": [
+            "same_domain",
+            "similar_relevance"
+          ],
+          "source": "patents_BT-PAT-008",
+          "target": "patents_BT-PAT-007",
+          "type": "related",
+          "weight": 0.8
+        },
+        {
+          "source": "patents_BT-PAT-020",
+          "target": "tech_metagenomic_sequencing",
+          "type": "uses_technology",
+          "weight": 1.0
+        },
+        {
+          "source": "patents_BT-PAT-020",
+          "target": "tech_nanopore_technology",
+          "type": "uses_technology",
+          "weight": 1.0
+        },
+        {
+          "source": "patents_BT-PAT-020",
+          "target": "tech_bioinformatics",
+          "type": "uses_technology",
+          "weight": 1.0
+        },
+        {
+          "source": "patents_BT-PAT-020",
+          "target": "keyword_metagenomic",
+          "type": "has_keyword",
+          "weight": 0.7
+        },
+        {
+          "source": "patents_BT-PAT-020",
+          "target": "keyword_pathogen_detection",
+          "type": "has_keyword",
+          "weight": 0.7
+        },
+        {
+          "source": "patents_BT-PAT-020",
+          "target": "keyword_antimicrobial_resistance",
+          "type": "has_keyword",
+          "weight": 0.7
+        },
+        {
+          "source": "patents_BT-PAT-020",
+          "target": "keyword_nanopore_sequencing",
+          "type": "has_keyword",
+          "weight": 0.7
+        },
+        {
+          "reasons": [
+            "same_domain",
+            "similar_relevance"
+          ],
+          "source": "patents_BT-PAT-020",
+          "target": "journals_BT-JRN-010",
+          "type": "related",
+          "weight": 0.8
+        },
+        {
+          "reasons": [
+            "same_domain",
+            "similar_relevance"
+          ],
+          "source": "patents_BT-PAT-020",
+          "target": "patents_BT-PAT-019",
+          "type": "related",
+          "weight": 0.8
+        },
+        {
+          "reasons": [
+            "same_domain",
+            "similar_relevance"
+          ],
+          "source": "patents_BT-PAT-020",
+          "target": "patents_BT-PAT-006",
+          "type": "related",
+          "weight": 0.8
+        },
+        {
+          "reasons": [
+            "same_domain",
+            "similar_relevance"
+          ],
+          "source": "patents_BT-PAT-020",
+          "target": "patents_BT-PAT-007",
+          "type": "related",
+          "weight": 0.8
+        },
+        {
+          "source": "journals_BT-JRN-010",
+          "target": "keyword_cancer_therapy",
+          "type": "has_keyword",
+          "weight": 0.7
+        },
+        {
+          "source": "journals_BT-JRN-010",
+          "target": "keyword_protac",
+          "type": "has_keyword",
+          "weight": 0.7
+        },
+        {
+          "source": "journals_BT-JRN-010",
+          "target": "keyword_undruggable_targets",
+          "type": "has_keyword",
+          "weight": 0.7
+        },
+        {
+          "source": "journals_BT-JRN-010",
+          "target": "keyword_transcription_factors",
+          "type": "has_keyword",
+          "weight": 0.7
+        },
+        {
+          "source": "journals_BT-JRN-010",
+          "target": "keyword_targeted_protein_degradation",
+          "type": "has_keyword",
+          "weight": 0.7
+        },
+        {
+          "reasons": [
+            "same_domain",
+            "similar_relevance",
+            "shared_keywords"
+          ],
+          "source": "journals_BT-JRN-010",
+          "target": "patents_BT-PAT-019",
+          "type": "related",
+          "weight": 1.8
+        },
+        {
+          "reasons": [
+            "same_domain",
+            "similar_relevance"
+          ],
+          "source": "journals_BT-JRN-010",
+          "target": "patents_BT-PAT-006",
+          "type": "related",
+          "weight": 0.8
+        },
+        {
+          "reasons": [
+            "same_domain",
+            "similar_relevance"
+          ],
+          "source": "journals_BT-JRN-010",
+          "target": "patents_BT-PAT-007",
+          "type": "related",
+          "weight": 0.8
+        },
+        {
+          "source": "patents_BT-PAT-019",
+          "target": "tech_protac",
+          "type": "uses_technology",
+          "weight": 1.0
+        },
+        {
+          "source": "patents_BT-PAT-019",
+          "target": "tech_targeted_protein_degradation",
+          "type": "uses_technology",
+          "weight": 1.0
+        },
+        {
+          "source": "patents_BT-PAT-019",
+          "target": "tech_cancer_therapeutics",
+          "type": "uses_technology",
+          "weight": 1.0
+        },
+        {
+          "source": "patents_BT-PAT-019",
+          "target": "keyword_protac",
+          "type": "has_keyword",
+          "weight": 0.7
+        },
+        {
+          "source": "patents_BT-PAT-019",
+          "target": "keyword_protein_degradation",
+          "type": "has_keyword",
+          "weight": 0.7
+        },
+        {
+          "source": "patents_BT-PAT-019",
+          "target": "keyword_e3_ligase",
+          "type": "has_keyword",
+          "weight": 0.7
+        },
+        {
+          "source": "patents_BT-PAT-019",
+          "target": "keyword_undruggable_targets",
+          "type": "has_keyword",
+          "weight": 0.7
+        },
+        {
+          "reasons": [
+            "same_domain",
+            "similar_relevance"
+          ],
+          "source": "patents_BT-PAT-019",
+          "target": "patents_BT-PAT-006",
+          "type": "related",
+          "weight": 0.8
+        },
+        {
+          "reasons": [
+            "same_domain",
+            "similar_relevance"
+          ],
+          "source": "patents_BT-PAT-019",
+          "target": "patents_BT-PAT-007",
+          "type": "related",
+          "weight": 0.8
+        },
+        {
+          "source": "patents_BT-PAT-006",
+          "target": "tech_cell_therapy",
+          "type": "uses_technology",
+          "weight": 1.0
+        },
+        {
+          "source": "patents_BT-PAT-006",
+          "target": "tech_exosomes",
+          "type": "uses_technology",
+          "weight": 1.0
+        },
+        {
+          "source": "patents_BT-PAT-006",
+          "target": "tech_biomanufacturing",
+          "type": "uses_technology",
+          "weight": 1.0
+        },
+        {
+          "source": "patents_BT-PAT-006",
+          "target": "keyword_exosomes",
+          "type": "has_keyword",
+          "weight": 0.7
+        },
+        {
+          "source": "patents_BT-PAT-006",
+          "target": "keyword_extracellular_vesicles",
+          "type": "has_keyword",
+          "weight": 0.7
+        },
+        {
+          "source": "patents_BT-PAT-006",
+          "target": "keyword_manufacturing",
+          "type": "has_keyword",
+          "weight": 0.7
+        },
+        {
+          "source": "patents_BT-PAT-006",
+          "target": "keyword_bioproduction",
+          "type": "has_keyword",
+          "weight": 0.7
+        },
+        {
+          "reasons": [
+            "same_domain",
+            "similar_relevance"
+          ],
+          "source": "patents_BT-PAT-006",
+          "target": "patents_BT-PAT-007",
+          "type": "related",
+          "weight": 0.8
+        },
+        {
+          "source": "patents_BT-PAT-007",
+          "target": "tech_synthetic_biology",
+          "type": "uses_technology",
+          "weight": 1.0
+        },
+        {
+          "source": "patents_BT-PAT-007",
+          "target": "tech_cell-free_protein_synthesis",
+          "type": "uses_technology",
+          "weight": 1.0
+        },
+        {
+          "source": "patents_BT-PAT-007",
+          "target": "tech_therapeutic_proteins",
+          "type": "uses_technology",
+          "weight": 1.0
+        },
+        {
+          "source": "patents_BT-PAT-007",
+          "target": "keyword_cell-free",
+          "type": "has_keyword",
+          "weight": 0.7
+        },
+        {
+          "source": "patents_BT-PAT-007",
+          "target": "keyword_synthetic_biology",
+          "type": "has_keyword",
+          "weight": 0.7
+        },
+        {
+          "source": "patents_BT-PAT-007",
+          "target": "keyword_protein_synthesis",
+          "type": "has_keyword",
+          "weight": 0.7
+        },
+        {
+          "source": "patents_BT-PAT-007",
+          "target": "keyword_biomanufacturing",
+          "type": "has_keyword",
+          "weight": 0.7
+        }
+      ],
+      "nodes": [
+        {
+          "color": "#4a6de5",
+          "data": {
+            "assignees": [
+              "Continuous Biologics Inc."
+            ],
+            "authors": [],
+            "country": "United States",
+            "cpcs": [
+              "A61K9/127",
+              "C12P19/34",
+              "C12N15/10"
+            ],
+            "data_quality_score": 0.87,
+            "domain": "Healthcare",
+            "id": "patents_BT-PAT-017",
+            "inventors": [
+              "Trout, Bernhardt L.",
+              "Jensen, Klavs F.",
+              "Chakravarthy, Ankur"
+            ],
+            "ipcs": [
+              "A61K9/127",
+              "C12N15/10",
+              "C12P19/34"
+            ],
+            "keywords": [
+              "biomanufacturing",
+              "continuous manufacturing",
+              "mRNA vaccine",
+              "process intensification"
+            ],
+            "knowledge_type": "patent",
+            "publication_date": "2022-08-11",
+            "publishers": [],
+            "related_titles": [
+              "Method for mRNA Delivery Using Lipid Nanoparticles",
+              "CRISPR-Cas9 System for Targeted Gene Editing",
+              "Bispecific Antibodies Targeting PD-1 and CTLA-4",
+              "Engineered CAR-T Cells with Enhanced Tumor Targeting",
+              "Microbiome-Based Therapeutics for Inflammatory Bowel Disease",
+              "Scalable Process for Manufacturing Exosome Therapeutics",
+              "Synthetic Biology Platform for On-Demand Therapeutic Protein Production",
+              "AI-Based Platform for De Novo Protein Design",
+              "Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues",
+              "High-Throughput Screening Platform for Antibody Discovery",
+              "Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy",
+              "RNA-Based Vaccine Platform for Infectious Diseases",
+              "Organs-on-Chips for Drug Toxicity Testing",
+              "Machine Learning Platform for Predicting Drug-Target Interactions",
+              "Nanobody Therapeutics for Neurodegenerative Diseases",
+              "Gene Therapy for Age-Related Macular Degeneration",
+              "PROTAC Technology for Protein Degradation",
+              "Real-Time Pathogen Detection System Using Metagenomic Sequencing",
+              "Single-Cell Multi-omics Analysis of the Immune Response in COVID-19",
+              "CRISPR-Engineered T Cells in Patients with Refractory Cancer",
+              "Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment",
+              "In Vivo Base Editing Corrects Hutchinson\u2013Gilford Progeria Syndrome in Mice",
+              "Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials",
+              "Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research",
+              "Enzyme-Free Biosensor for Continuous Glucose Monitoring",
+              "Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome",
+              "Massively Parallel Screening of Protein Design Space Using Machine Learning",
+              "PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer"
+            ],
+            "similarity_score": 0.6507,
+            "subdomains": [
+              "Biotech",
+              "Biologics Manufacturing"
+            ],
+            "summary_text": "No summary available",
+            "technologies": [
+              "continuous manufacturing",
+              "mRNA production",
+              "process intensification"
+            ],
+            "title": "Continuous Manufacturing Process for mRNA Vaccines"
+          },
+          "domain": "Healthcare",
+          "id": "patents_BT-PAT-017",
+          "knowledge_type": "patent",
+          "publication_date": "2022-08-11",
+          "similarity_score": 0.6507,
+          "size": 19.7605,
+          "title": "Continuous Manufacturing Process for mRNA Vaccines",
+          "type": "trend"
+        },
+        {
+          "color": "#4a6de5",
+          "data": {
+            "assignees": [
+              "NanoTherapeutics, Inc."
+            ],
+            "authors": [],
+            "country": "United States",
+            "cpcs": [
+              "A61K9/127",
+              "A61K47/24",
+              "C12N15/88"
+            ],
+            "data_quality_score": 0.95,
+            "domain": "Healthcare",
+            "id": "patents_BT-PAT-001",
+            "inventors": [
+              "Chen, Li-Qiang",
+              "Rodriguez, Maria",
+              "Patel, Amit K."
+            ],
+            "ipcs": [
+              "A61K9/127",
+              "A61K47/24",
+              "C12N15/88"
+            ],
+            "keywords": [
+              "mRNA delivery",
+              "LNP",
+              "nanoparticle",
+              "gene therapy"
+            ],
+            "knowledge_type": "patent",
+            "publication_date": "2020-05-12",
+            "publishers": [],
+            "related_titles": [
+              "Gene Therapy for Age-Related Macular Degeneration",
+              "In Vivo Base Editing Corrects Hutchinson\u2013Gilford Progeria Syndrome in Mice",
+              "RNA-Based Vaccine Platform for Infectious Diseases",
+              "Continuous Manufacturing Process for mRNA Vaccines",
+              "CRISPR-Cas9 System for Targeted Gene Editing",
+              "Bispecific Antibodies Targeting PD-1 and CTLA-4",
+              "Engineered CAR-T Cells with Enhanced Tumor Targeting",
+              "Microbiome-Based Therapeutics for Inflammatory Bowel Disease",
+              "Scalable Process for Manufacturing Exosome Therapeutics",
+              "Synthetic Biology Platform for On-Demand Therapeutic Protein Production",
+              "AI-Based Platform for De Novo Protein Design",
+              "Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues",
+              "High-Throughput Screening Platform for Antibody Discovery",
+              "Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy",
+              "Organs-on-Chips for Drug Toxicity Testing",
+              "Machine Learning Platform for Predicting Drug-Target Interactions",
+              "Nanobody Therapeutics for Neurodegenerative Diseases",
+              "PROTAC Technology for Protein Degradation",
+              "Real-Time Pathogen Detection System Using Metagenomic Sequencing",
+              "Single-Cell Multi-omics Analysis of the Immune Response in COVID-19",
+              "CRISPR-Engineered T Cells in Patients with Refractory Cancer",
+              "Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment",
+              "Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials",
+              "Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research",
+              "Enzyme-Free Biosensor for Continuous Glucose Monitoring",
+              "Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome",
+              "Massively Parallel Screening of Protein Design Space Using Machine Learning",
+              "PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer"
+            ],
+            "similarity_score": 0.647,
+            "subdomains": [
+              "Biotech",
+              "Drug Delivery"
+            ],
+            "summary_text": "No summary available",
+            "technologies": [
+              "mRNA",
+              "lipid nanoparticles",
+              "drug delivery"
+            ],
+            "title": "Method for mRNA Delivery Using Lipid Nanoparticles"
+          },
+          "domain": "Healthcare",
+          "id": "patents_BT-PAT-001",
+          "knowledge_type": "patent",
+          "publication_date": "2020-05-12",
+          "similarity_score": 0.647,
+          "size": 19.705,
+          "title": "Method for mRNA Delivery Using Lipid Nanoparticles",
+          "type": "trend"
+        },
+        {
+          "color": "#4a6de5",
+          "data": {
+            "assignees": [],
+            "authors": [
+              "Li, Haoyang",
+              "Schulz, Daniel",
+              "Thrane, Kristine",
+              "Larsson, Ludvig",
+              "Pe'er, Dana"
+            ],
+            "country": "United States",
+            "cpcs": [],
+            "data_quality_score": 0.92,
+            "domain": "Healthcare",
+            "id": "journals_BT-JRN-003",
+            "inventors": [],
+            "ipcs": [],
+            "keywords": [
+              "spatial transcriptomics",
+              "tumor microenvironment",
+              "cancer",
+              "gene expression",
+              "precision medicine"
+            ],
+            "knowledge_type": "journal",
+            "publication_date": "2022-09-15",
+            "publishers": [
+              "Cell"
+            ],
+            "related_titles": [
+              "Method for mRNA Delivery Using Lipid Nanoparticles",
+              "CRISPR-Cas9 System for Targeted Gene Editing",
+              "Bispecific Antibodies Targeting PD-1 and CTLA-4",
+              "Engineered CAR-T Cells with Enhanced Tumor Targeting",
+              "Microbiome-Based Therapeutics for Inflammatory Bowel Disease",
+              "Scalable Process for Manufacturing Exosome Therapeutics",
+              "Synthetic Biology Platform for On-Demand Therapeutic Protein Production",
+              "AI-Based Platform for De Novo Protein Design",
+              "Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues",
+              "High-Throughput Screening Platform for Antibody Discovery",
+              "Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy",
+              "RNA-Based Vaccine Platform for Infectious Diseases",
+              "Organs-on-Chips for Drug Toxicity Testing",
+              "Machine Learning Platform for Predicting Drug-Target Interactions",
+              "Nanobody Therapeutics for Neurodegenerative Diseases",
+              "Gene Therapy for Age-Related Macular Degeneration",
+              "Continuous Manufacturing Process for mRNA Vaccines",
+              "PROTAC Technology for Protein Degradation",
+              "Real-Time Pathogen Detection System Using Metagenomic Sequencing",
+              "Single-Cell Multi-omics Analysis of the Immune Response in COVID-19",
+              "CRISPR-Engineered T Cells in Patients with Refractory Cancer",
+              "In Vivo Base Editing Corrects Hutchinson\u2013Gilford Progeria Syndrome in Mice",
+              "Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials",
+              "Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research",
+              "Enzyme-Free Biosensor for Continuous Glucose Monitoring",
+              "Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome",
+              "Massively Parallel Screening of Protein Design Space Using Machine Learning",
+              "PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer"
+            ],
+            "similarity_score": 0.6416,
+            "subdomains": [
+              "Biotech",
+              "Oncology"
+            ],
+            "summary_text": "No summary available",
+            "technologies": [],
+            "title": "Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment"
+          },
+          "domain": "Healthcare",
+          "id": "journals_BT-JRN-003",
+          "knowledge_type": "journal",
+          "publication_date": "2022-09-15",
+          "similarity_score": 0.6416,
+          "size": 19.624,
+          "title": "Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment",
+          "type": "trend"
+        },
+        {
+          "color": "#4a6de5",
+          "data": {
+            "assignees": [
+              "RapidVax Inc."
+            ],
+            "authors": [],
+            "country": "United States",
+            "cpcs": [
+              "C12N15/88",
+              "A61K39/00",
+              "A61K47/69"
+            ],
+            "data_quality_score": 0.93,
+            "domain": "Healthcare",
+            "id": "patents_BT-PAT-012",
+            "inventors": [
+              "Karik\u00f3, Katalin",
+              "Weissman, Drew",
+              "Pardi, Norbert"
+            ],
+            "ipcs": [
+              "C12N15/88",
+              "A61K39/00",
+              "A61K47/69"
+            ],
+            "keywords": [
+              "mRNA",
+              "vaccine",
+              "infectious disease",
+              "lipid nanoparticle"
+            ],
+            "knowledge_type": "patent",
+            "publication_date": "2019-09-05",
+            "publishers": [],
+            "related_titles": [
+              "Method for mRNA Delivery Using Lipid Nanoparticles",
+              "CRISPR-Cas9 System for Targeted Gene Editing",
+              "Bispecific Antibodies Targeting PD-1 and CTLA-4",
+              "Engineered CAR-T Cells with Enhanced Tumor Targeting",
+              "Microbiome-Based Therapeutics for Inflammatory Bowel Disease",
+              "Scalable Process for Manufacturing Exosome Therapeutics",
+              "Synthetic Biology Platform for On-Demand Therapeutic Protein Production",
+              "AI-Based Platform for De Novo Protein Design",
+              "Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues",
+              "High-Throughput Screening Platform for Antibody Discovery",
+              "Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy",
+              "Organs-on-Chips for Drug Toxicity Testing",
+              "Machine Learning Platform for Predicting Drug-Target Interactions",
+              "Nanobody Therapeutics for Neurodegenerative Diseases",
+              "Gene Therapy for Age-Related Macular Degeneration",
+              "Continuous Manufacturing Process for mRNA Vaccines",
+              "PROTAC Technology for Protein Degradation",
+              "Real-Time Pathogen Detection System Using Metagenomic Sequencing",
+              "Single-Cell Multi-omics Analysis of the Immune Response in COVID-19",
+              "CRISPR-Engineered T Cells in Patients with Refractory Cancer",
+              "Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment",
+              "In Vivo Base Editing Corrects Hutchinson\u2013Gilford Progeria Syndrome in Mice",
+              "Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials",
+              "Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research",
+              "Enzyme-Free Biosensor for Continuous Glucose Monitoring",
+              "Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome",
+              "Massively Parallel Screening of Protein Design Space Using Machine Learning",
+              "PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer"
+            ],
+            "similarity_score": 0.641,
+            "subdomains": [
+              "Biotech",
+              "Vaccines"
+            ],
+            "summary_text": "No summary available",
+            "technologies": [
+              "lipid nanoparticles",
+              "mRNA vaccines",
+              "infectious disease"
+            ],
+            "title": "RNA-Based Vaccine Platform for Infectious Diseases"
+          },
+          "domain": "Healthcare",
+          "id": "patents_BT-PAT-012",
+          "knowledge_type": "patent",
+          "publication_date": "2019-09-05",
+          "similarity_score": 0.641,
+          "size": 19.615000000000002,
+          "title": "RNA-Based Vaccine Platform for Infectious Diseases",
+          "type": "trend"
+        },
+        {
+          "color": "#4a6de5",
+          "data": {
+            "assignees": [
+              "ProteoDesign AI Inc."
+            ],
+            "authors": [],
+            "country": "United States",
+            "cpcs": [
+              "G16B15/00",
+              "C07K14/005",
+              "G06N3/08"
+            ],
+            "data_quality_score": 0.9,
+            "domain": "Healthcare",
+            "id": "patents_BT-PAT-008",
+            "inventors": [
+              "Baker, David",
+              "Shin, Joon-Hyun",
+              "Singh, Manvir"
+            ],
+            "ipcs": [
+              "G16B15/00",
+              "C07K14/00",
+              "G06N3/08"
+            ],
+            "keywords": [
+              "AI",
+              "machine learning",
+              "protein design",
+              "computational protein engineering"
+            ],
+            "knowledge_type": "patent",
+            "publication_date": "2022-07-14",
+            "publishers": [],
+            "related_titles": [
+              "Method for mRNA Delivery Using Lipid Nanoparticles",
+              "CRISPR-Cas9 System for Targeted Gene Editing",
+              "Bispecific Antibodies Targeting PD-1 and CTLA-4",
+              "Engineered CAR-T Cells with Enhanced Tumor Targeting",
+              "Microbiome-Based Therapeutics for Inflammatory Bowel Disease",
+              "Scalable Process for Manufacturing Exosome Therapeutics",
+              "Synthetic Biology Platform for On-Demand Therapeutic Protein Production",
+              "Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues",
+              "High-Throughput Screening Platform for Antibody Discovery",
+              "Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy",
+              "RNA-Based Vaccine Platform for Infectious Diseases",
+              "Organs-on-Chips for Drug Toxicity Testing",
+              "Machine Learning Platform for Predicting Drug-Target Interactions",
+              "Nanobody Therapeutics for Neurodegenerative Diseases",
+              "Gene Therapy for Age-Related Macular Degeneration",
+              "Continuous Manufacturing Process for mRNA Vaccines",
+              "PROTAC Technology for Protein Degradation",
+              "Real-Time Pathogen Detection System Using Metagenomic Sequencing",
+              "Single-Cell Multi-omics Analysis of the Immune Response in COVID-19",
+              "CRISPR-Engineered T Cells in Patients with Refractory Cancer",
+              "Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment",
+              "In Vivo Base Editing Corrects Hutchinson\u2013Gilford Progeria Syndrome in Mice",
+              "Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials",
+              "Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research",
+              "Enzyme-Free Biosensor for Continuous Glucose Monitoring",
+              "Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome",
+              "Massively Parallel Screening of Protein Design Space Using Machine Learning",
+              "PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer",
+              "Machine Learning System for Predictive Vehicle Maintenance",
+              "Multi-Modal Urban Mobility Orchestration Platform",
+              "AI-Enabled Traffic Signal Control System"
+            ],
+            "similarity_score": 0.638,
+            "subdomains": [
+              "Biotech",
+              "Computational Biology"
+            ],
+            "summary_text": "No summary available",
+            "technologies": [
+              "artificial intelligence",
+              "protein design",
+              "computational biology"
+            ],
+            "title": "AI-Based Platform for De Novo Protein Design"
+          },
+          "domain": "Healthcare",
+          "id": "patents_BT-PAT-008",
+          "knowledge_type": "patent",
+          "publication_date": "2022-07-14",
+          "similarity_score": 0.638,
+          "size": 19.57,
+          "title": "AI-Based Platform for De Novo Protein Design",
+          "type": "trend"
+        },
+        {
+          "color": "#4a6de5",
+          "data": {
+            "assignees": [
+              "RapidDx Genomics"
+            ],
+            "authors": [],
+            "country": "United States",
+            "cpcs": [
+              "C12Q1/6806",
+              "G16B30/00",
+              "G16H50/70"
+            ],
+            "data_quality_score": 0.88,
+            "domain": "Healthcare",
+            "id": "patents_BT-PAT-020",
+            "inventors": [
+              "Schatz, Michael C.",
+              "Phillippy, Adam M.",
+              "Zimin, Aleksey V."
+            ],
+            "ipcs": [
+              "C12Q1/6806",
+              "G16B30/00",
+              "G16H50/70"
+            ],
+            "keywords": [
+              "metagenomic",
+              "pathogen detection",
+              "antimicrobial resistance",
+              "nanopore sequencing"
+            ],
+            "knowledge_type": "patent",
+            "publication_date": "2023-05-04",
+            "publishers": [],
+            "related_titles": [
+              "Method for mRNA Delivery Using Lipid Nanoparticles",
+              "CRISPR-Cas9 System for Targeted Gene Editing",
+              "Bispecific Antibodies Targeting PD-1 and CTLA-4",
+              "Engineered CAR-T Cells with Enhanced Tumor Targeting",
+              "Microbiome-Based Therapeutics for Inflammatory Bowel Disease",
+              "Scalable Process for Manufacturing Exosome Therapeutics",
+              "Synthetic Biology Platform for On-Demand Therapeutic Protein Production",
+              "AI-Based Platform for De Novo Protein Design",
+              "Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues",
+              "High-Throughput Screening Platform for Antibody Discovery",
+              "Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy",
+              "RNA-Based Vaccine Platform for Infectious Diseases",
+              "Organs-on-Chips for Drug Toxicity Testing",
+              "Machine Learning Platform for Predicting Drug-Target Interactions",
+              "Nanobody Therapeutics for Neurodegenerative Diseases",
+              "Gene Therapy for Age-Related Macular Degeneration",
+              "Continuous Manufacturing Process for mRNA Vaccines",
+              "PROTAC Technology for Protein Degradation",
+              "Single-Cell Multi-omics Analysis of the Immune Response in COVID-19",
+              "CRISPR-Engineered T Cells in Patients with Refractory Cancer",
+              "Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment",
+              "In Vivo Base Editing Corrects Hutchinson\u2013Gilford Progeria Syndrome in Mice",
+              "Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials",
+              "Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research",
+              "Enzyme-Free Biosensor for Continuous Glucose Monitoring",
+              "Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome",
+              "Massively Parallel Screening of Protein Design Space Using Machine Learning",
+              "PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer"
+            ],
+            "similarity_score": 0.6363,
+            "subdomains": [
+              "Biotech",
+              "Diagnostics"
+            ],
+            "summary_text": "No summary available",
+            "technologies": [
+              "metagenomic sequencing",
+              "nanopore technology",
+              "bioinformatics"
+            ],
+            "title": "Real-Time Pathogen Detection System Using Metagenomic Sequencing"
+          },
+          "domain": "Healthcare",
+          "id": "patents_BT-PAT-020",
+          "knowledge_type": "patent",
+          "publication_date": "2023-05-04",
+          "similarity_score": 0.6363,
+          "size": 19.5445,
+          "title": "Real-Time Pathogen Detection System Using Metagenomic Sequencing",
+          "type": "trend"
+        },
+        {
+          "color": "#4a6de5",
+          "data": {
+            "assignees": [],
+            "authors": [
+              "Burslem, George M.",
+              "Schultz, David C.",
+              "Bondeson, Daniel P.",
+              "Eide, Christopher A.",
+              "Crews, Craig M."
+            ],
+            "country": "United States",
+            "cpcs": [],
+            "data_quality_score": 0.93,
+            "domain": "Healthcare",
+            "id": "journals_BT-JRN-010",
+            "inventors": [],
+            "ipcs": [],
+            "keywords": [
+              "cancer therapy",
+              "PROTAC",
+              "undruggable targets",
+              "transcription factors",
+              "targeted protein degradation"
+            ],
+            "knowledge_type": "journal",
+            "publication_date": "2023-04-18",
+            "publishers": [
+              "Science Translational Medicine"
+            ],
+            "related_titles": [
+              "Method for mRNA Delivery Using Lipid Nanoparticles",
+              "CRISPR-Cas9 System for Targeted Gene Editing",
+              "Bispecific Antibodies Targeting PD-1 and CTLA-4",
+              "Engineered CAR-T Cells with Enhanced Tumor Targeting",
+              "Microbiome-Based Therapeutics for Inflammatory Bowel Disease",
+              "Scalable Process for Manufacturing Exosome Therapeutics",
+              "Synthetic Biology Platform for On-Demand Therapeutic Protein Production",
+              "AI-Based Platform for De Novo Protein Design",
+              "Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues",
+              "High-Throughput Screening Platform for Antibody Discovery",
+              "Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy",
+              "RNA-Based Vaccine Platform for Infectious Diseases",
+              "Organs-on-Chips for Drug Toxicity Testing",
+              "Machine Learning Platform for Predicting Drug-Target Interactions",
+              "Nanobody Therapeutics for Neurodegenerative Diseases",
+              "Gene Therapy for Age-Related Macular Degeneration",
+              "Continuous Manufacturing Process for mRNA Vaccines",
+              "PROTAC Technology for Protein Degradation",
+              "Real-Time Pathogen Detection System Using Metagenomic Sequencing",
+              "Single-Cell Multi-omics Analysis of the Immune Response in COVID-19",
+              "CRISPR-Engineered T Cells in Patients with Refractory Cancer",
+              "Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment",
+              "In Vivo Base Editing Corrects Hutchinson\u2013Gilford Progeria Syndrome in Mice",
+              "Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials",
+              "Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research",
+              "Enzyme-Free Biosensor for Continuous Glucose Monitoring",
+              "Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome",
+              "Massively Parallel Screening of Protein Design Space Using Machine Learning"
+            ],
+            "similarity_score": 0.6329,
+            "subdomains": [
+              "Biotech",
+              "Drug Discovery"
+            ],
+            "summary_text": "No summary available",
+            "technologies": [],
+            "title": "PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer"
+          },
+          "domain": "Healthcare",
+          "id": "journals_BT-JRN-010",
+          "knowledge_type": "journal",
+          "publication_date": "2023-04-18",
+          "similarity_score": 0.6329,
+          "size": 19.4935,
+          "title": "PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer",
+          "type": "trend"
+        },
+        {
+          "color": "#4a6de5",
+          "data": {
+            "assignees": [
+              "ProteoDeg Therapeutics"
+            ],
+            "authors": [],
+            "country": "United States",
+            "cpcs": [
+              "A61P35/00",
+              "C07D498/22",
+              "A61K31/53"
+            ],
+            "data_quality_score": 0.89,
+            "domain": "Healthcare",
+            "id": "patents_BT-PAT-019",
+            "inventors": [
+              "Crews, Craig M.",
+              "Bradner, James E.",
+              "Winter, Georg E."
+            ],
+            "ipcs": [
+              "A61P35/00",
+              "C07D498/22",
+              "A61K31/53"
+            ],
+            "keywords": [
+              "PROTAC",
+              "protein degradation",
+              "E3 ligase",
+              "undruggable targets"
+            ],
+            "knowledge_type": "patent",
+            "publication_date": "2022-01-27",
+            "publishers": [],
+            "related_titles": [
+              "Method for mRNA Delivery Using Lipid Nanoparticles",
+              "CRISPR-Cas9 System for Targeted Gene Editing",
+              "Bispecific Antibodies Targeting PD-1 and CTLA-4",
+              "Engineered CAR-T Cells with Enhanced Tumor Targeting",
+              "Microbiome-Based Therapeutics for Inflammatory Bowel Disease",
+              "Scalable Process for Manufacturing Exosome Therapeutics",
+              "Synthetic Biology Platform for On-Demand Therapeutic Protein Production",
+              "AI-Based Platform for De Novo Protein Design",
+              "Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues",
+              "High-Throughput Screening Platform for Antibody Discovery",
+              "Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy",
+              "RNA-Based Vaccine Platform for Infectious Diseases",
+              "Organs-on-Chips for Drug Toxicity Testing",
+              "Machine Learning Platform for Predicting Drug-Target Interactions",
+              "Nanobody Therapeutics for Neurodegenerative Diseases",
+              "Gene Therapy for Age-Related Macular Degeneration",
+              "Continuous Manufacturing Process for mRNA Vaccines",
+              "Real-Time Pathogen Detection System Using Metagenomic Sequencing",
+              "Single-Cell Multi-omics Analysis of the Immune Response in COVID-19",
+              "CRISPR-Engineered T Cells in Patients with Refractory Cancer",
+              "Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment",
+              "In Vivo Base Editing Corrects Hutchinson\u2013Gilford Progeria Syndrome in Mice",
+              "Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials",
+              "Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research",
+              "Enzyme-Free Biosensor for Continuous Glucose Monitoring",
+              "Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome",
+              "Massively Parallel Screening of Protein Design Space Using Machine Learning",
+              "PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer"
+            ],
+            "similarity_score": 0.6216,
+            "subdomains": [
+              "Biotech",
+              "Drug Discovery"
+            ],
+            "summary_text": "No summary available",
+            "technologies": [
+              "PROTAC",
+              "targeted protein degradation",
+              "cancer therapeutics"
+            ],
+            "title": "PROTAC Technology for Protein Degradation"
+          },
+          "domain": "Healthcare",
+          "id": "patents_BT-PAT-019",
+          "knowledge_type": "patent",
+          "publication_date": "2022-01-27",
+          "similarity_score": 0.6216,
+          "size": 19.323999999999998,
+          "title": "PROTAC Technology for Protein Degradation",
+          "type": "trend"
+        },
+        {
+          "color": "#4a6de5",
+          "data": {
+            "assignees": [
+              "Exosome Therapeutics Corp."
+            ],
+            "authors": [],
+            "country": "United States",
+            "cpcs": [
+              "C12N5/0062",
+              "A61K9/0019",
+              "A61K35/12"
+            ],
+            "data_quality_score": 0.87,
+            "domain": "Healthcare",
+            "id": "patents_BT-PAT-006",
+            "inventors": [
+              "Miller, David S.",
+              "Garcia, Paulo",
+              "Chen, Wei"
+            ],
+            "ipcs": [
+              "C12N5/00",
+              "A61K9/00",
+              "A61K35/12"
+            ],
+            "keywords": [
+              "exosomes",
+              "extracellular vesicles",
+              "manufacturing",
+              "bioproduction"
+            ],
+            "knowledge_type": "patent",
+            "publication_date": "2023-01-18",
+            "publishers": [],
+            "related_titles": [
+              "Method for mRNA Delivery Using Lipid Nanoparticles",
+              "CRISPR-Cas9 System for Targeted Gene Editing",
+              "Bispecific Antibodies Targeting PD-1 and CTLA-4",
+              "Engineered CAR-T Cells with Enhanced Tumor Targeting",
+              "Microbiome-Based Therapeutics for Inflammatory Bowel Disease",
+              "Synthetic Biology Platform for On-Demand Therapeutic Protein Production",
+              "AI-Based Platform for De Novo Protein Design",
+              "Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues",
+              "High-Throughput Screening Platform for Antibody Discovery",
+              "Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy",
+              "RNA-Based Vaccine Platform for Infectious Diseases",
+              "Organs-on-Chips for Drug Toxicity Testing",
+              "Machine Learning Platform for Predicting Drug-Target Interactions",
+              "Nanobody Therapeutics for Neurodegenerative Diseases",
+              "Gene Therapy for Age-Related Macular Degeneration",
+              "Continuous Manufacturing Process for mRNA Vaccines",
+              "PROTAC Technology for Protein Degradation",
+              "Real-Time Pathogen Detection System Using Metagenomic Sequencing",
+              "Single-Cell Multi-omics Analysis of the Immune Response in COVID-19",
+              "CRISPR-Engineered T Cells in Patients with Refractory Cancer",
+              "Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment",
+              "In Vivo Base Editing Corrects Hutchinson\u2013Gilford Progeria Syndrome in Mice",
+              "Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials",
+              "Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research",
+              "Enzyme-Free Biosensor for Continuous Glucose Monitoring",
+              "Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome",
+              "Massively Parallel Screening of Protein Design Space Using Machine Learning",
+              "PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer"
+            ],
+            "similarity_score": 0.6182,
+            "subdomains": [
+              "Biotech",
+              "Biologics Manufacturing"
+            ],
+            "summary_text": "No summary available",
+            "technologies": [
+              "cell therapy",
+              "exosomes",
+              "biomanufacturing"
+            ],
+            "title": "Scalable Process for Manufacturing Exosome Therapeutics"
+          },
+          "domain": "Healthcare",
+          "id": "patents_BT-PAT-006",
+          "knowledge_type": "patent",
+          "publication_date": "2023-01-18",
+          "similarity_score": 0.6182,
+          "size": 19.273,
+          "title": "Scalable Process for Manufacturing Exosome Therapeutics",
+          "type": "trend"
+        },
+        {
+          "color": "#4a6de5",
+          "data": {
+            "assignees": [
+              "SyntheBio Inc."
+            ],
+            "authors": [],
+            "country": "United States",
+            "cpcs": [
+              "C12N15/1034",
+              "C12P21/00",
+              "C12N15/09"
+            ],
+            "data_quality_score": 0.85,
+            "domain": "Healthcare",
+            "id": "patents_BT-PAT-007",
+            "inventors": [
+              "Jewett, Michael C.",
+              "Stark, Jessica C.",
+              "Martin, Rodrigo"
+            ],
+            "ipcs": [
+              "C12N15/10",
+              "C12P21/00",
+              "C12N15/09"
+            ],
+            "keywords": [
+              "cell-free",
+              "synthetic biology",
+              "protein synthesis",
+              "biomanufacturing"
+            ],
+            "knowledge_type": "patent",
+            "publication_date": "2021-11-05",
+            "publishers": [],
+            "related_titles": [
+              "Method for mRNA Delivery Using Lipid Nanoparticles",
+              "CRISPR-Cas9 System for Targeted Gene Editing",
+              "Bispecific Antibodies Targeting PD-1 and CTLA-4",
+              "Engineered CAR-T Cells with Enhanced Tumor Targeting",
+              "Microbiome-Based Therapeutics for Inflammatory Bowel Disease",
+              "Scalable Process for Manufacturing Exosome Therapeutics",
+              "AI-Based Platform for De Novo Protein Design",
+              "Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues",
+              "High-Throughput Screening Platform for Antibody Discovery",
+              "Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy",
+              "RNA-Based Vaccine Platform for Infectious Diseases",
+              "Organs-on-Chips for Drug Toxicity Testing",
+              "Machine Learning Platform for Predicting Drug-Target Interactions",
+              "Nanobody Therapeutics for Neurodegenerative Diseases",
+              "Gene Therapy for Age-Related Macular Degeneration",
+              "Continuous Manufacturing Process for mRNA Vaccines",
+              "PROTAC Technology for Protein Degradation",
+              "Real-Time Pathogen Detection System Using Metagenomic Sequencing",
+              "Single-Cell Multi-omics Analysis of the Immune Response in COVID-19",
+              "CRISPR-Engineered T Cells in Patients with Refractory Cancer",
+              "Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment",
+              "In Vivo Base Editing Corrects Hutchinson\u2013Gilford Progeria Syndrome in Mice",
+              "Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials",
+              "Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research",
+              "Enzyme-Free Biosensor for Continuous Glucose Monitoring",
+              "Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome",
+              "Massively Parallel Screening of Protein Design Space Using Machine Learning",
+              "PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer"
+            ],
+            "similarity_score": 0.6163,
+            "subdomains": [
+              "Biotech",
+              "Synthetic Biology"
+            ],
+            "summary_text": "No summary available",
+            "technologies": [
+              "synthetic biology",
+              "cell-free protein synthesis",
+              "therapeutic proteins"
+            ],
+            "title": "Synthetic Biology Platform for On-Demand Therapeutic Protein Production"
+          },
+          "domain": "Healthcare",
+          "id": "patents_BT-PAT-007",
+          "knowledge_type": "patent",
+          "publication_date": "2021-11-05",
+          "similarity_score": 0.6163,
+          "size": 19.2445,
+          "title": "Synthetic Biology Platform for On-Demand Therapeutic Protein Production",
+          "type": "trend"
+        },
+        {
+          "color": "#28a745",
+          "domain": "Healthcare",
+          "id": "tech_continuous_manufacturing",
+          "size": 8,
+          "title": "continuous manufacturing",
+          "type": "technology"
+        },
+        {
+          "color": "#28a745",
+          "domain": "Healthcare",
+          "id": "tech_mrna_production",
+          "size": 8,
+          "title": "mRNA production",
+          "type": "technology"
+        },
+        {
+          "color": "#28a745",
+          "domain": "Healthcare",
+          "id": "tech_process_intensification",
+          "size": 8,
+          "title": "process intensification",
+          "type": "technology"
+        },
+        {
+          "color": "#fd7e14",
+          "domain": "Healthcare",
+          "id": "keyword_biomanufacturing",
+          "size": 6,
+          "title": "biomanufacturing",
+          "type": "keyword"
+        },
+        {
+          "color": "#fd7e14",
+          "domain": "Healthcare",
+          "id": "keyword_continuous_manufacturing",
+          "size": 6,
+          "title": "continuous manufacturing",
+          "type": "keyword"
+        },
+        {
+          "color": "#fd7e14",
+          "domain": "Healthcare",
+          "id": "keyword_mrna_vaccine",
+          "size": 6,
+          "title": "mRNA vaccine",
+          "type": "keyword"
+        },
+        {
+          "color": "#fd7e14",
+          "domain": "Healthcare",
+          "id": "keyword_process_intensification",
+          "size": 6,
+          "title": "process intensification",
+          "type": "keyword"
+        },
+        {
+          "color": "#28a745",
+          "domain": "Healthcare",
+          "id": "tech_mrna",
+          "size": 8,
+          "title": "mRNA",
+          "type": "technology"
+        },
+        {
+          "color": "#28a745",
+          "domain": "Healthcare",
+          "id": "tech_lipid_nanoparticles",
+          "size": 8,
+          "title": "lipid nanoparticles",
+          "type": "technology"
+        },
+        {
+          "color": "#28a745",
+          "domain": "Healthcare",
+          "id": "tech_drug_delivery",
+          "size": 8,
+          "title": "drug delivery",
+          "type": "technology"
+        },
+        {
+          "color": "#fd7e14",
+          "domain": "Healthcare",
+          "id": "keyword_mrna_delivery",
+          "size": 6,
+          "title": "mRNA delivery",
+          "type": "keyword"
+        },
+        {
+          "color": "#fd7e14",
+          "domain": "Healthcare",
+          "id": "keyword_lnp",
+          "size": 6,
+          "title": "LNP",
+          "type": "keyword"
+        },
+        {
+          "color": "#fd7e14",
+          "domain": "Healthcare",
+          "id": "keyword_nanoparticle",
+          "size": 6,
+          "title": "nanoparticle",
+          "type": "keyword"
+        },
+        {
+          "color": "#fd7e14",
+          "domain": "Healthcare",
+          "id": "keyword_gene_therapy",
+          "size": 6,
+          "title": "gene therapy",
+          "type": "keyword"
+        },
+        {
+          "color": "#fd7e14",
+          "domain": "Healthcare",
+          "id": "keyword_spatial_transcriptomics",
+          "size": 6,
+          "title": "spatial transcriptomics",
+          "type": "keyword"
+        },
+        {
+          "color": "#fd7e14",
+          "domain": "Healthcare",
+          "id": "keyword_tumor_microenvironment",
+          "size": 6,
+          "title": "tumor microenvironment",
+          "type": "keyword"
+        },
+        {
+          "color": "#fd7e14",
+          "domain": "Healthcare",
+          "id": "keyword_cancer",
+          "size": 6,
+          "title": "cancer",
+          "type": "keyword"
+        },
+        {
+          "color": "#fd7e14",
+          "domain": "Healthcare",
+          "id": "keyword_gene_expression",
+          "size": 6,
+          "title": "gene expression",
+          "type": "keyword"
+        },
+        {
+          "color": "#fd7e14",
+          "domain": "Healthcare",
+          "id": "keyword_precision_medicine",
+          "size": 6,
+          "title": "precision medicine",
+          "type": "keyword"
+        },
+        {
+          "color": "#28a745",
+          "domain": "Healthcare",
+          "id": "tech_mrna_vaccines",
+          "size": 8,
+          "title": "mRNA vaccines",
+          "type": "technology"
+        },
+        {
+          "color": "#28a745",
+          "domain": "Healthcare",
+          "id": "tech_infectious_disease",
+          "size": 8,
+          "title": "infectious disease",
+          "type": "technology"
+        },
+        {
+          "color": "#fd7e14",
+          "domain": "Healthcare",
+          "id": "keyword_mrna",
+          "size": 6,
+          "title": "mRNA",
+          "type": "keyword"
+        },
+        {
+          "color": "#fd7e14",
+          "domain": "Healthcare",
+          "id": "keyword_vaccine",
+          "size": 6,
+          "title": "vaccine",
+          "type": "keyword"
+        },
+        {
+          "color": "#fd7e14",
+          "domain": "Healthcare",
+          "id": "keyword_infectious_disease",
+          "size": 6,
+          "title": "infectious disease",
+          "type": "keyword"
+        },
+        {
+          "color": "#fd7e14",
+          "domain": "Healthcare",
+          "id": "keyword_lipid_nanoparticle",
+          "size": 6,
+          "title": "lipid nanoparticle",
+          "type": "keyword"
+        },
+        {
+          "color": "#28a745",
+          "domain": "Healthcare",
+          "id": "tech_artificial_intelligence",
+          "size": 8,
+          "title": "artificial intelligence",
+          "type": "technology"
+        },
+        {
+          "color": "#28a745",
+          "domain": "Healthcare",
+          "id": "tech_protein_design",
+          "size": 8,
+          "title": "protein design",
+          "type": "technology"
+        },
+        {
+          "color": "#28a745",
+          "domain": "Healthcare",
+          "id": "tech_computational_biology",
+          "size": 8,
+          "title": "computational biology",
+          "type": "technology"
+        },
+        {
+          "color": "#fd7e14",
+          "domain": "Healthcare",
+          "id": "keyword_ai",
+          "size": 6,
+          "title": "AI",
+          "type": "keyword"
+        },
+        {
+          "color": "#fd7e14",
+          "domain": "Healthcare",
+          "id": "keyword_machine_learning",
+          "size": 6,
+          "title": "machine learning",
+          "type": "keyword"
+        },
+        {
+          "color": "#fd7e14",
+          "domain": "Healthcare",
+          "id": "keyword_protein_design",
+          "size": 6,
+          "title": "protein design",
+          "type": "keyword"
+        },
+        {
+          "color": "#fd7e14",
+          "domain": "Healthcare",
+          "id": "keyword_computational_protein_engineering",
+          "size": 6,
+          "title": "computational protein engineering",
+          "type": "keyword"
+        },
+        {
+          "color": "#28a745",
+          "domain": "Healthcare",
+          "id": "tech_metagenomic_sequencing",
+          "size": 8,
+          "title": "metagenomic sequencing",
+          "type": "technology"
+        },
+        {
+          "color": "#28a745",
+          "domain": "Healthcare",
+          "id": "tech_nanopore_technology",
+          "size": 8,
+          "title": "nanopore technology",
+          "type": "technology"
+        },
+        {
+          "color": "#28a745",
+          "domain": "Healthcare",
+          "id": "tech_bioinformatics",
+          "size": 8,
+          "title": "bioinformatics",
+          "type": "technology"
+        },
+        {
+          "color": "#fd7e14",
+          "domain": "Healthcare",
+          "id": "keyword_metagenomic",
+          "size": 6,
+          "title": "metagenomic",
+          "type": "keyword"
+        },
+        {
+          "color": "#fd7e14",
+          "domain": "Healthcare",
+          "id": "keyword_pathogen_detection",
+          "size": 6,
+          "title": "pathogen detection",
+          "type": "keyword"
+        },
+        {
+          "color": "#fd7e14",
+          "domain": "Healthcare",
+          "id": "keyword_antimicrobial_resistance",
+          "size": 6,
+          "title": "antimicrobial resistance",
+          "type": "keyword"
+        },
+        {
+          "color": "#fd7e14",
+          "domain": "Healthcare",
+          "id": "keyword_nanopore_sequencing",
+          "size": 6,
+          "title": "nanopore sequencing",
+          "type": "keyword"
+        },
+        {
+          "color": "#fd7e14",
+          "domain": "Healthcare",
+          "id": "keyword_cancer_therapy",
+          "size": 6,
+          "title": "cancer therapy",
+          "type": "keyword"
+        },
+        {
+          "color": "#fd7e14",
+          "domain": "Healthcare",
+          "id": "keyword_protac",
+          "size": 6,
+          "title": "PROTAC",
+          "type": "keyword"
+        },
+        {
+          "color": "#fd7e14",
+          "domain": "Healthcare",
+          "id": "keyword_undruggable_targets",
+          "size": 6,
+          "title": "undruggable targets",
+          "type": "keyword"
+        },
+        {
+          "color": "#fd7e14",
+          "domain": "Healthcare",
+          "id": "keyword_transcription_factors",
+          "size": 6,
+          "title": "transcription factors",
+          "type": "keyword"
+        },
+        {
+          "color": "#fd7e14",
+          "domain": "Healthcare",
+          "id": "keyword_targeted_protein_degradation",
+          "size": 6,
+          "title": "targeted protein degradation",
+          "type": "keyword"
+        },
+        {
+          "color": "#28a745",
+          "domain": "Healthcare",
+          "id": "tech_protac",
+          "size": 8,
+          "title": "PROTAC",
+          "type": "technology"
+        },
+        {
+          "color": "#28a745",
+          "domain": "Healthcare",
+          "id": "tech_targeted_protein_degradation",
+          "size": 8,
+          "title": "targeted protein degradation",
+          "type": "technology"
+        },
+        {
+          "color": "#28a745",
+          "domain": "Healthcare",
+          "id": "tech_cancer_therapeutics",
+          "size": 8,
+          "title": "cancer therapeutics",
+          "type": "technology"
+        },
+        {
+          "color": "#fd7e14",
+          "domain": "Healthcare",
+          "id": "keyword_protein_degradation",
+          "size": 6,
+          "title": "protein degradation",
+          "type": "keyword"
+        },
+        {
+          "color": "#fd7e14",
+          "domain": "Healthcare",
+          "id": "keyword_e3_ligase",
+          "size": 6,
+          "title": "E3 ligase",
+          "type": "keyword"
+        },
+        {
+          "color": "#28a745",
+          "domain": "Healthcare",
+          "id": "tech_cell_therapy",
+          "size": 8,
+          "title": "cell therapy",
+          "type": "technology"
+        },
+        {
+          "color": "#28a745",
+          "domain": "Healthcare",
+          "id": "tech_exosomes",
+          "size": 8,
+          "title": "exosomes",
+          "type": "technology"
+        },
+        {
+          "color": "#28a745",
+          "domain": "Healthcare",
+          "id": "tech_biomanufacturing",
+          "size": 8,
+          "title": "biomanufacturing",
+          "type": "technology"
+        },
+        {
+          "color": "#fd7e14",
+          "domain": "Healthcare",
+          "id": "keyword_exosomes",
+          "size": 6,
+          "title": "exosomes",
+          "type": "keyword"
+        },
+        {
+          "color": "#fd7e14",
+          "domain": "Healthcare",
+          "id": "keyword_extracellular_vesicles",
+          "size": 6,
+          "title": "extracellular vesicles",
+          "type": "keyword"
+        },
+        {
+          "color": "#fd7e14",
+          "domain": "Healthcare",
+          "id": "keyword_manufacturing",
+          "size": 6,
+          "title": "manufacturing",
+          "type": "keyword"
+        },
+        {
+          "color": "#fd7e14",
+          "domain": "Healthcare",
+          "id": "keyword_bioproduction",
+          "size": 6,
+          "title": "bioproduction",
+          "type": "keyword"
+        },
+        {
+          "color": "#28a745",
+          "domain": "Healthcare",
+          "id": "tech_synthetic_biology",
+          "size": 8,
+          "title": "synthetic biology",
+          "type": "technology"
+        },
+        {
+          "color": "#28a745",
+          "domain": "Healthcare",
+          "id": "tech_cell-free_protein_synthesis",
+          "size": 8,
+          "title": "cell-free protein synthesis",
+          "type": "technology"
+        },
+        {
+          "color": "#28a745",
+          "domain": "Healthcare",
+          "id": "tech_therapeutic_proteins",
+          "size": 8,
+          "title": "therapeutic proteins",
+          "type": "technology"
+        },
+        {
+          "color": "#fd7e14",
+          "domain": "Healthcare",
+          "id": "keyword_cell-free",
+          "size": 6,
+          "title": "cell-free",
+          "type": "keyword"
+        },
+        {
+          "color": "#fd7e14",
+          "domain": "Healthcare",
+          "id": "keyword_synthetic_biology",
+          "size": 6,
+          "title": "synthetic biology",
+          "type": "keyword"
+        },
+        {
+          "color": "#fd7e14",
+          "domain": "Healthcare",
+          "id": "keyword_protein_synthesis",
+          "size": 6,
+          "title": "protein synthesis",
+          "type": "keyword"
+        }
+      ]
+    },
+    "graph_insights": {
+      "central_technologies": {
+        "analysis": "The central technologies in this knowledge graph are pivotal due to their innovation potential and relevance to contemporary healthcare challenges. Their high centrality index and degree signify not only their influence but also their interconnectedness within the healthcare domain, particularly in response to increasing demands for effective vaccine solutions and pathogen detection technologies. Each of these technologies predominantly centers around the synthesis, delivery, and application of mRNA, showcasing a robust emphasis on vaccine and therapeutic innovations. Patterns indicate an emerging trend towards AI integration and real-time diagnostics in healthcare.",
+        "technologies": [
+          {
+            "analysis": "This technology streamlines the vaccine production process, enhancing efficiency and scalability. As a key player in the fight against infectious diseases, it responds to urgent global health demands.",
+            "impact": "Potentially transformative in reducing vaccine production time and cost, directly impacting public health responses.",
+            "title": "Continuous Manufacturing Process for mRNA Vaccines"
+          },
+          {
+            "analysis": "Offers a sophisticated approach to vaccine delivery, improving cellular uptake and immune response effectiveness.",
+            "impact": "Could significantly enhance the efficacy of mRNA vaccines, vital in combating emerging diseases.",
+            "title": "Method for mRNA Delivery Using Lipid Nanoparticles"
+          },
+          {
+            "analysis": "This platform represents a versatile solution for generating vaccines against a range of infectious agents, harnessing the adaptability of RNA technology.",
+            "impact": "Facilitates rapid response capabilities to emerging infectious diseases, boosting global health security.",
+            "title": "RNA-Based Vaccine Platform for Infectious Diseases"
+          },
+          {
+            "analysis": "Utilizes artificial intelligence to predict protein structures and functions, accelerating vaccine development.",
+            "impact": "Has the potential to revolutionize biopharmaceuticals by streamlining the design process and reducing time to market.",
+            "title": "AI-Based Platform for De Novo Protein Design"
+          },
+          {
+            "analysis": "Employs advanced sequencing techniques for rapid pathogen identification, crucial in outbreak scenarios.",
+            "impact": "Speeds up diagnosis and response to infectious diseases, enhancing public health surveillance efforts.",
+            "title": "Real-Time Pathogen Detection System Using Metagenomic Sequencing"
+          }
+        ]
+      },
+      "cross_domain_connections": {
+        "analysis": "The absence of identified cross-domain connections indicates a significant opportunity for innovation between technology sectors. There are gaps where healthcare technologies could intersect with fields like data science, robotics, and environmental sciences to create new solutions. The potential for interdisciplinary collaboration can lead to breakthroughs that address complex problems not solvable within a single domain.",
+        "opportunities": [
+          {
+            "connection": "Linking mRNA vaccine technologies with AI data analytics",
+            "potential": "Development of predictive algorithms for vaccine efficacy based on patient data, enhancing personalized medicine."
+          },
+          {
+            "connection": "Integrating biotech with environmental monitoring systems",
+            "potential": "Creating biosensors for pathogen detection in public health and environmental safety contexts."
+          },
+          {
+            "connection": "Harnessing robotics for vaccine administration",
+            "potential": "Automating vaccination processes in underserved areas to improve healthcare access and efficiency."
+          }
+        ]
+      },
+      "innovation_pathways": {
+        "analysis": "The identified innovation pathways illustrate how interconnected technologies can lead to advanced solutions in healthcare. Each pathway represents progressive iterations of vaccine development and deployment strategies, underscoring a continuous innovation cycle within the healthcare technology sector. These connections emphasize the strategic importance of collaboration between technologies, leading to more robust healthcare responses.",
+        "implications": [
+          {
+            "implication": "This indicates potential for rapid advancements in vaccine distribution mechanisms, allowing for expedited responses during health crises.",
+            "path": "Continuous Manufacturing Process for mRNA Vaccines \u2192 Method for mRNA Delivery Using Lipid Nanoparticles"
+          },
+          {
+            "implication": "Illustrates that AI can play a transforming role in improving the production phase of vaccine creation, paving the way for efficient biopharmaceutical processes.",
+            "path": "Continuous Manufacturing Process for mRNA Vaccines \u2192 AI-Based Platform for De Novo Protein Design"
+          },
+          {
+            "implication": "Highlights the necessity for real-time analytics in vaccine production and distribution, ensuring safety and efficacy in public health scenarios.",
+            "path": "Continuous Manufacturing Process for mRNA Vaccines \u2192 Real-Time Pathogen Detection System Using Metagenomic Sequencing"
+          }
+        ]
+      }
+    },
+    "original_scout_data": {
+      "data_from_source": [
+        {
+          "assignees": [
+            "Continuous Biologics Inc."
+          ],
+          "authors": [],
+          "country": "United States",
+          "cpcs": [
+            "A61K9/127",
+            "C12P19/34",
+            "C12N15/10"
+          ],
+          "data_quality_score": 0.87,
+          "domain": "Healthcare",
+          "id": "patents_BT-PAT-017",
+          "inventors": [
+            "Trout, Bernhardt L.",
+            "Jensen, Klavs F.",
+            "Chakravarthy, Ankur"
+          ],
+          "ipcs": [
+            "A61K9/127",
+            "C12N15/10",
+            "C12P19/34"
+          ],
+          "keywords": [
+            "biomanufacturing",
+            "continuous manufacturing",
+            "mRNA vaccine",
+            "process intensification"
+          ],
+          "knowledge_type": "patent",
+          "publication_date": "2022-08-11",
+          "publishers": [],
+          "related_titles": [
+            "Method for mRNA Delivery Using Lipid Nanoparticles",
+            "CRISPR-Cas9 System for Targeted Gene Editing",
+            "Bispecific Antibodies Targeting PD-1 and CTLA-4",
+            "Engineered CAR-T Cells with Enhanced Tumor Targeting",
+            "Microbiome-Based Therapeutics for Inflammatory Bowel Disease",
+            "Scalable Process for Manufacturing Exosome Therapeutics",
+            "Synthetic Biology Platform for On-Demand Therapeutic Protein Production",
+            "AI-Based Platform for De Novo Protein Design",
+            "Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues",
+            "High-Throughput Screening Platform for Antibody Discovery",
+            "Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy",
+            "RNA-Based Vaccine Platform for Infectious Diseases",
+            "Organs-on-Chips for Drug Toxicity Testing",
+            "Machine Learning Platform for Predicting Drug-Target Interactions",
+            "Nanobody Therapeutics for Neurodegenerative Diseases",
+            "Gene Therapy for Age-Related Macular Degeneration",
+            "PROTAC Technology for Protein Degradation",
+            "Real-Time Pathogen Detection System Using Metagenomic Sequencing",
+            "Single-Cell Multi-omics Analysis of the Immune Response in COVID-19",
+            "CRISPR-Engineered T Cells in Patients with Refractory Cancer",
+            "Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment",
+            "In Vivo Base Editing Corrects Hutchinson\u2013Gilford Progeria Syndrome in Mice",
+            "Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials",
+            "Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research",
+            "Enzyme-Free Biosensor for Continuous Glucose Monitoring",
+            "Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome",
+            "Massively Parallel Screening of Protein Design Space Using Machine Learning",
+            "PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer"
+          ],
+          "similarity_score": 0.6506712436676025,
+          "subdomains": [
+            "Biotech",
+            "Biologics Manufacturing"
+          ],
+          "summary_text": "No summary available",
+          "technologies": [
+            "continuous manufacturing",
+            "mRNA production",
+            "process intensification"
+          ],
+          "title": "Continuous Manufacturing Process for mRNA Vaccines"
+        },
+        {
+          "assignees": [
+            "NanoTherapeutics, Inc."
+          ],
+          "authors": [],
+          "country": "United States",
+          "cpcs": [
+            "A61K9/127",
+            "A61K47/24",
+            "C12N15/88"
+          ],
+          "data_quality_score": 0.95,
+          "domain": "Healthcare",
+          "id": "patents_BT-PAT-001",
+          "inventors": [
+            "Chen, Li-Qiang",
+            "Rodriguez, Maria",
+            "Patel, Amit K."
+          ],
+          "ipcs": [
+            "A61K9/127",
+            "A61K47/24",
+            "C12N15/88"
+          ],
+          "keywords": [
+            "mRNA delivery",
+            "LNP",
+            "nanoparticle",
+            "gene therapy"
+          ],
+          "knowledge_type": "patent",
+          "publication_date": "2020-05-12",
+          "publishers": [],
+          "related_titles": [
+            "Gene Therapy for Age-Related Macular Degeneration",
+            "In Vivo Base Editing Corrects Hutchinson\u2013Gilford Progeria Syndrome in Mice",
+            "RNA-Based Vaccine Platform for Infectious Diseases",
+            "Continuous Manufacturing Process for mRNA Vaccines",
+            "CRISPR-Cas9 System for Targeted Gene Editing",
+            "Bispecific Antibodies Targeting PD-1 and CTLA-4",
+            "Engineered CAR-T Cells with Enhanced Tumor Targeting",
+            "Microbiome-Based Therapeutics for Inflammatory Bowel Disease",
+            "Scalable Process for Manufacturing Exosome Therapeutics",
+            "Synthetic Biology Platform for On-Demand Therapeutic Protein Production",
+            "AI-Based Platform for De Novo Protein Design",
+            "Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues",
+            "High-Throughput Screening Platform for Antibody Discovery",
+            "Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy",
+            "Organs-on-Chips for Drug Toxicity Testing",
+            "Machine Learning Platform for Predicting Drug-Target Interactions",
+            "Nanobody Therapeutics for Neurodegenerative Diseases",
+            "PROTAC Technology for Protein Degradation",
+            "Real-Time Pathogen Detection System Using Metagenomic Sequencing",
+            "Single-Cell Multi-omics Analysis of the Immune Response in COVID-19",
+            "CRISPR-Engineered T Cells in Patients with Refractory Cancer",
+            "Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment",
+            "Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials",
+            "Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research",
+            "Enzyme-Free Biosensor for Continuous Glucose Monitoring",
+            "Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome",
+            "Massively Parallel Screening of Protein Design Space Using Machine Learning",
+            "PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer"
+          ],
+          "similarity_score": 0.6469898223876953,
+          "subdomains": [
+            "Biotech",
+            "Drug Delivery"
+          ],
+          "summary_text": "No summary available",
+          "technologies": [
+            "mRNA",
+            "lipid nanoparticles",
+            "drug delivery"
+          ],
+          "title": "Method for mRNA Delivery Using Lipid Nanoparticles"
+        },
+        {
+          "assignees": [],
+          "authors": [
+            "Li, Haoyang",
+            "Schulz, Daniel",
+            "Thrane, Kristine",
+            "Larsson, Ludvig",
+            "Pe'er, Dana"
+          ],
+          "country": "United States",
+          "cpcs": [],
+          "data_quality_score": 0.92,
+          "domain": "Healthcare",
+          "id": "journals_BT-JRN-003",
+          "inventors": [],
+          "ipcs": [],
+          "keywords": [
+            "spatial transcriptomics",
+            "tumor microenvironment",
+            "cancer",
+            "gene expression",
+            "precision medicine"
+          ],
+          "knowledge_type": "journal",
+          "publication_date": "2022-09-15",
+          "publishers": [
+            "Cell"
+          ],
+          "related_titles": [
+            "Method for mRNA Delivery Using Lipid Nanoparticles",
+            "CRISPR-Cas9 System for Targeted Gene Editing",
+            "Bispecific Antibodies Targeting PD-1 and CTLA-4",
+            "Engineered CAR-T Cells with Enhanced Tumor Targeting",
+            "Microbiome-Based Therapeutics for Inflammatory Bowel Disease",
+            "Scalable Process for Manufacturing Exosome Therapeutics",
+            "Synthetic Biology Platform for On-Demand Therapeutic Protein Production",
+            "AI-Based Platform for De Novo Protein Design",
+            "Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues",
+            "High-Throughput Screening Platform for Antibody Discovery",
+            "Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy",
+            "RNA-Based Vaccine Platform for Infectious Diseases",
+            "Organs-on-Chips for Drug Toxicity Testing",
+            "Machine Learning Platform for Predicting Drug-Target Interactions",
+            "Nanobody Therapeutics for Neurodegenerative Diseases",
+            "Gene Therapy for Age-Related Macular Degeneration",
+            "Continuous Manufacturing Process for mRNA Vaccines",
+            "PROTAC Technology for Protein Degradation",
+            "Real-Time Pathogen Detection System Using Metagenomic Sequencing",
+            "Single-Cell Multi-omics Analysis of the Immune Response in COVID-19",
+            "CRISPR-Engineered T Cells in Patients with Refractory Cancer",
+            "In Vivo Base Editing Corrects Hutchinson\u2013Gilford Progeria Syndrome in Mice",
+            "Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials",
+            "Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research",
+            "Enzyme-Free Biosensor for Continuous Glucose Monitoring",
+            "Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome",
+            "Massively Parallel Screening of Protein Design Space Using Machine Learning",
+            "PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer"
+          ],
+          "similarity_score": 0.6415657997131348,
+          "subdomains": [
+            "Biotech",
+            "Oncology"
+          ],
+          "summary_text": "No summary available",
+          "technologies": [],
+          "title": "Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment"
+        },
+        {
+          "assignees": [
+            "RapidVax Inc."
+          ],
+          "authors": [],
+          "country": "United States",
+          "cpcs": [
+            "C12N15/88",
+            "A61K39/00",
+            "A61K47/69"
+          ],
+          "data_quality_score": 0.93,
+          "domain": "Healthcare",
+          "id": "patents_BT-PAT-012",
+          "inventors": [
+            "Karik\u00f3, Katalin",
+            "Weissman, Drew",
+            "Pardi, Norbert"
+          ],
+          "ipcs": [
+            "C12N15/88",
+            "A61K39/00",
+            "A61K47/69"
+          ],
+          "keywords": [
+            "mRNA",
+            "vaccine",
+            "infectious disease",
+            "lipid nanoparticle"
+          ],
+          "knowledge_type": "patent",
+          "publication_date": "2019-09-05",
+          "publishers": [],
+          "related_titles": [
+            "Method for mRNA Delivery Using Lipid Nanoparticles",
+            "CRISPR-Cas9 System for Targeted Gene Editing",
+            "Bispecific Antibodies Targeting PD-1 and CTLA-4",
+            "Engineered CAR-T Cells with Enhanced Tumor Targeting",
+            "Microbiome-Based Therapeutics for Inflammatory Bowel Disease",
+            "Scalable Process for Manufacturing Exosome Therapeutics",
+            "Synthetic Biology Platform for On-Demand Therapeutic Protein Production",
+            "AI-Based Platform for De Novo Protein Design",
+            "Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues",
+            "High-Throughput Screening Platform for Antibody Discovery",
+            "Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy",
+            "Organs-on-Chips for Drug Toxicity Testing",
+            "Machine Learning Platform for Predicting Drug-Target Interactions",
+            "Nanobody Therapeutics for Neurodegenerative Diseases",
+            "Gene Therapy for Age-Related Macular Degeneration",
+            "Continuous Manufacturing Process for mRNA Vaccines",
+            "PROTAC Technology for Protein Degradation",
+            "Real-Time Pathogen Detection System Using Metagenomic Sequencing",
+            "Single-Cell Multi-omics Analysis of the Immune Response in COVID-19",
+            "CRISPR-Engineered T Cells in Patients with Refractory Cancer",
+            "Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment",
+            "In Vivo Base Editing Corrects Hutchinson\u2013Gilford Progeria Syndrome in Mice",
+            "Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials",
+            "Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research",
+            "Enzyme-Free Biosensor for Continuous Glucose Monitoring",
+            "Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome",
+            "Massively Parallel Screening of Protein Design Space Using Machine Learning",
+            "PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer"
+          ],
+          "similarity_score": 0.6410243511199951,
+          "subdomains": [
+            "Biotech",
+            "Vaccines"
+          ],
+          "summary_text": "No summary available",
+          "technologies": [
+            "lipid nanoparticles",
+            "mRNA vaccines",
+            "infectious disease"
+          ],
+          "title": "RNA-Based Vaccine Platform for Infectious Diseases"
+        },
+        {
+          "assignees": [
+            "ProteoDesign AI Inc."
+          ],
+          "authors": [],
+          "country": "United States",
+          "cpcs": [
+            "G16B15/00",
+            "C07K14/005",
+            "G06N3/08"
+          ],
+          "data_quality_score": 0.9,
+          "domain": "Healthcare",
+          "id": "patents_BT-PAT-008",
+          "inventors": [
+            "Baker, David",
+            "Shin, Joon-Hyun",
+            "Singh, Manvir"
+          ],
+          "ipcs": [
+            "G16B15/00",
+            "C07K14/00",
+            "G06N3/08"
+          ],
+          "keywords": [
+            "AI",
+            "machine learning",
+            "protein design",
+            "computational protein engineering"
+          ],
+          "knowledge_type": "patent",
+          "publication_date": "2022-07-14",
+          "publishers": [],
+          "related_titles": [
+            "Method for mRNA Delivery Using Lipid Nanoparticles",
+            "CRISPR-Cas9 System for Targeted Gene Editing",
+            "Bispecific Antibodies Targeting PD-1 and CTLA-4",
+            "Engineered CAR-T Cells with Enhanced Tumor Targeting",
+            "Microbiome-Based Therapeutics for Inflammatory Bowel Disease",
+            "Scalable Process for Manufacturing Exosome Therapeutics",
+            "Synthetic Biology Platform for On-Demand Therapeutic Protein Production",
+            "Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues",
+            "High-Throughput Screening Platform for Antibody Discovery",
+            "Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy",
+            "RNA-Based Vaccine Platform for Infectious Diseases",
+            "Organs-on-Chips for Drug Toxicity Testing",
+            "Machine Learning Platform for Predicting Drug-Target Interactions",
+            "Nanobody Therapeutics for Neurodegenerative Diseases",
+            "Gene Therapy for Age-Related Macular Degeneration",
+            "Continuous Manufacturing Process for mRNA Vaccines",
+            "PROTAC Technology for Protein Degradation",
+            "Real-Time Pathogen Detection System Using Metagenomic Sequencing",
+            "Single-Cell Multi-omics Analysis of the Immune Response in COVID-19",
+            "CRISPR-Engineered T Cells in Patients with Refractory Cancer",
+            "Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment",
+            "In Vivo Base Editing Corrects Hutchinson\u2013Gilford Progeria Syndrome in Mice",
+            "Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials",
+            "Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research",
+            "Enzyme-Free Biosensor for Continuous Glucose Monitoring",
+            "Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome",
+            "Massively Parallel Screening of Protein Design Space Using Machine Learning",
+            "PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer",
+            "Machine Learning System for Predictive Vehicle Maintenance",
+            "Multi-Modal Urban Mobility Orchestration Platform",
+            "AI-Enabled Traffic Signal Control System"
+          ],
+          "similarity_score": 0.6379947662353516,
+          "subdomains": [
+            "Biotech",
+            "Computational Biology"
+          ],
+          "summary_text": "No summary available",
+          "technologies": [
+            "artificial intelligence",
+            "protein design",
+            "computational biology"
+          ],
+          "title": "AI-Based Platform for De Novo Protein Design"
+        },
+        {
+          "assignees": [
+            "RapidDx Genomics"
+          ],
+          "authors": [],
+          "country": "United States",
+          "cpcs": [
+            "C12Q1/6806",
+            "G16B30/00",
+            "G16H50/70"
+          ],
+          "data_quality_score": 0.88,
+          "domain": "Healthcare",
+          "id": "patents_BT-PAT-020",
+          "inventors": [
+            "Schatz, Michael C.",
+            "Phillippy, Adam M.",
+            "Zimin, Aleksey V."
+          ],
+          "ipcs": [
+            "C12Q1/6806",
+            "G16B30/00",
+            "G16H50/70"
+          ],
+          "keywords": [
+            "metagenomic",
+            "pathogen detection",
+            "antimicrobial resistance",
+            "nanopore sequencing"
+          ],
+          "knowledge_type": "patent",
+          "publication_date": "2023-05-04",
+          "publishers": [],
+          "related_titles": [
+            "Method for mRNA Delivery Using Lipid Nanoparticles",
+            "CRISPR-Cas9 System for Targeted Gene Editing",
+            "Bispecific Antibodies Targeting PD-1 and CTLA-4",
+            "Engineered CAR-T Cells with Enhanced Tumor Targeting",
+            "Microbiome-Based Therapeutics for Inflammatory Bowel Disease",
+            "Scalable Process for Manufacturing Exosome Therapeutics",
+            "Synthetic Biology Platform for On-Demand Therapeutic Protein Production",
+            "AI-Based Platform for De Novo Protein Design",
+            "Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues",
+            "High-Throughput Screening Platform for Antibody Discovery",
+            "Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy",
+            "RNA-Based Vaccine Platform for Infectious Diseases",
+            "Organs-on-Chips for Drug Toxicity Testing",
+            "Machine Learning Platform for Predicting Drug-Target Interactions",
+            "Nanobody Therapeutics for Neurodegenerative Diseases",
+            "Gene Therapy for Age-Related Macular Degeneration",
+            "Continuous Manufacturing Process for mRNA Vaccines",
+            "PROTAC Technology for Protein Degradation",
+            "Single-Cell Multi-omics Analysis of the Immune Response in COVID-19",
+            "CRISPR-Engineered T Cells in Patients with Refractory Cancer",
+            "Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment",
+            "In Vivo Base Editing Corrects Hutchinson\u2013Gilford Progeria Syndrome in Mice",
+            "Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials",
+            "Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research",
+            "Enzyme-Free Biosensor for Continuous Glucose Monitoring",
+            "Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome",
+            "Massively Parallel Screening of Protein Design Space Using Machine Learning",
+            "PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer"
+          ],
+          "similarity_score": 0.6363234519958496,
+          "subdomains": [
+            "Biotech",
+            "Diagnostics"
+          ],
+          "summary_text": "No summary available",
+          "technologies": [
+            "metagenomic sequencing",
+            "nanopore technology",
+            "bioinformatics"
+          ],
+          "title": "Real-Time Pathogen Detection System Using Metagenomic Sequencing"
+        },
+        {
+          "assignees": [],
+          "authors": [
+            "Burslem, George M.",
+            "Schultz, David C.",
+            "Bondeson, Daniel P.",
+            "Eide, Christopher A.",
+            "Crews, Craig M."
+          ],
+          "country": "United States",
+          "cpcs": [],
+          "data_quality_score": 0.93,
+          "domain": "Healthcare",
+          "id": "journals_BT-JRN-010",
+          "inventors": [],
+          "ipcs": [],
+          "keywords": [
+            "cancer therapy",
+            "PROTAC",
+            "undruggable targets",
+            "transcription factors",
+            "targeted protein degradation"
+          ],
+          "knowledge_type": "journal",
+          "publication_date": "2023-04-18",
+          "publishers": [
+            "Science Translational Medicine"
+          ],
+          "related_titles": [
+            "Method for mRNA Delivery Using Lipid Nanoparticles",
+            "CRISPR-Cas9 System for Targeted Gene Editing",
+            "Bispecific Antibodies Targeting PD-1 and CTLA-4",
+            "Engineered CAR-T Cells with Enhanced Tumor Targeting",
+            "Microbiome-Based Therapeutics for Inflammatory Bowel Disease",
+            "Scalable Process for Manufacturing Exosome Therapeutics",
+            "Synthetic Biology Platform for On-Demand Therapeutic Protein Production",
+            "AI-Based Platform for De Novo Protein Design",
+            "Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues",
+            "High-Throughput Screening Platform for Antibody Discovery",
+            "Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy",
+            "RNA-Based Vaccine Platform for Infectious Diseases",
+            "Organs-on-Chips for Drug Toxicity Testing",
+            "Machine Learning Platform for Predicting Drug-Target Interactions",
+            "Nanobody Therapeutics for Neurodegenerative Diseases",
+            "Gene Therapy for Age-Related Macular Degeneration",
+            "Continuous Manufacturing Process for mRNA Vaccines",
+            "PROTAC Technology for Protein Degradation",
+            "Real-Time Pathogen Detection System Using Metagenomic Sequencing",
+            "Single-Cell Multi-omics Analysis of the Immune Response in COVID-19",
+            "CRISPR-Engineered T Cells in Patients with Refractory Cancer",
+            "Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment",
+            "In Vivo Base Editing Corrects Hutchinson\u2013Gilford Progeria Syndrome in Mice",
+            "Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials",
+            "Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research",
+            "Enzyme-Free Biosensor for Continuous Glucose Monitoring",
+            "Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome",
+            "Massively Parallel Screening of Protein Design Space Using Machine Learning"
+          ],
+          "similarity_score": 0.6329269409179688,
+          "subdomains": [
+            "Biotech",
+            "Drug Discovery"
+          ],
+          "summary_text": "No summary available",
+          "technologies": [],
+          "title": "PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer"
+        },
+        {
+          "assignees": [
+            "ProteoDeg Therapeutics"
+          ],
+          "authors": [],
+          "country": "United States",
+          "cpcs": [
+            "A61P35/00",
+            "C07D498/22",
+            "A61K31/53"
+          ],
+          "data_quality_score": 0.89,
+          "domain": "Healthcare",
+          "id": "patents_BT-PAT-019",
+          "inventors": [
+            "Crews, Craig M.",
+            "Bradner, James E.",
+            "Winter, Georg E."
+          ],
+          "ipcs": [
+            "A61P35/00",
+            "C07D498/22",
+            "A61K31/53"
+          ],
+          "keywords": [
+            "PROTAC",
+            "protein degradation",
+            "E3 ligase",
+            "undruggable targets"
+          ],
+          "knowledge_type": "patent",
+          "publication_date": "2022-01-27",
+          "publishers": [],
+          "related_titles": [
+            "Method for mRNA Delivery Using Lipid Nanoparticles",
+            "CRISPR-Cas9 System for Targeted Gene Editing",
+            "Bispecific Antibodies Targeting PD-1 and CTLA-4",
+            "Engineered CAR-T Cells with Enhanced Tumor Targeting",
+            "Microbiome-Based Therapeutics for Inflammatory Bowel Disease",
+            "Scalable Process for Manufacturing Exosome Therapeutics",
+            "Synthetic Biology Platform for On-Demand Therapeutic Protein Production",
+            "AI-Based Platform for De Novo Protein Design",
+            "Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues",
+            "High-Throughput Screening Platform for Antibody Discovery",
+            "Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy",
+            "RNA-Based Vaccine Platform for Infectious Diseases",
+            "Organs-on-Chips for Drug Toxicity Testing",
+            "Machine Learning Platform for Predicting Drug-Target Interactions",
+            "Nanobody Therapeutics for Neurodegenerative Diseases",
+            "Gene Therapy for Age-Related Macular Degeneration",
+            "Continuous Manufacturing Process for mRNA Vaccines",
+            "Real-Time Pathogen Detection System Using Metagenomic Sequencing",
+            "Single-Cell Multi-omics Analysis of the Immune Response in COVID-19",
+            "CRISPR-Engineered T Cells in Patients with Refractory Cancer",
+            "Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment",
+            "In Vivo Base Editing Corrects Hutchinson\u2013Gilford Progeria Syndrome in Mice",
+            "Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials",
+            "Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research",
+            "Enzyme-Free Biosensor for Continuous Glucose Monitoring",
+            "Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome",
+            "Massively Parallel Screening of Protein Design Space Using Machine Learning",
+            "PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer"
+          ],
+          "similarity_score": 0.6215879917144775,
+          "subdomains": [
+            "Biotech",
+            "Drug Discovery"
+          ],
+          "summary_text": "No summary available",
+          "technologies": [
+            "PROTAC",
+            "targeted protein degradation",
+            "cancer therapeutics"
+          ],
+          "title": "PROTAC Technology for Protein Degradation"
+        },
+        {
+          "assignees": [
+            "Exosome Therapeutics Corp."
+          ],
+          "authors": [],
+          "country": "United States",
+          "cpcs": [
+            "C12N5/0062",
+            "A61K9/0019",
+            "A61K35/12"
+          ],
+          "data_quality_score": 0.87,
+          "domain": "Healthcare",
+          "id": "patents_BT-PAT-006",
+          "inventors": [
+            "Miller, David S.",
+            "Garcia, Paulo",
+            "Chen, Wei"
+          ],
+          "ipcs": [
+            "C12N5/00",
+            "A61K9/00",
+            "A61K35/12"
+          ],
+          "keywords": [
+            "exosomes",
+            "extracellular vesicles",
+            "manufacturing",
+            "bioproduction"
+          ],
+          "knowledge_type": "patent",
+          "publication_date": "2023-01-18",
+          "publishers": [],
+          "related_titles": [
+            "Method for mRNA Delivery Using Lipid Nanoparticles",
+            "CRISPR-Cas9 System for Targeted Gene Editing",
+            "Bispecific Antibodies Targeting PD-1 and CTLA-4",
+            "Engineered CAR-T Cells with Enhanced Tumor Targeting",
+            "Microbiome-Based Therapeutics for Inflammatory Bowel Disease",
+            "Synthetic Biology Platform for On-Demand Therapeutic Protein Production",
+            "AI-Based Platform for De Novo Protein Design",
+            "Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues",
+            "High-Throughput Screening Platform for Antibody Discovery",
+            "Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy",
+            "RNA-Based Vaccine Platform for Infectious Diseases",
+            "Organs-on-Chips for Drug Toxicity Testing",
+            "Machine Learning Platform for Predicting Drug-Target Interactions",
+            "Nanobody Therapeutics for Neurodegenerative Diseases",
+            "Gene Therapy for Age-Related Macular Degeneration",
+            "Continuous Manufacturing Process for mRNA Vaccines",
+            "PROTAC Technology for Protein Degradation",
+            "Real-Time Pathogen Detection System Using Metagenomic Sequencing",
+            "Single-Cell Multi-omics Analysis of the Immune Response in COVID-19",
+            "CRISPR-Engineered T Cells in Patients with Refractory Cancer",
+            "Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment",
+            "In Vivo Base Editing Corrects Hutchinson\u2013Gilford Progeria Syndrome in Mice",
+            "Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials",
+            "Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research",
+            "Enzyme-Free Biosensor for Continuous Glucose Monitoring",
+            "Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome",
+            "Massively Parallel Screening of Protein Design Space Using Machine Learning",
+            "PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer"
+          ],
+          "similarity_score": 0.6181893348693848,
+          "subdomains": [
+            "Biotech",
+            "Biologics Manufacturing"
+          ],
+          "summary_text": "No summary available",
+          "technologies": [
+            "cell therapy",
+            "exosomes",
+            "biomanufacturing"
+          ],
+          "title": "Scalable Process for Manufacturing Exosome Therapeutics"
+        },
+        {
+          "assignees": [
+            "SyntheBio Inc."
+          ],
+          "authors": [],
+          "country": "United States",
+          "cpcs": [
+            "C12N15/1034",
+            "C12P21/00",
+            "C12N15/09"
+          ],
+          "data_quality_score": 0.85,
+          "domain": "Healthcare",
+          "id": "patents_BT-PAT-007",
+          "inventors": [
+            "Jewett, Michael C.",
+            "Stark, Jessica C.",
+            "Martin, Rodrigo"
+          ],
+          "ipcs": [
+            "C12N15/10",
+            "C12P21/00",
+            "C12N15/09"
+          ],
+          "keywords": [
+            "cell-free",
+            "synthetic biology",
+            "protein synthesis",
+            "biomanufacturing"
+          ],
+          "knowledge_type": "patent",
+          "publication_date": "2021-11-05",
+          "publishers": [],
+          "related_titles": [
+            "Method for mRNA Delivery Using Lipid Nanoparticles",
+            "CRISPR-Cas9 System for Targeted Gene Editing",
+            "Bispecific Antibodies Targeting PD-1 and CTLA-4",
+            "Engineered CAR-T Cells with Enhanced Tumor Targeting",
+            "Microbiome-Based Therapeutics for Inflammatory Bowel Disease",
+            "Scalable Process for Manufacturing Exosome Therapeutics",
+            "AI-Based Platform for De Novo Protein Design",
+            "Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues",
+            "High-Throughput Screening Platform for Antibody Discovery",
+            "Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy",
+            "RNA-Based Vaccine Platform for Infectious Diseases",
+            "Organs-on-Chips for Drug Toxicity Testing",
+            "Machine Learning Platform for Predicting Drug-Target Interactions",
+            "Nanobody Therapeutics for Neurodegenerative Diseases",
+            "Gene Therapy for Age-Related Macular Degeneration",
+            "Continuous Manufacturing Process for mRNA Vaccines",
+            "PROTAC Technology for Protein Degradation",
+            "Real-Time Pathogen Detection System Using Metagenomic Sequencing",
+            "Single-Cell Multi-omics Analysis of the Immune Response in COVID-19",
+            "CRISPR-Engineered T Cells in Patients with Refractory Cancer",
+            "Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment",
+            "In Vivo Base Editing Corrects Hutchinson\u2013Gilford Progeria Syndrome in Mice",
+            "Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials",
+            "Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research",
+            "Enzyme-Free Biosensor for Continuous Glucose Monitoring",
+            "Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome",
+            "Massively Parallel Screening of Protein Design Space Using Machine Learning",
+            "PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer"
+          ],
+          "similarity_score": 0.6163442134857178,
+          "subdomains": [
+            "Biotech",
+            "Synthetic Biology"
+          ],
+          "summary_text": "No summary available",
+          "technologies": [
+            "synthetic biology",
+            "cell-free protein synthesis",
+            "therapeutic proteins"
+          ],
+          "title": "Synthetic Biology Platform for On-Demand Therapeutic Protein Production"
+        }
+      ],
+      "insights": [
+        "There is a significant ongoing focus on developing mRNA vaccines for infectious diseases, as evidenced by multiple patents and research publications centered around mRNA delivery systems utilizing lipid nanoparticles and novel manufacturing processes.",
+        "The continuous manufacturing process for mRNA vaccines represents an innovation that may enhance efficiency in vaccine production, which has become increasingly critical in light of the global demand for rapid vaccine development in response to pandemics.",
+        "Emerging technologies such as AI-based platforms for protein design and scalable exosome manufacturing are poised to significantly impact the biotech and pharmaceutical industries by improving the efficacy and speed of therapeutic development, including mRNA-based therapeutics.",
+        "The integration of spatial transcriptomics in cancer research underscores the continuing evolution of mRNA applications beyond vaccines, indicating its potential role in precision medicine and targeted therapies.",
+        "The trend indicates that the strategic alliance between biopharmaceutical companies and tech firms specializing in AI and computational biology will likely accelerate mRNA research and development efforts."
+      ],
+      "isData": true,
+      "message": "Successfully generated insights.",
+      "notes": "The healthcare industry is witnessing transformative advancements in mRNA technology, particularly with its applications in vaccines and therapeutics. The trend is shifting towards creating more efficient production processes, such as continuous manufacturing, which enables quicker responses to health crises. Additionally, the advent of AI in protein design and enhancements in delivery systems signify a potential leap in therapeutic efficacy, particularly for complex diseases like cancer. Companies that harness these innovations and forge strategic partnerships will not only stay ahead in the competitive landscape but also contribute significantly to global health outcomes. A focus on integrating cutting-edge technologies and collaboration with academic entities can foster groundbreaking developments in mRNA applications, making personalized medicine approaches feasible and effective, particularly for conditions currently deemed challenging to treat.",
+      "prompt": "i want to know things related to mrna",
+      "recommendations": [
+        "Invest in partnerships with AI and computational biology firms to enhance mRNA therapeutic designs and improve production methodologies, thus positioning your organization as a leader in innovative healthcare solutions.",
+        "Prioritize the development of a robust pipeline for mRNA vaccines and therapeutics, focusing on continuous manufacturing processes to meet emerging healthcare needs rapidly.",
+        "Engage in collaborations with research institutions to leverage advancements in spatial transcriptomics for developing personalized mRNA-based treatment options for cancer and other diseases."
+      ],
+      "relevant_trends": [
+        {
+          "assignees": [
+            "Continuous Biologics Inc."
+          ],
+          "authors": [],
+          "country": "United States",
+          "cpcs": [
+            "A61K9/127",
+            "C12P19/34",
+            "C12N15/10"
+          ],
+          "data_quality_score": 0.87,
+          "domain": "Healthcare",
+          "id": "patents_BT-PAT-017",
+          "inventors": [
+            "Trout, Bernhardt L.",
+            "Jensen, Klavs F.",
+            "Chakravarthy, Ankur"
+          ],
+          "ipcs": [
+            "A61K9/127",
+            "C12N15/10",
+            "C12P19/34"
+          ],
+          "keywords": [
+            "biomanufacturing",
+            "continuous manufacturing",
+            "mRNA vaccine",
+            "process intensification"
+          ],
+          "knowledge_type": "patent",
+          "publication_date": "2022-08-11",
+          "publishers": [],
+          "related_titles": [
+            "Method for mRNA Delivery Using Lipid Nanoparticles",
+            "CRISPR-Cas9 System for Targeted Gene Editing",
+            "Bispecific Antibodies Targeting PD-1 and CTLA-4",
+            "Engineered CAR-T Cells with Enhanced Tumor Targeting",
+            "Microbiome-Based Therapeutics for Inflammatory Bowel Disease",
+            "Scalable Process for Manufacturing Exosome Therapeutics",
+            "Synthetic Biology Platform for On-Demand Therapeutic Protein Production",
+            "AI-Based Platform for De Novo Protein Design",
+            "Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues",
+            "High-Throughput Screening Platform for Antibody Discovery",
+            "Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy",
+            "RNA-Based Vaccine Platform for Infectious Diseases",
+            "Organs-on-Chips for Drug Toxicity Testing",
+            "Machine Learning Platform for Predicting Drug-Target Interactions",
+            "Nanobody Therapeutics for Neurodegenerative Diseases",
+            "Gene Therapy for Age-Related Macular Degeneration",
+            "PROTAC Technology for Protein Degradation",
+            "Real-Time Pathogen Detection System Using Metagenomic Sequencing",
+            "Single-Cell Multi-omics Analysis of the Immune Response in COVID-19",
+            "CRISPR-Engineered T Cells in Patients with Refractory Cancer",
+            "Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment",
+            "In Vivo Base Editing Corrects Hutchinson\u2013Gilford Progeria Syndrome in Mice",
+            "Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials",
+            "Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research",
+            "Enzyme-Free Biosensor for Continuous Glucose Monitoring",
+            "Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome",
+            "Massively Parallel Screening of Protein Design Space Using Machine Learning",
+            "PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer"
+          ],
+          "similarity_score": 0.6507,
+          "subdomains": [
+            "Biotech",
+            "Biologics Manufacturing"
+          ],
+          "summary_text": "No summary available",
+          "technologies": [
+            "continuous manufacturing",
+            "mRNA production",
+            "process intensification"
+          ],
+          "title": "Continuous Manufacturing Process for mRNA Vaccines"
+        },
+        {
+          "assignees": [
+            "NanoTherapeutics, Inc."
+          ],
+          "authors": [],
+          "country": "United States",
+          "cpcs": [
+            "A61K9/127",
+            "A61K47/24",
+            "C12N15/88"
+          ],
+          "data_quality_score": 0.95,
+          "domain": "Healthcare",
+          "id": "patents_BT-PAT-001",
+          "inventors": [
+            "Chen, Li-Qiang",
+            "Rodriguez, Maria",
+            "Patel, Amit K."
+          ],
+          "ipcs": [
+            "A61K9/127",
+            "A61K47/24",
+            "C12N15/88"
+          ],
+          "keywords": [
+            "mRNA delivery",
+            "LNP",
+            "nanoparticle",
+            "gene therapy"
+          ],
+          "knowledge_type": "patent",
+          "publication_date": "2020-05-12",
+          "publishers": [],
+          "related_titles": [
+            "Gene Therapy for Age-Related Macular Degeneration",
+            "In Vivo Base Editing Corrects Hutchinson\u2013Gilford Progeria Syndrome in Mice",
+            "RNA-Based Vaccine Platform for Infectious Diseases",
+            "Continuous Manufacturing Process for mRNA Vaccines",
+            "CRISPR-Cas9 System for Targeted Gene Editing",
+            "Bispecific Antibodies Targeting PD-1 and CTLA-4",
+            "Engineered CAR-T Cells with Enhanced Tumor Targeting",
+            "Microbiome-Based Therapeutics for Inflammatory Bowel Disease",
+            "Scalable Process for Manufacturing Exosome Therapeutics",
+            "Synthetic Biology Platform for On-Demand Therapeutic Protein Production",
+            "AI-Based Platform for De Novo Protein Design",
+            "Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues",
+            "High-Throughput Screening Platform for Antibody Discovery",
+            "Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy",
+            "Organs-on-Chips for Drug Toxicity Testing",
+            "Machine Learning Platform for Predicting Drug-Target Interactions",
+            "Nanobody Therapeutics for Neurodegenerative Diseases",
+            "PROTAC Technology for Protein Degradation",
+            "Real-Time Pathogen Detection System Using Metagenomic Sequencing",
+            "Single-Cell Multi-omics Analysis of the Immune Response in COVID-19",
+            "CRISPR-Engineered T Cells in Patients with Refractory Cancer",
+            "Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment",
+            "Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials",
+            "Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research",
+            "Enzyme-Free Biosensor for Continuous Glucose Monitoring",
+            "Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome",
+            "Massively Parallel Screening of Protein Design Space Using Machine Learning",
+            "PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer"
+          ],
+          "similarity_score": 0.647,
+          "subdomains": [
+            "Biotech",
+            "Drug Delivery"
+          ],
+          "summary_text": "No summary available",
+          "technologies": [
+            "mRNA",
+            "lipid nanoparticles",
+            "drug delivery"
+          ],
+          "title": "Method for mRNA Delivery Using Lipid Nanoparticles"
+        },
+        {
+          "assignees": [],
+          "authors": [
+            "Li, Haoyang",
+            "Schulz, Daniel",
+            "Thrane, Kristine",
+            "Larsson, Ludvig",
+            "Pe'er, Dana"
+          ],
+          "country": "United States",
+          "cpcs": [],
+          "data_quality_score": 0.92,
+          "domain": "Healthcare",
+          "id": "journals_BT-JRN-003",
+          "inventors": [],
+          "ipcs": [],
+          "keywords": [
+            "spatial transcriptomics",
+            "tumor microenvironment",
+            "cancer",
+            "gene expression",
+            "precision medicine"
+          ],
+          "knowledge_type": "journal",
+          "publication_date": "2022-09-15",
+          "publishers": [
+            "Cell"
+          ],
+          "related_titles": [
+            "Method for mRNA Delivery Using Lipid Nanoparticles",
+            "CRISPR-Cas9 System for Targeted Gene Editing",
+            "Bispecific Antibodies Targeting PD-1 and CTLA-4",
+            "Engineered CAR-T Cells with Enhanced Tumor Targeting",
+            "Microbiome-Based Therapeutics for Inflammatory Bowel Disease",
+            "Scalable Process for Manufacturing Exosome Therapeutics",
+            "Synthetic Biology Platform for On-Demand Therapeutic Protein Production",
+            "AI-Based Platform for De Novo Protein Design",
+            "Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues",
+            "High-Throughput Screening Platform for Antibody Discovery",
+            "Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy",
+            "RNA-Based Vaccine Platform for Infectious Diseases",
+            "Organs-on-Chips for Drug Toxicity Testing",
+            "Machine Learning Platform for Predicting Drug-Target Interactions",
+            "Nanobody Therapeutics for Neurodegenerative Diseases",
+            "Gene Therapy for Age-Related Macular Degeneration",
+            "Continuous Manufacturing Process for mRNA Vaccines",
+            "PROTAC Technology for Protein Degradation",
+            "Real-Time Pathogen Detection System Using Metagenomic Sequencing",
+            "Single-Cell Multi-omics Analysis of the Immune Response in COVID-19",
+            "CRISPR-Engineered T Cells in Patients with Refractory Cancer",
+            "In Vivo Base Editing Corrects Hutchinson\u2013Gilford Progeria Syndrome in Mice",
+            "Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials",
+            "Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research",
+            "Enzyme-Free Biosensor for Continuous Glucose Monitoring",
+            "Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome",
+            "Massively Parallel Screening of Protein Design Space Using Machine Learning",
+            "PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer"
+          ],
+          "similarity_score": 0.6416,
+          "subdomains": [
+            "Biotech",
+            "Oncology"
+          ],
+          "summary_text": "No summary available",
+          "technologies": [],
+          "title": "Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment"
+        },
+        {
+          "assignees": [
+            "RapidVax Inc."
+          ],
+          "authors": [],
+          "country": "United States",
+          "cpcs": [
+            "C12N15/88",
+            "A61K39/00",
+            "A61K47/69"
+          ],
+          "data_quality_score": 0.93,
+          "domain": "Healthcare",
+          "id": "patents_BT-PAT-012",
+          "inventors": [
+            "Karik\u00f3, Katalin",
+            "Weissman, Drew",
+            "Pardi, Norbert"
+          ],
+          "ipcs": [
+            "C12N15/88",
+            "A61K39/00",
+            "A61K47/69"
+          ],
+          "keywords": [
+            "mRNA",
+            "vaccine",
+            "infectious disease",
+            "lipid nanoparticle"
+          ],
+          "knowledge_type": "patent",
+          "publication_date": "2019-09-05",
+          "publishers": [],
+          "related_titles": [
+            "Method for mRNA Delivery Using Lipid Nanoparticles",
+            "CRISPR-Cas9 System for Targeted Gene Editing",
+            "Bispecific Antibodies Targeting PD-1 and CTLA-4",
+            "Engineered CAR-T Cells with Enhanced Tumor Targeting",
+            "Microbiome-Based Therapeutics for Inflammatory Bowel Disease",
+            "Scalable Process for Manufacturing Exosome Therapeutics",
+            "Synthetic Biology Platform for On-Demand Therapeutic Protein Production",
+            "AI-Based Platform for De Novo Protein Design",
+            "Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues",
+            "High-Throughput Screening Platform for Antibody Discovery",
+            "Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy",
+            "Organs-on-Chips for Drug Toxicity Testing",
+            "Machine Learning Platform for Predicting Drug-Target Interactions",
+            "Nanobody Therapeutics for Neurodegenerative Diseases",
+            "Gene Therapy for Age-Related Macular Degeneration",
+            "Continuous Manufacturing Process for mRNA Vaccines",
+            "PROTAC Technology for Protein Degradation",
+            "Real-Time Pathogen Detection System Using Metagenomic Sequencing",
+            "Single-Cell Multi-omics Analysis of the Immune Response in COVID-19",
+            "CRISPR-Engineered T Cells in Patients with Refractory Cancer",
+            "Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment",
+            "In Vivo Base Editing Corrects Hutchinson\u2013Gilford Progeria Syndrome in Mice",
+            "Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials",
+            "Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research",
+            "Enzyme-Free Biosensor for Continuous Glucose Monitoring",
+            "Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome",
+            "Massively Parallel Screening of Protein Design Space Using Machine Learning",
+            "PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer"
+          ],
+          "similarity_score": 0.641,
+          "subdomains": [
+            "Biotech",
+            "Vaccines"
+          ],
+          "summary_text": "No summary available",
+          "technologies": [
+            "lipid nanoparticles",
+            "mRNA vaccines",
+            "infectious disease"
+          ],
+          "title": "RNA-Based Vaccine Platform for Infectious Diseases"
+        },
+        {
+          "assignees": [
+            "ProteoDesign AI Inc."
+          ],
+          "authors": [],
+          "country": "United States",
+          "cpcs": [
+            "G16B15/00",
+            "C07K14/005",
+            "G06N3/08"
+          ],
+          "data_quality_score": 0.9,
+          "domain": "Healthcare",
+          "id": "patents_BT-PAT-008",
+          "inventors": [
+            "Baker, David",
+            "Shin, Joon-Hyun",
+            "Singh, Manvir"
+          ],
+          "ipcs": [
+            "G16B15/00",
+            "C07K14/00",
+            "G06N3/08"
+          ],
+          "keywords": [
+            "AI",
+            "machine learning",
+            "protein design",
+            "computational protein engineering"
+          ],
+          "knowledge_type": "patent",
+          "publication_date": "2022-07-14",
+          "publishers": [],
+          "related_titles": [
+            "Method for mRNA Delivery Using Lipid Nanoparticles",
+            "CRISPR-Cas9 System for Targeted Gene Editing",
+            "Bispecific Antibodies Targeting PD-1 and CTLA-4",
+            "Engineered CAR-T Cells with Enhanced Tumor Targeting",
+            "Microbiome-Based Therapeutics for Inflammatory Bowel Disease",
+            "Scalable Process for Manufacturing Exosome Therapeutics",
+            "Synthetic Biology Platform for On-Demand Therapeutic Protein Production",
+            "Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues",
+            "High-Throughput Screening Platform for Antibody Discovery",
+            "Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy",
+            "RNA-Based Vaccine Platform for Infectious Diseases",
+            "Organs-on-Chips for Drug Toxicity Testing",
+            "Machine Learning Platform for Predicting Drug-Target Interactions",
+            "Nanobody Therapeutics for Neurodegenerative Diseases",
+            "Gene Therapy for Age-Related Macular Degeneration",
+            "Continuous Manufacturing Process for mRNA Vaccines",
+            "PROTAC Technology for Protein Degradation",
+            "Real-Time Pathogen Detection System Using Metagenomic Sequencing",
+            "Single-Cell Multi-omics Analysis of the Immune Response in COVID-19",
+            "CRISPR-Engineered T Cells in Patients with Refractory Cancer",
+            "Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment",
+            "In Vivo Base Editing Corrects Hutchinson\u2013Gilford Progeria Syndrome in Mice",
+            "Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials",
+            "Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research",
+            "Enzyme-Free Biosensor for Continuous Glucose Monitoring",
+            "Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome",
+            "Massively Parallel Screening of Protein Design Space Using Machine Learning",
+            "PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer",
+            "Machine Learning System for Predictive Vehicle Maintenance",
+            "Multi-Modal Urban Mobility Orchestration Platform",
+            "AI-Enabled Traffic Signal Control System"
+          ],
+          "similarity_score": 0.638,
+          "subdomains": [
+            "Biotech",
+            "Computational Biology"
+          ],
+          "summary_text": "No summary available",
+          "technologies": [
+            "artificial intelligence",
+            "protein design",
+            "computational biology"
+          ],
+          "title": "AI-Based Platform for De Novo Protein Design"
+        },
+        {
+          "assignees": [
+            "RapidDx Genomics"
+          ],
+          "authors": [],
+          "country": "United States",
+          "cpcs": [
+            "C12Q1/6806",
+            "G16B30/00",
+            "G16H50/70"
+          ],
+          "data_quality_score": 0.88,
+          "domain": "Healthcare",
+          "id": "patents_BT-PAT-020",
+          "inventors": [
+            "Schatz, Michael C.",
+            "Phillippy, Adam M.",
+            "Zimin, Aleksey V."
+          ],
+          "ipcs": [
+            "C12Q1/6806",
+            "G16B30/00",
+            "G16H50/70"
+          ],
+          "keywords": [
+            "metagenomic",
+            "pathogen detection",
+            "antimicrobial resistance",
+            "nanopore sequencing"
+          ],
+          "knowledge_type": "patent",
+          "publication_date": "2023-05-04",
+          "publishers": [],
+          "related_titles": [
+            "Method for mRNA Delivery Using Lipid Nanoparticles",
+            "CRISPR-Cas9 System for Targeted Gene Editing",
+            "Bispecific Antibodies Targeting PD-1 and CTLA-4",
+            "Engineered CAR-T Cells with Enhanced Tumor Targeting",
+            "Microbiome-Based Therapeutics for Inflammatory Bowel Disease",
+            "Scalable Process for Manufacturing Exosome Therapeutics",
+            "Synthetic Biology Platform for On-Demand Therapeutic Protein Production",
+            "AI-Based Platform for De Novo Protein Design",
+            "Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues",
+            "High-Throughput Screening Platform for Antibody Discovery",
+            "Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy",
+            "RNA-Based Vaccine Platform for Infectious Diseases",
+            "Organs-on-Chips for Drug Toxicity Testing",
+            "Machine Learning Platform for Predicting Drug-Target Interactions",
+            "Nanobody Therapeutics for Neurodegenerative Diseases",
+            "Gene Therapy for Age-Related Macular Degeneration",
+            "Continuous Manufacturing Process for mRNA Vaccines",
+            "PROTAC Technology for Protein Degradation",
+            "Single-Cell Multi-omics Analysis of the Immune Response in COVID-19",
+            "CRISPR-Engineered T Cells in Patients with Refractory Cancer",
+            "Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment",
+            "In Vivo Base Editing Corrects Hutchinson\u2013Gilford Progeria Syndrome in Mice",
+            "Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials",
+            "Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research",
+            "Enzyme-Free Biosensor for Continuous Glucose Monitoring",
+            "Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome",
+            "Massively Parallel Screening of Protein Design Space Using Machine Learning",
+            "PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer"
+          ],
+          "similarity_score": 0.6363,
+          "subdomains": [
+            "Biotech",
+            "Diagnostics"
+          ],
+          "summary_text": "No summary available",
+          "technologies": [
+            "metagenomic sequencing",
+            "nanopore technology",
+            "bioinformatics"
+          ],
+          "title": "Real-Time Pathogen Detection System Using Metagenomic Sequencing"
+        },
+        {
+          "assignees": [],
+          "authors": [
+            "Burslem, George M.",
+            "Schultz, David C.",
+            "Bondeson, Daniel P.",
+            "Eide, Christopher A.",
+            "Crews, Craig M."
+          ],
+          "country": "United States",
+          "cpcs": [],
+          "data_quality_score": 0.93,
+          "domain": "Healthcare",
+          "id": "journals_BT-JRN-010",
+          "inventors": [],
+          "ipcs": [],
+          "keywords": [
+            "cancer therapy",
+            "PROTAC",
+            "undruggable targets",
+            "transcription factors",
+            "targeted protein degradation"
+          ],
+          "knowledge_type": "journal",
+          "publication_date": "2023-04-18",
+          "publishers": [
+            "Science Translational Medicine"
+          ],
+          "related_titles": [
+            "Method for mRNA Delivery Using Lipid Nanoparticles",
+            "CRISPR-Cas9 System for Targeted Gene Editing",
+            "Bispecific Antibodies Targeting PD-1 and CTLA-4",
+            "Engineered CAR-T Cells with Enhanced Tumor Targeting",
+            "Microbiome-Based Therapeutics for Inflammatory Bowel Disease",
+            "Scalable Process for Manufacturing Exosome Therapeutics",
+            "Synthetic Biology Platform for On-Demand Therapeutic Protein Production",
+            "AI-Based Platform for De Novo Protein Design",
+            "Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues",
+            "High-Throughput Screening Platform for Antibody Discovery",
+            "Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy",
+            "RNA-Based Vaccine Platform for Infectious Diseases",
+            "Organs-on-Chips for Drug Toxicity Testing",
+            "Machine Learning Platform for Predicting Drug-Target Interactions",
+            "Nanobody Therapeutics for Neurodegenerative Diseases",
+            "Gene Therapy for Age-Related Macular Degeneration",
+            "Continuous Manufacturing Process for mRNA Vaccines",
+            "PROTAC Technology for Protein Degradation",
+            "Real-Time Pathogen Detection System Using Metagenomic Sequencing",
+            "Single-Cell Multi-omics Analysis of the Immune Response in COVID-19",
+            "CRISPR-Engineered T Cells in Patients with Refractory Cancer",
+            "Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment",
+            "In Vivo Base Editing Corrects Hutchinson\u2013Gilford Progeria Syndrome in Mice",
+            "Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials",
+            "Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research",
+            "Enzyme-Free Biosensor for Continuous Glucose Monitoring",
+            "Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome",
+            "Massively Parallel Screening of Protein Design Space Using Machine Learning"
+          ],
+          "similarity_score": 0.6329,
+          "subdomains": [
+            "Biotech",
+            "Drug Discovery"
+          ],
+          "summary_text": "No summary available",
+          "technologies": [],
+          "title": "PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer"
+        },
+        {
+          "assignees": [
+            "ProteoDeg Therapeutics"
+          ],
+          "authors": [],
+          "country": "United States",
+          "cpcs": [
+            "A61P35/00",
+            "C07D498/22",
+            "A61K31/53"
+          ],
+          "data_quality_score": 0.89,
+          "domain": "Healthcare",
+          "id": "patents_BT-PAT-019",
+          "inventors": [
+            "Crews, Craig M.",
+            "Bradner, James E.",
+            "Winter, Georg E."
+          ],
+          "ipcs": [
+            "A61P35/00",
+            "C07D498/22",
+            "A61K31/53"
+          ],
+          "keywords": [
+            "PROTAC",
+            "protein degradation",
+            "E3 ligase",
+            "undruggable targets"
+          ],
+          "knowledge_type": "patent",
+          "publication_date": "2022-01-27",
+          "publishers": [],
+          "related_titles": [
+            "Method for mRNA Delivery Using Lipid Nanoparticles",
+            "CRISPR-Cas9 System for Targeted Gene Editing",
+            "Bispecific Antibodies Targeting PD-1 and CTLA-4",
+            "Engineered CAR-T Cells with Enhanced Tumor Targeting",
+            "Microbiome-Based Therapeutics for Inflammatory Bowel Disease",
+            "Scalable Process for Manufacturing Exosome Therapeutics",
+            "Synthetic Biology Platform for On-Demand Therapeutic Protein Production",
+            "AI-Based Platform for De Novo Protein Design",
+            "Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues",
+            "High-Throughput Screening Platform for Antibody Discovery",
+            "Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy",
+            "RNA-Based Vaccine Platform for Infectious Diseases",
+            "Organs-on-Chips for Drug Toxicity Testing",
+            "Machine Learning Platform for Predicting Drug-Target Interactions",
+            "Nanobody Therapeutics for Neurodegenerative Diseases",
+            "Gene Therapy for Age-Related Macular Degeneration",
+            "Continuous Manufacturing Process for mRNA Vaccines",
+            "Real-Time Pathogen Detection System Using Metagenomic Sequencing",
+            "Single-Cell Multi-omics Analysis of the Immune Response in COVID-19",
+            "CRISPR-Engineered T Cells in Patients with Refractory Cancer",
+            "Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment",
+            "In Vivo Base Editing Corrects Hutchinson\u2013Gilford Progeria Syndrome in Mice",
+            "Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials",
+            "Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research",
+            "Enzyme-Free Biosensor for Continuous Glucose Monitoring",
+            "Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome",
+            "Massively Parallel Screening of Protein Design Space Using Machine Learning",
+            "PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer"
+          ],
+          "similarity_score": 0.6216,
+          "subdomains": [
+            "Biotech",
+            "Drug Discovery"
+          ],
+          "summary_text": "No summary available",
+          "technologies": [
+            "PROTAC",
+            "targeted protein degradation",
+            "cancer therapeutics"
+          ],
+          "title": "PROTAC Technology for Protein Degradation"
+        },
+        {
+          "assignees": [
+            "Exosome Therapeutics Corp."
+          ],
+          "authors": [],
+          "country": "United States",
+          "cpcs": [
+            "C12N5/0062",
+            "A61K9/0019",
+            "A61K35/12"
+          ],
+          "data_quality_score": 0.87,
+          "domain": "Healthcare",
+          "id": "patents_BT-PAT-006",
+          "inventors": [
+            "Miller, David S.",
+            "Garcia, Paulo",
+            "Chen, Wei"
+          ],
+          "ipcs": [
+            "C12N5/00",
+            "A61K9/00",
+            "A61K35/12"
+          ],
+          "keywords": [
+            "exosomes",
+            "extracellular vesicles",
+            "manufacturing",
+            "bioproduction"
+          ],
+          "knowledge_type": "patent",
+          "publication_date": "2023-01-18",
+          "publishers": [],
+          "related_titles": [
+            "Method for mRNA Delivery Using Lipid Nanoparticles",
+            "CRISPR-Cas9 System for Targeted Gene Editing",
+            "Bispecific Antibodies Targeting PD-1 and CTLA-4",
+            "Engineered CAR-T Cells with Enhanced Tumor Targeting",
+            "Microbiome-Based Therapeutics for Inflammatory Bowel Disease",
+            "Synthetic Biology Platform for On-Demand Therapeutic Protein Production",
+            "AI-Based Platform for De Novo Protein Design",
+            "Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues",
+            "High-Throughput Screening Platform for Antibody Discovery",
+            "Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy",
+            "RNA-Based Vaccine Platform for Infectious Diseases",
+            "Organs-on-Chips for Drug Toxicity Testing",
+            "Machine Learning Platform for Predicting Drug-Target Interactions",
+            "Nanobody Therapeutics for Neurodegenerative Diseases",
+            "Gene Therapy for Age-Related Macular Degeneration",
+            "Continuous Manufacturing Process for mRNA Vaccines",
+            "PROTAC Technology for Protein Degradation",
+            "Real-Time Pathogen Detection System Using Metagenomic Sequencing",
+            "Single-Cell Multi-omics Analysis of the Immune Response in COVID-19",
+            "CRISPR-Engineered T Cells in Patients with Refractory Cancer",
+            "Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment",
+            "In Vivo Base Editing Corrects Hutchinson\u2013Gilford Progeria Syndrome in Mice",
+            "Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials",
+            "Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research",
+            "Enzyme-Free Biosensor for Continuous Glucose Monitoring",
+            "Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome",
+            "Massively Parallel Screening of Protein Design Space Using Machine Learning",
+            "PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer"
+          ],
+          "similarity_score": 0.6182,
+          "subdomains": [
+            "Biotech",
+            "Biologics Manufacturing"
+          ],
+          "summary_text": "No summary available",
+          "technologies": [
+            "cell therapy",
+            "exosomes",
+            "biomanufacturing"
+          ],
+          "title": "Scalable Process for Manufacturing Exosome Therapeutics"
+        },
+        {
+          "assignees": [
+            "SyntheBio Inc."
+          ],
+          "authors": [],
+          "country": "United States",
+          "cpcs": [
+            "C12N15/1034",
+            "C12P21/00",
+            "C12N15/09"
+          ],
+          "data_quality_score": 0.85,
+          "domain": "Healthcare",
+          "id": "patents_BT-PAT-007",
+          "inventors": [
+            "Jewett, Michael C.",
+            "Stark, Jessica C.",
+            "Martin, Rodrigo"
+          ],
+          "ipcs": [
+            "C12N15/10",
+            "C12P21/00",
+            "C12N15/09"
+          ],
+          "keywords": [
+            "cell-free",
+            "synthetic biology",
+            "protein synthesis",
+            "biomanufacturing"
+          ],
+          "knowledge_type": "patent",
+          "publication_date": "2021-11-05",
+          "publishers": [],
+          "related_titles": [
+            "Method for mRNA Delivery Using Lipid Nanoparticles",
+            "CRISPR-Cas9 System for Targeted Gene Editing",
+            "Bispecific Antibodies Targeting PD-1 and CTLA-4",
+            "Engineered CAR-T Cells with Enhanced Tumor Targeting",
+            "Microbiome-Based Therapeutics for Inflammatory Bowel Disease",
+            "Scalable Process for Manufacturing Exosome Therapeutics",
+            "AI-Based Platform for De Novo Protein Design",
+            "Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues",
+            "High-Throughput Screening Platform for Antibody Discovery",
+            "Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy",
+            "RNA-Based Vaccine Platform for Infectious Diseases",
+            "Organs-on-Chips for Drug Toxicity Testing",
+            "Machine Learning Platform for Predicting Drug-Target Interactions",
+            "Nanobody Therapeutics for Neurodegenerative Diseases",
+            "Gene Therapy for Age-Related Macular Degeneration",
+            "Continuous Manufacturing Process for mRNA Vaccines",
+            "PROTAC Technology for Protein Degradation",
+            "Real-Time Pathogen Detection System Using Metagenomic Sequencing",
+            "Single-Cell Multi-omics Analysis of the Immune Response in COVID-19",
+            "CRISPR-Engineered T Cells in Patients with Refractory Cancer",
+            "Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment",
+            "In Vivo Base Editing Corrects Hutchinson\u2013Gilford Progeria Syndrome in Mice",
+            "Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials",
+            "Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research",
+            "Enzyme-Free Biosensor for Continuous Glucose Monitoring",
+            "Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome",
+            "Massively Parallel Screening of Protein Design Space Using Machine Learning",
+            "PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer"
+          ],
+          "similarity_score": 0.6163,
+          "subdomains": [
+            "Biotech",
+            "Synthetic Biology"
+          ],
+          "summary_text": "No summary available",
+          "technologies": [
+            "synthetic biology",
+            "cell-free protein synthesis",
+            "therapeutic proteins"
+          ],
+          "title": "Synthetic Biology Platform for On-Demand Therapeutic Protein Production"
+        }
+      ],
+      "response_to_user_prompt": "Recent advancements in mRNA technology focus on developing efficient delivery systems, enhancing manufacturing processes, and applying AI in protein design. Key patents and research highlight the significance of lipid nanoparticles and continuous manufacturing for mRNA vaccines. Companies are encouraged to invest in strategic partnerships and prioritize mRNA therapeutic development to meet emerging healthcare demands.",
+      "source": "neo4j",
+      "timestamp": 1745221024,
+      "trend_summary": "- ID: patents_BT-PAT-017 | Title: Continuous Manufacturing Process for mRNA Vaccines | Domain: Healthcare | Knowledge Type: patent | Publication Date: 2022-08-11 | Quality Score: 0.87 | Country: United States | Score: 0.6507\n  Assignees: Continuous Biologics Inc.\n  Inventors: Trout, Bernhardt L., Jensen, Klavs F., Chakravarthy, Ankur\n  Technologies: continuous manufacturing, mRNA production, process intensification\n  Subdomains: Biotech, Biologics Manufacturing\n  Keywords: biomanufacturing, continuous manufacturing, mRNA vaccine, process intensification\n  Related_titles: Method for mRNA Delivery Using Lipid Nanoparticles, CRISPR-Cas9 System for Targeted Gene Editing, Bispecific Antibodies Targeting PD-1 and CTLA-4, Engineered CAR-T Cells with Enhanced Tumor Targeting, Microbiome-Based Therapeutics for Inflammatory Bowel Disease, Scalable Process for Manufacturing Exosome Therapeutics, Synthetic Biology Platform for On-Demand Therapeutic Protein Production, AI-Based Platform for De Novo Protein Design, Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues, High-Throughput Screening Platform for Antibody Discovery, Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy, RNA-Based Vaccine Platform for Infectious Diseases, Organs-on-Chips for Drug Toxicity Testing, Machine Learning Platform for Predicting Drug-Target Interactions, Nanobody Therapeutics for Neurodegenerative Diseases, Gene Therapy for Age-Related Macular Degeneration, PROTAC Technology for Protein Degradation, Real-Time Pathogen Detection System Using Metagenomic Sequencing, Single-Cell Multi-omics Analysis of the Immune Response in COVID-19, CRISPR-Engineered T Cells in Patients with Refractory Cancer, Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment, In Vivo Base Editing Corrects Hutchinson\u2013Gilford Progeria Syndrome in Mice, Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials, Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research, Enzyme-Free Biosensor for Continuous Glucose Monitoring, Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome, Massively Parallel Screening of Protein Design Space Using Machine Learning, PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer\n- ID: patents_BT-PAT-001 | Title: Method for mRNA Delivery Using Lipid Nanoparticles | Domain: Healthcare | Knowledge Type: patent | Publication Date: 2020-05-12 | Quality Score: 0.95 | Country: United States | Score: 0.647\n  Assignees: NanoTherapeutics, Inc.\n  Inventors: Chen, Li-Qiang, Rodriguez, Maria, Patel, Amit K.\n  Technologies: mRNA, lipid nanoparticles, drug delivery\n  Subdomains: Biotech, Drug Delivery\n  Keywords: mRNA delivery, LNP, nanoparticle, gene therapy\n  Related_titles: Gene Therapy for Age-Related Macular Degeneration, In Vivo Base Editing Corrects Hutchinson\u2013Gilford Progeria Syndrome in Mice, RNA-Based Vaccine Platform for Infectious Diseases, Continuous Manufacturing Process for mRNA Vaccines, CRISPR-Cas9 System for Targeted Gene Editing, Bispecific Antibodies Targeting PD-1 and CTLA-4, Engineered CAR-T Cells with Enhanced Tumor Targeting, Microbiome-Based Therapeutics for Inflammatory Bowel Disease, Scalable Process for Manufacturing Exosome Therapeutics, Synthetic Biology Platform for On-Demand Therapeutic Protein Production, AI-Based Platform for De Novo Protein Design, Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues, High-Throughput Screening Platform for Antibody Discovery, Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy, Organs-on-Chips for Drug Toxicity Testing, Machine Learning Platform for Predicting Drug-Target Interactions, Nanobody Therapeutics for Neurodegenerative Diseases, PROTAC Technology for Protein Degradation, Real-Time Pathogen Detection System Using Metagenomic Sequencing, Single-Cell Multi-omics Analysis of the Immune Response in COVID-19, CRISPR-Engineered T Cells in Patients with Refractory Cancer, Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment, Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials, Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research, Enzyme-Free Biosensor for Continuous Glucose Monitoring, Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome, Massively Parallel Screening of Protein Design Space Using Machine Learning, PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer\n- ID: journals_BT-JRN-003 | Title: Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment | Domain: Healthcare | Knowledge Type: journal | Publication Date: 2022-09-15 | Quality Score: 0.92 | Country: United States | Score: 0.6416\n  Subdomains: Biotech, Oncology\n  Keywords: spatial transcriptomics, tumor microenvironment, cancer, gene expression, precision medicine\n  Related_titles: Method for mRNA Delivery Using Lipid Nanoparticles, CRISPR-Cas9 System for Targeted Gene Editing, Bispecific Antibodies Targeting PD-1 and CTLA-4, Engineered CAR-T Cells with Enhanced Tumor Targeting, Microbiome-Based Therapeutics for Inflammatory Bowel Disease, Scalable Process for Manufacturing Exosome Therapeutics, Synthetic Biology Platform for On-Demand Therapeutic Protein Production, AI-Based Platform for De Novo Protein Design, Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues, High-Throughput Screening Platform for Antibody Discovery, Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy, RNA-Based Vaccine Platform for Infectious Diseases, Organs-on-Chips for Drug Toxicity Testing, Machine Learning Platform for Predicting Drug-Target Interactions, Nanobody Therapeutics for Neurodegenerative Diseases, Gene Therapy for Age-Related Macular Degeneration, Continuous Manufacturing Process for mRNA Vaccines, PROTAC Technology for Protein Degradation, Real-Time Pathogen Detection System Using Metagenomic Sequencing, Single-Cell Multi-omics Analysis of the Immune Response in COVID-19, CRISPR-Engineered T Cells in Patients with Refractory Cancer, In Vivo Base Editing Corrects Hutchinson\u2013Gilford Progeria Syndrome in Mice, Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials, Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research, Enzyme-Free Biosensor for Continuous Glucose Monitoring, Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome, Massively Parallel Screening of Protein Design Space Using Machine Learning, PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer\n- ID: patents_BT-PAT-012 | Title: RNA-Based Vaccine Platform for Infectious Diseases | Domain: Healthcare | Knowledge Type: patent | Publication Date: 2019-09-05 | Quality Score: 0.93 | Country: United States | Score: 0.641\n  Assignees: RapidVax Inc.\n  Inventors: Karik\u00f3, Katalin, Weissman, Drew, Pardi, Norbert\n  Technologies: lipid nanoparticles, mRNA vaccines, infectious disease\n  Subdomains: Biotech, Vaccines\n  Keywords: mRNA, vaccine, infectious disease, lipid nanoparticle\n  Related_titles: Method for mRNA Delivery Using Lipid Nanoparticles, CRISPR-Cas9 System for Targeted Gene Editing, Bispecific Antibodies Targeting PD-1 and CTLA-4, Engineered CAR-T Cells with Enhanced Tumor Targeting, Microbiome-Based Therapeutics for Inflammatory Bowel Disease, Scalable Process for Manufacturing Exosome Therapeutics, Synthetic Biology Platform for On-Demand Therapeutic Protein Production, AI-Based Platform for De Novo Protein Design, Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues, High-Throughput Screening Platform for Antibody Discovery, Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy, Organs-on-Chips for Drug Toxicity Testing, Machine Learning Platform for Predicting Drug-Target Interactions, Nanobody Therapeutics for Neurodegenerative Diseases, Gene Therapy for Age-Related Macular Degeneration, Continuous Manufacturing Process for mRNA Vaccines, PROTAC Technology for Protein Degradation, Real-Time Pathogen Detection System Using Metagenomic Sequencing, Single-Cell Multi-omics Analysis of the Immune Response in COVID-19, CRISPR-Engineered T Cells in Patients with Refractory Cancer, Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment, In Vivo Base Editing Corrects Hutchinson\u2013Gilford Progeria Syndrome in Mice, Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials, Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research, Enzyme-Free Biosensor for Continuous Glucose Monitoring, Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome, Massively Parallel Screening of Protein Design Space Using Machine Learning, PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer\n- ID: patents_BT-PAT-008 | Title: AI-Based Platform for De Novo Protein Design | Domain: Healthcare | Knowledge Type: patent | Publication Date: 2022-07-14 | Quality Score: 0.9 | Country: United States | Score: 0.638\n  Assignees: ProteoDesign AI Inc.\n  Inventors: Baker, David, Shin, Joon-Hyun, Singh, Manvir\n  Technologies: artificial intelligence, protein design, computational biology\n  Subdomains: Biotech, Computational Biology\n  Keywords: AI, machine learning, protein design, computational protein engineering\n  Related_titles: Method for mRNA Delivery Using Lipid Nanoparticles, CRISPR-Cas9 System for Targeted Gene Editing, Bispecific Antibodies Targeting PD-1 and CTLA-4, Engineered CAR-T Cells with Enhanced Tumor Targeting, Microbiome-Based Therapeutics for Inflammatory Bowel Disease, Scalable Process for Manufacturing Exosome Therapeutics, Synthetic Biology Platform for On-Demand Therapeutic Protein Production, Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues, High-Throughput Screening Platform for Antibody Discovery, Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy, RNA-Based Vaccine Platform for Infectious Diseases, Organs-on-Chips for Drug Toxicity Testing, Machine Learning Platform for Predicting Drug-Target Interactions, Nanobody Therapeutics for Neurodegenerative Diseases, Gene Therapy for Age-Related Macular Degeneration, Continuous Manufacturing Process for mRNA Vaccines, PROTAC Technology for Protein Degradation, Real-Time Pathogen Detection System Using Metagenomic Sequencing, Single-Cell Multi-omics Analysis of the Immune Response in COVID-19, CRISPR-Engineered T Cells in Patients with Refractory Cancer, Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment, In Vivo Base Editing Corrects Hutchinson\u2013Gilford Progeria Syndrome in Mice, Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials, Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research, Enzyme-Free Biosensor for Continuous Glucose Monitoring, Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome, Massively Parallel Screening of Protein Design Space Using Machine Learning, PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer, Machine Learning System for Predictive Vehicle Maintenance, Multi-Modal Urban Mobility Orchestration Platform, AI-Enabled Traffic Signal Control System\n- ID: patents_BT-PAT-020 | Title: Real-Time Pathogen Detection System Using Metagenomic Sequencing | Domain: Healthcare | Knowledge Type: patent | Publication Date: 2023-05-04 | Quality Score: 0.88 | Country: United States | Score: 0.6363\n  Assignees: RapidDx Genomics\n  Inventors: Schatz, Michael C., Phillippy, Adam M., Zimin, Aleksey V.\n  Technologies: metagenomic sequencing, nanopore technology, bioinformatics\n  Subdomains: Biotech, Diagnostics\n  Keywords: metagenomic, pathogen detection, antimicrobial resistance, nanopore sequencing\n  Related_titles: Method for mRNA Delivery Using Lipid Nanoparticles, CRISPR-Cas9 System for Targeted Gene Editing, Bispecific Antibodies Targeting PD-1 and CTLA-4, Engineered CAR-T Cells with Enhanced Tumor Targeting, Microbiome-Based Therapeutics for Inflammatory Bowel Disease, Scalable Process for Manufacturing Exosome Therapeutics, Synthetic Biology Platform for On-Demand Therapeutic Protein Production, AI-Based Platform for De Novo Protein Design, Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues, High-Throughput Screening Platform for Antibody Discovery, Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy, RNA-Based Vaccine Platform for Infectious Diseases, Organs-on-Chips for Drug Toxicity Testing, Machine Learning Platform for Predicting Drug-Target Interactions, Nanobody Therapeutics for Neurodegenerative Diseases, Gene Therapy for Age-Related Macular Degeneration, Continuous Manufacturing Process for mRNA Vaccines, PROTAC Technology for Protein Degradation, Single-Cell Multi-omics Analysis of the Immune Response in COVID-19, CRISPR-Engineered T Cells in Patients with Refractory Cancer, Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment, In Vivo Base Editing Corrects Hutchinson\u2013Gilford Progeria Syndrome in Mice, Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials, Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research, Enzyme-Free Biosensor for Continuous Glucose Monitoring, Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome, Massively Parallel Screening of Protein Design Space Using Machine Learning, PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer\n- ID: journals_BT-JRN-010 | Title: PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer | Domain: Healthcare | Knowledge Type: journal | Publication Date: 2023-04-18 | Quality Score: 0.93 | Country: United States | Score: 0.6329\n  Subdomains: Biotech, Drug Discovery\n  Keywords: cancer therapy, PROTAC, undruggable targets, transcription factors, targeted protein degradation\n  Related_titles: Method for mRNA Delivery Using Lipid Nanoparticles, CRISPR-Cas9 System for Targeted Gene Editing, Bispecific Antibodies Targeting PD-1 and CTLA-4, Engineered CAR-T Cells with Enhanced Tumor Targeting, Microbiome-Based Therapeutics for Inflammatory Bowel Disease, Scalable Process for Manufacturing Exosome Therapeutics, Synthetic Biology Platform for On-Demand Therapeutic Protein Production, AI-Based Platform for De Novo Protein Design, Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues, High-Throughput Screening Platform for Antibody Discovery, Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy, RNA-Based Vaccine Platform for Infectious Diseases, Organs-on-Chips for Drug Toxicity Testing, Machine Learning Platform for Predicting Drug-Target Interactions, Nanobody Therapeutics for Neurodegenerative Diseases, Gene Therapy for Age-Related Macular Degeneration, Continuous Manufacturing Process for mRNA Vaccines, PROTAC Technology for Protein Degradation, Real-Time Pathogen Detection System Using Metagenomic Sequencing, Single-Cell Multi-omics Analysis of the Immune Response in COVID-19, CRISPR-Engineered T Cells in Patients with Refractory Cancer, Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment, In Vivo Base Editing Corrects Hutchinson\u2013Gilford Progeria Syndrome in Mice, Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials, Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research, Enzyme-Free Biosensor for Continuous Glucose Monitoring, Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome, Massively Parallel Screening of Protein Design Space Using Machine Learning\n- ID: patents_BT-PAT-019 | Title: PROTAC Technology for Protein Degradation | Domain: Healthcare | Knowledge Type: patent | Publication Date: 2022-01-27 | Quality Score: 0.89 | Country: United States | Score: 0.6216\n  Assignees: ProteoDeg Therapeutics\n  Inventors: Crews, Craig M., Bradner, James E., Winter, Georg E.\n  Technologies: PROTAC, targeted protein degradation, cancer therapeutics\n  Subdomains: Biotech, Drug Discovery\n  Keywords: PROTAC, protein degradation, E3 ligase, undruggable targets\n  Related_titles: Method for mRNA Delivery Using Lipid Nanoparticles, CRISPR-Cas9 System for Targeted Gene Editing, Bispecific Antibodies Targeting PD-1 and CTLA-4, Engineered CAR-T Cells with Enhanced Tumor Targeting, Microbiome-Based Therapeutics for Inflammatory Bowel Disease, Scalable Process for Manufacturing Exosome Therapeutics, Synthetic Biology Platform for On-Demand Therapeutic Protein Production, AI-Based Platform for De Novo Protein Design, Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues, High-Throughput Screening Platform for Antibody Discovery, Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy, RNA-Based Vaccine Platform for Infectious Diseases, Organs-on-Chips for Drug Toxicity Testing, Machine Learning Platform for Predicting Drug-Target Interactions, Nanobody Therapeutics for Neurodegenerative Diseases, Gene Therapy for Age-Related Macular Degeneration, Continuous Manufacturing Process for mRNA Vaccines, Real-Time Pathogen Detection System Using Metagenomic Sequencing, Single-Cell Multi-omics Analysis of the Immune Response in COVID-19, CRISPR-Engineered T Cells in Patients with Refractory Cancer, Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment, In Vivo Base Editing Corrects Hutchinson\u2013Gilford Progeria Syndrome in Mice, Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials, Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research, Enzyme-Free Biosensor for Continuous Glucose Monitoring, Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome, Massively Parallel Screening of Protein Design Space Using Machine Learning, PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer\n- ID: patents_BT-PAT-006 | Title: Scalable Process for Manufacturing Exosome Therapeutics | Domain: Healthcare | Knowledge Type: patent | Publication Date: 2023-01-18 | Quality Score: 0.87 | Country: United States | Score: 0.6182\n  Assignees: Exosome Therapeutics Corp.\n  Inventors: Miller, David S., Garcia, Paulo, Chen, Wei\n  Technologies: cell therapy, exosomes, biomanufacturing\n  Subdomains: Biotech, Biologics Manufacturing\n  Keywords: exosomes, extracellular vesicles, manufacturing, bioproduction\n  Related_titles: Method for mRNA Delivery Using Lipid Nanoparticles, CRISPR-Cas9 System for Targeted Gene Editing, Bispecific Antibodies Targeting PD-1 and CTLA-4, Engineered CAR-T Cells with Enhanced Tumor Targeting, Microbiome-Based Therapeutics for Inflammatory Bowel Disease, Synthetic Biology Platform for On-Demand Therapeutic Protein Production, AI-Based Platform for De Novo Protein Design, Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues, High-Throughput Screening Platform for Antibody Discovery, Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy, RNA-Based Vaccine Platform for Infectious Diseases, Organs-on-Chips for Drug Toxicity Testing, Machine Learning Platform for Predicting Drug-Target Interactions, Nanobody Therapeutics for Neurodegenerative Diseases, Gene Therapy for Age-Related Macular Degeneration, Continuous Manufacturing Process for mRNA Vaccines, PROTAC Technology for Protein Degradation, Real-Time Pathogen Detection System Using Metagenomic Sequencing, Single-Cell Multi-omics Analysis of the Immune Response in COVID-19, CRISPR-Engineered T Cells in Patients with Refractory Cancer, Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment, In Vivo Base Editing Corrects Hutchinson\u2013Gilford Progeria Syndrome in Mice, Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials, Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research, Enzyme-Free Biosensor for Continuous Glucose Monitoring, Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome, Massively Parallel Screening of Protein Design Space Using Machine Learning, PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer\n- ID: patents_BT-PAT-007 | Title: Synthetic Biology Platform for On-Demand Therapeutic Protein Production | Domain: Healthcare | Knowledge Type: patent | Publication Date: 2021-11-05 | Quality Score: 0.85 | Country: United States | Score: 0.6163\n  Assignees: SyntheBio Inc.\n  Inventors: Jewett, Michael C., Stark, Jessica C., Martin, Rodrigo\n  Technologies: synthetic biology, cell-free protein synthesis, therapeutic proteins\n  Subdomains: Biotech, Synthetic Biology\n  Keywords: cell-free, synthetic biology, protein synthesis, biomanufacturing\n  Related_titles: Method for mRNA Delivery Using Lipid Nanoparticles, CRISPR-Cas9 System for Targeted Gene Editing, Bispecific Antibodies Targeting PD-1 and CTLA-4, Engineered CAR-T Cells with Enhanced Tumor Targeting, Microbiome-Based Therapeutics for Inflammatory Bowel Disease, Scalable Process for Manufacturing Exosome Therapeutics, AI-Based Platform for De Novo Protein Design, Biodegradable Scaffolds for 3D Bioprinting of Functional Tissues, High-Throughput Screening Platform for Antibody Discovery, Engineered Bacterial Strains for Targeted Colorectal Cancer Therapy, RNA-Based Vaccine Platform for Infectious Diseases, Organs-on-Chips for Drug Toxicity Testing, Machine Learning Platform for Predicting Drug-Target Interactions, Nanobody Therapeutics for Neurodegenerative Diseases, Gene Therapy for Age-Related Macular Degeneration, Continuous Manufacturing Process for mRNA Vaccines, PROTAC Technology for Protein Degradation, Real-Time Pathogen Detection System Using Metagenomic Sequencing, Single-Cell Multi-omics Analysis of the Immune Response in COVID-19, CRISPR-Engineered T Cells in Patients with Refractory Cancer, Spatial Transcriptomics Reveals Insights into the Tumor Microenvironment, In Vivo Base Editing Corrects Hutchinson\u2013Gilford Progeria Syndrome in Mice, Engineered Living Materials: Prospects and Challenges for Using Biological Systems to Direct the Assembly of Smart Materials, Intestinal Organoids as a Tool for Inflammatory Bowel Disease Research, Enzyme-Free Biosensor for Continuous Glucose Monitoring, Microbiome-Based Therapeutics Shape the Gut Microbiome and Improve Metabolic Syndrome, Massively Parallel Screening of Protein Design Space Using Machine Learning, PROTAC Degraders for Previously Undruggable Transcription Factors in Cancer\n"
+    },
+    "s_curve_data": {
+      "domains": [
+        "Healthcare"
+      ],
+      "max_year": 2023,
+      "min_year": 2019,
+      "technologies": [
+        {
+          "data": [
+            {
+              "count": 1,
+              "cumulative": 1,
+              "year": 2019
+            },
+            {
+              "count": 1,
+              "cumulative": 2,
+              "year": 2020
+            },
+            {
+              "count": 0,
+              "cumulative": 2,
+              "year": 2021
+            },
+            {
+              "count": 0,
+              "cumulative": 2,
+              "year": 2022
+            },
+            {
+              "count": 0,
+              "cumulative": 2,
+              "year": 2023
+            }
+          ],
+          "domains": [
+            "Healthcare"
+          ],
+          "growth_data": [
+            {
+              "growth": 1.0,
+              "year": 2020
+            },
+            {
+              "growth": 0.0,
+              "year": 2021
+            },
+            {
+              "growth": 0.0,
+              "year": 2022
+            },
+            {
+              "growth": 0.0,
+              "year": 2023
+            }
+          ],
+          "stage": "saturation",
+          "technology": "lipid nanoparticles",
+          "total_mentions": 2
+        },
+        {
+          "data": [
+            {
+              "count": 0,
+              "cumulative": 0,
+              "year": 2019
+            },
+            {
+              "count": 0,
+              "cumulative": 0,
+              "year": 2020
+            },
+            {
+              "count": 0,
+              "cumulative": 0,
+              "year": 2021
+            },
+            {
+              "count": 1,
+              "cumulative": 1,
+              "year": 2022
+            },
+            {
+              "count": 0,
+              "cumulative": 1,
+              "year": 2023
+            }
+          ],
+          "domains": [
+            "Healthcare"
+          ],
+          "growth_data": [
+            {
+              "growth": 0,
+              "year": 2020
+            },
+            {
+              "growth": 0,
+              "year": 2021
+            },
+            {
+              "growth": 0,
+              "year": 2022
+            },
+            {
+              "growth": 0.0,
+              "year": 2023
+            }
+          ],
+          "stage": "saturation",
+          "technology": "continuous manufacturing",
+          "total_mentions": 1
+        },
+        {
+          "data": [
+            {
+              "count": 0,
+              "cumulative": 0,
+              "year": 2019
+            },
+            {
+              "count": 0,
+              "cumulative": 0,
+              "year": 2020
+            },
+            {
+              "count": 0,
+              "cumulative": 0,
+              "year": 2021
+            },
+            {
+              "count": 1,
+              "cumulative": 1,
+              "year": 2022
+            },
+            {
+              "count": 0,
+              "cumulative": 1,
+              "year": 2023
+            }
+          ],
+          "domains": [
+            "Healthcare"
+          ],
+          "growth_data": [
+            {
+              "growth": 0,
+              "year": 2020
+            },
+            {
+              "growth": 0,
+              "year": 2021
+            },
+            {
+              "growth": 0,
+              "year": 2022
+            },
+            {
+              "growth": 0.0,
+              "year": 2023
+            }
+          ],
+          "stage": "saturation",
+          "technology": "mRNA production",
+          "total_mentions": 1
+        },
+        {
+          "data": [
+            {
+              "count": 0,
+              "cumulative": 0,
+              "year": 2019
+            },
+            {
+              "count": 0,
+              "cumulative": 0,
+              "year": 2020
+            },
+            {
+              "count": 0,
+              "cumulative": 0,
+              "year": 2021
+            },
+            {
+              "count": 1,
+              "cumulative": 1,
+              "year": 2022
+            },
+            {
+              "count": 0,
+              "cumulative": 1,
+              "year": 2023
+            }
+          ],
+          "domains": [
+            "Healthcare"
+          ],
+          "growth_data": [
+            {
+              "growth": 0,
+              "year": 2020
+            },
+            {
+              "growth": 0,
+              "year": 2021
+            },
+            {
+              "growth": 0,
+              "year": 2022
+            },
+            {
+              "growth": 0.0,
+              "year": 2023
+            }
+          ],
+          "stage": "saturation",
+          "technology": "process intensification",
+          "total_mentions": 1
+        },
+        {
+          "data": [
+            {
+              "count": 0,
+              "cumulative": 0,
+              "year": 2019
+            },
+            {
+              "count": 1,
+              "cumulative": 1,
+              "year": 2020
+            },
+            {
+              "count": 0,
+              "cumulative": 1,
+              "year": 2021
+            },
+            {
+              "count": 0,
+              "cumulative": 1,
+              "year": 2022
+            },
+            {
+              "count": 0,
+              "cumulative": 1,
+              "year": 2023
+            }
+          ],
+          "domains": [
+            "Healthcare"
+          ],
+          "growth_data": [
+            {
+              "growth": 0,
+              "year": 2020
+            },
+            {
+              "growth": 0.0,
+              "year": 2021
+            },
+            {
+              "growth": 0.0,
+              "year": 2022
+            },
+            {
+              "growth": 0.0,
+              "year": 2023
+            }
+          ],
+          "stage": "saturation",
+          "technology": "mRNA",
+          "total_mentions": 1
+        },
+        {
+          "data": [
+            {
+              "count": 0,
+              "cumulative": 0,
+              "year": 2019
+            },
+            {
+              "count": 1,
+              "cumulative": 1,
+              "year": 2020
+            },
+            {
+              "count": 0,
+              "cumulative": 1,
+              "year": 2021
+            },
+            {
+              "count": 0,
+              "cumulative": 1,
+              "year": 2022
+            },
+            {
+              "count": 0,
+              "cumulative": 1,
+              "year": 2023
+            }
+          ],
+          "domains": [
+            "Healthcare"
+          ],
+          "growth_data": [
+            {
+              "growth": 0,
+              "year": 2020
+            },
+            {
+              "growth": 0.0,
+              "year": 2021
+            },
+            {
+              "growth": 0.0,
+              "year": 2022
+            },
+            {
+              "growth": 0.0,
+              "year": 2023
+            }
+          ],
+          "stage": "saturation",
+          "technology": "drug delivery",
+          "total_mentions": 1
+        },
+        {
+          "data": [
+            {
+              "count": 1,
+              "cumulative": 1,
+              "year": 2019
+            },
+            {
+              "count": 0,
+              "cumulative": 1,
+              "year": 2020
+            },
+            {
+              "count": 0,
+              "cumulative": 1,
+              "year": 2021
+            },
+            {
+              "count": 0,
+              "cumulative": 1,
+              "year": 2022
+            },
+            {
+              "count": 0,
+              "cumulative": 1,
+              "year": 2023
+            }
+          ],
+          "domains": [
+            "Healthcare"
+          ],
+          "growth_data": [
+            {
+              "growth": 0.0,
+              "year": 2020
+            },
+            {
+              "growth": 0.0,
+              "year": 2021
+            },
+            {
+              "growth": 0.0,
+              "year": 2022
+            },
+            {
+              "growth": 0.0,
+              "year": 2023
+            }
+          ],
+          "stage": "saturation",
+          "technology": "mRNA vaccines",
+          "total_mentions": 1
+        },
+        {
+          "data": [
+            {
+              "count": 1,
+              "cumulative": 1,
+              "year": 2019
+            },
+            {
+              "count": 0,
+              "cumulative": 1,
+              "year": 2020
+            },
+            {
+              "count": 0,
+              "cumulative": 1,
+              "year": 2021
+            },
+            {
+              "count": 0,
+              "cumulative": 1,
+              "year": 2022
+            },
+            {
+              "count": 0,
+              "cumulative": 1,
+              "year": 2023
+            }
+          ],
+          "domains": [
+            "Healthcare"
+          ],
+          "growth_data": [
+            {
+              "growth": 0.0,
+              "year": 2020
+            },
+            {
+              "growth": 0.0,
+              "year": 2021
+            },
+            {
+              "growth": 0.0,
+              "year": 2022
+            },
+            {
+              "growth": 0.0,
+              "year": 2023
+            }
+          ],
+          "stage": "saturation",
+          "technology": "infectious disease",
+          "total_mentions": 1
+        },
+        {
+          "data": [
+            {
+              "count": 0,
+              "cumulative": 0,
+              "year": 2019
+            },
+            {
+              "count": 0,
+              "cumulative": 0,
+              "year": 2020
+            },
+            {
+              "count": 0,
+              "cumulative": 0,
+              "year": 2021
+            },
+            {
+              "count": 1,
+              "cumulative": 1,
+              "year": 2022
+            },
+            {
+              "count": 0,
+              "cumulative": 1,
+              "year": 2023
+            }
+          ],
+          "domains": [
+            "Healthcare"
+          ],
+          "growth_data": [
+            {
+              "growth": 0,
+              "year": 2020
+            },
+            {
+              "growth": 0,
+              "year": 2021
+            },
+            {
+              "growth": 0,
+              "year": 2022
+            },
+            {
+              "growth": 0.0,
+              "year": 2023
+            }
+          ],
+          "stage": "saturation",
+          "technology": "artificial intelligence",
+          "total_mentions": 1
+        },
+        {
+          "data": [
+            {
+              "count": 0,
+              "cumulative": 0,
+              "year": 2019
+            },
+            {
+              "count": 0,
+              "cumulative": 0,
+              "year": 2020
+            },
+            {
+              "count": 0,
+              "cumulative": 0,
+              "year": 2021
+            },
+            {
+              "count": 1,
+              "cumulative": 1,
+              "year": 2022
+            },
+            {
+              "count": 0,
+              "cumulative": 1,
+              "year": 2023
+            }
+          ],
+          "domains": [
+            "Healthcare"
+          ],
+          "growth_data": [
+            {
+              "growth": 0,
+              "year": 2020
+            },
+            {
+              "growth": 0,
+              "year": 2021
+            },
+            {
+              "growth": 0,
+              "year": 2022
+            },
+            {
+              "growth": 0.0,
+              "year": 2023
+            }
+          ],
+          "stage": "saturation",
+          "technology": "protein design",
+          "total_mentions": 1
+        }
+      ],
+      "years": [
+        2019,
+        2020,
+        2021,
+        2022,
+        2023
+      ]
+    },
+    "timestamp": 1745300999
+  }
+  
