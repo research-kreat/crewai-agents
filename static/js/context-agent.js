@@ -15,10 +15,10 @@ function loadAnalystResultsFromLocalStorage() {
     const storedAnalyst = localStorage.getItem("analystResultsIndex");
     if (storedAnalyst) {
       const indexData = JSON.parse(storedAnalyst);
-      
+
       // Clear current results
       analystResults = [];
-      
+
       // Load each result
       indexData.forEach((item) => {
         const storedData = localStorage.getItem(`analystResult_${item.id}`);
@@ -32,7 +32,7 @@ function loadAnalystResultsFromLocalStorage() {
           });
         }
       });
-      
+
       logToConsole(
         `Loaded ${analystResults.length} analyst results from localStorage`,
         "system"
@@ -41,9 +41,9 @@ function loadAnalystResultsFromLocalStorage() {
       // Fall back to scout results if no analyst results
       const storedScout = localStorage.getItem("scoutResultsIndex");
       if (!storedScout) return;
-      
+
       const scoutIndexData = JSON.parse(storedScout);
-      
+
       // We'll convert scout results to a format compatible with analyst
       scoutIndexData.forEach((item) => {
         const storedData = localStorage.getItem(`scoutResult_${item.id}`);
@@ -58,20 +58,20 @@ function loadAnalystResultsFromLocalStorage() {
             data: {
               original_scout_data: scoutData,
               graph_data: { nodes: [], links: [] },
-              graph_insights: {}
-            }
+              graph_insights: {},
+            },
           };
-          
+
           analystResults.push(analystResult);
         }
       });
-      
+
       logToConsole(
         `Converted ${analystResults.length} scout results to analyst format`,
         "system"
       );
     }
-    
+
     // Update select dropdown
     updateAnalystSelect();
   } catch (e) {
@@ -628,61 +628,85 @@ document.addEventListener("DOMContentLoaded", () => {
  */
 function loadCompanyTemplate() {
   const template = {
-    "name": "Acme Tech Innovations",
-    "founded": "2008",
-    "founders": ["Jane Smith", "John Doe"],
-    "headquarters": "San Francisco, CA",
-    "type": "Public Company",
-    "industry": ["Software", "Artificial Intelligence", "Cloud Computing"],
-    "website": "https://www.acmetechinnovations.com",
-    "numberOfEmployees": 1500,
-    "products": [
-      "AI-powered Analytics Platform",
-      "Enterprise Cloud Solutions",
-      "Predictive Maintenance Software",
-      "Digital Transformation Services"
+    name: "Mahindra & Mahindra Ltd.",
+    founded: "1945-10-02",
+    founders: [
+      "Jagdish Chandra Mahindra",
+      "Kailash Chandra Mahindra",
+      "Malik Ghulam Muhammad",
     ],
-    "focusAreas": [
-      "Machine Learning",
-      "Enterprise Software",
-      "Predictive Analytics",
-      "Cloud Infrastructure"
+    headquarters: "Mumbai, Maharashtra, India",
+    type: "Public",
+    industry: [
+      "Automotive",
+      "Farm Equipment",
+      "Information Technology",
+      "Financial Services",
+      "Renewable Energy",
+      "Logistics",
+      "Hospitality",
+      "Real Estate",
     ],
-    "initiatives": [
-      "Sustainable Tech Initiative",
-      "AI Ethics Research",
-      "Industry 4.0 Partnership Program"
+    website: "https://auto.mahindra.com",
+    numberOfEmployees: 260000,
+    products: [
+      "Passenger Vehicles",
+      "Commercial Vehicles",
+      "Tractors",
+      "Motorcycles",
+      "Electric Vehicles",
+      "Agricultural Implements",
+      "Automotive Components",
     ],
-    "researchAndDevelopment": {
-      "facilities": [
-        "San Francisco Innovation Lab",
-        "Boston Research Center",
-        "Bangalore Development Hub"
+    focusAreas: [
+      "Electric Vehicle Development",
+      "Sustainable Farming Solutions",
+      "Digital Farming Technologies",
+      "Precision Agriculture",
+      "Autonomous Driving",
+      "Connected Vehicles",
+      "Sustainability",
+    ],
+    initiatives: [
+      "Electric SUV Launch",
+      "EV Expansion Plan",
+      "Precision Agriculture Partnerships",
+    ],
+    researchAndDevelopment: {
+      facilities: [
+        "Mahindra Research Valley (India)",
+        "Mahindra North American Technical Centre (USA)",
+        "Mahindra Advanced Design Europe (UK)",
+        "Pininfarina (Italy)",
       ],
-      "recentInvestmentsUSD": 50000000,
-      "annualInvestment": {
-        "amountINR": 1200000000,
-        "fiscalYear": "2023-2024",
-        "percentageOfTurnover": 18
-      }
+      recentInvestmentsUSD: 1440000000,
+      annualInvestment: {
+        amountINR: 29700000000,
+        fiscalYear: "2019-20",
+        percentageOfTurnover: 6.3,
+      },
     },
-    "latestNews": [
+    latestNews: [
       {
-        "title": "Acme Tech Launches Next-Gen AI Platform",
-        "url": "https://www.techpress.com/acme-launches-ai-platform"
+        title: "Mahindra unveils global electric SUV lineup",
+        url: "https://www.autocarindia.com/car-news/mahindra-unveils-global-electric-suv-lineup-427958",
       },
       {
-        "title": "Acme Acquires DataSense Analytics for $200M",
-        "url": "https://www.businesswire.com/acme-acquires-datasense"
+        title: "Mahindra to invest ₹12,000 crore in EVs by 2027",
+        url: "https://www.business-standard.com/article/companies/mahindra-to-invest-rs-12-000-cr-in-evs-by-2027-says-anish-shah-124032300968_1.html",
       },
       {
-        "title": "Acme Tech Named Top Cloud Provider of 2024",
-        "url": "https://www.cloudawards.com/acme-top-provider"
-      }
-    ]
+        title: "Mahindra reports record tractor sales in Q4 FY24",
+        url: "https://economictimes.indiatimes.com/industry/auto/auto-news/mahindra-reports-record-tractor-sales-in-q4-fy24/articleshow/108412014.cms",
+      },
+    ],
   };
 
-  document.getElementById("company-profile").value = JSON.stringify(template, null, 2);
+  document.getElementById("company-profile").value = JSON.stringify(
+    template,
+    null,
+    2
+  );
   logToConsole("Company profile template loaded", "info");
 }
 
@@ -692,108 +716,142 @@ function loadCompanyTemplate() {
 function loadCompetitorTemplate() {
   const template = [
     {
-      "name": "TechNova Solutions",
-      "founded": "2005",
-      "founders": ["Michael Johnson", "Lisa Chen"],
-      "headquarters": "Seattle, WA",
-      "type": "Public Company",
-      "industry": ["Software", "Cloud Computing", "Enterprise Solutions"],
-      "website": "https://www.technovasolutions.com",
-      "numberOfEmployees": 2200,
-      "products": [
-        "Enterprise Cloud Platform",
-        "Business Intelligence Suite",
-        "Machine Learning Framework",
-        "Data Integration Tools"
+      name: "Tata Motors Ltd.",
+      founded: "1945-09-01",
+      founders: ["Jehangir Ratanji Dadabhoy Tata"],
+      headquarters: "Mumbai, Maharashtra, India",
+      type: "Public",
+      industry: [
+        "Automotive",
+        "Commercial Vehicles",
+        "Passenger Vehicles",
+        "Electric Vehicles",
       ],
-      "focusAreas": [
-        "Cloud Computing",
-        "AI/ML",
-        "Business Intelligence",
-        "Enterprise Software"
+      domain: "Mobility",
+      website: "https://www.tatamotors.com",
+      numberOfEmployees: 75000,
+      products: [
+        "Passenger Cars",
+        "SUVs",
+        "Commercial Vehicles",
+        "Electric Vehicles",
+        "Defence Vehicles",
+        "Trucks",
+        "Buses",
       ],
-      "initiatives": [
-        "Open Source AI Framework",
-        "Green Cloud Computing",
-        "Digital Transformation Accelerator"
+      focusAreas: [
+        "Electric Vehicle Technology",
+        "Autonomous Driving",
+        "Connected Vehicles",
+        "Alternative Fuel Solutions",
+        "Lightweight Materials",
+        "Advanced Safety Systems",
       ],
-      "researchAndDevelopment": {
-        "facilities": [
-          "Seattle Innovation Center",
-          "Austin Research Lab",
-          "Dublin Technology Center"
+      initiatives: [
+        "EV Expansion Plan",
+        "Jaguar Land Rover Electrification",
+        "Commercial EV Fleet Solutions",
+      ],
+      researchAndDevelopment: {
+        facilities: [
+          "Tata Motors European Technical Centre (UK)",
+          "Engineering Research Centre (Pune)",
+          "Tata Motors Research Centre (Jamshedpur)",
         ],
-        "recentInvestmentsUSD": 75000000,
-        "annualInvestment": {
-          "amountINR": 1800000000,
-          "fiscalYear": "2023-2024",
-          "percentageOfTurnover": 22
-        }
+        recentInvestmentsUSD: 2100000000,
+        annualInvestment: {
+          amountINR: 42000000000,
+          fiscalYear: "2022-23",
+          percentageOfTurnover: 5.8,
+        },
       },
-      "latestNews": [
+      latestNews: [
         {
-          "title": "TechNova Releases Industry-Leading ML Platform",
-          "url": "https://www.technews.com/technova-ml-platform"
+          title: "Tata Motors achieves 50,000 EV sales milestone in India",
+          url: "https://auto.economictimes.indiatimes.com/news/passenger-vehicle/cars/tata-motors-achieves-50000-ev-sales-milestone-in-india/98761234",
         },
         {
-          "title": "TechNova Partners with Microsoft for Cloud Integration",
-          "url": "https://www.cloudnews.com/technova-microsoft-partnership"
-        }
-      ]
+          title:
+            "Tata Motors launches new range of electric commercial vehicles",
+          url: "https://www.livemint.com/companies/news/tata-motors-launches-new-range-of-electric-commercial-vehicles-11678901234.html",
+        },
+        {
+          title: "Tata Motors reports 18% growth in Q3 FY24 sales",
+          url: "https://economictimes.indiatimes.com/industry/auto/auto-news/tata-motors-reports-18-growth-in-q3-fy24-sales/articleshow/106543210.cms",
+        },
+      ],
     },
     {
-      "name": "FutureTech Dynamics",
-      "founded": "2012",
-      "founders": ["Alex Zhang", "Sarah Miller"],
-      "headquarters": "Boston, MA",
-      "type": "Private Company",
-      "industry": ["AI", "Machine Learning", "Data Analytics"],
-      "website": "https://www.futuretechdynamics.com",
-      "numberOfEmployees": 850,
-      "products": [
-        "Predictive Analytics Suite",
-        "AI-Driven Decision Platform",
-        "Neural Network Framework",
-        "Data Visualization Tools"
+      name: "Ola Electric Mobility Pvt. Ltd.",
+      founded: "2017-03-01",
+      founders: ["Bhavish Aggarwal"],
+      headquarters: "Bengaluru, Karnataka, India",
+      type: "Private",
+      industry: [
+        "Electric Vehicles",
+        "Battery Technology",
+        "Charging Infrastructure",
+        "Mobility Services",
       ],
-      "focusAreas": [
-        "Deep Learning",
-        "Natural Language Processing",
-        "Computer Vision",
-        "Predictive Analytics"
+      domain: "Mobility",
+      website: "https://olaelectric.com",
+      numberOfEmployees: 4000,
+      products: [
+        "Electric Scooters",
+        "Electric Motorcycles",
+        "Battery Packs",
+        "Home Charging Solutions",
+        "Hypercharger Network",
       ],
-      "initiatives": [
-        "AI for Healthcare",
-        "Responsible AI Development",
-        "AI Research Fellowship"
+      focusAreas: [
+        "Battery Technology",
+        "Electric Vehicle Design",
+        "Autonomous Capabilities",
+        "Connected Mobility",
+        "Charging Infrastructure",
+        "Sustainable Manufacturing",
       ],
-      "researchAndDevelopment": {
-        "facilities": [
-          "Boston Research Headquarters",
-          "Montreal AI Lab",
-          "London Innovation Hub"
+      initiatives: [
+        "Futurefactory",
+        "Hypercharger Network Expansion",
+        "Battery Innovation Centre",
+      ],
+      researchAndDevelopment: {
+        facilities: [
+          "Ola Electric R&D Centre (Bengaluru)",
+          "Ola Advanced Technology Centre (UK)",
+          "Battery Innovation Centre (Tamil Nadu)",
         ],
-        "recentInvestmentsUSD": 40000000,
-        "annualInvestment": {
-          "amountINR": 950000000,
-          "fiscalYear": "2023-2024",
-          "percentageOfTurnover": 25
-        }
+        recentInvestmentsUSD: 920000000,
+        annualInvestment: {
+          amountINR: 18000000000,
+          fiscalYear: "2022-23",
+          percentageOfTurnover: 12.5,
+        },
       },
-      "latestNews": [
+      latestNews: [
         {
-          "title": "FutureTech Secures $50M Series C Funding",
-          "url": "https://www.venturenews.com/futuretech-funding"
+          title: "Ola Electric files for IPO, aims to raise $1 billion",
+          url: "https://www.livemint.com/companies/news/ola-electric-files-for-ipo-aims-to-raise-1-billion-11687654321.html",
         },
         {
-          "title": "FutureTech's NLP System Achieves Industry Benchmark",
-          "url": "https://www.ainews.com/futuretech-nlp-benchmark"
-        }
-      ]
-    }
+          title:
+            "Ola Electric unveils India's first locally-made lithium-ion cell",
+          url: "https://auto.economictimes.indiatimes.com/news/auto-components/ola-electric-unveils-indias-first-locally-made-lithium-ion-cell/99123456",
+        },
+        {
+          title: "Ola Electric crosses 300,000 units sales milestone",
+          url: "https://economictimes.indiatimes.com/industry/renewables/ola-electric-crosses-300000-units-sales-milestone/articleshow/106789012.cms",
+        },
+      ],
+    },
   ];
 
-  document.getElementById("competitor-data").value = JSON.stringify(template, null, 2);
+  document.getElementById("competitor-data").value = JSON.stringify(
+    template,
+    null,
+    2
+  );
   logToConsole("Competitor data template loaded", "info");
 }
 
@@ -802,491 +860,2917 @@ function loadCompetitorTemplate() {
  */
 function loadAnalystTemplate() {
   const template = {
-    "graph_data": {
-      "links": [
+    date: "2025-04-23",
+    graph_data: {
+      links: [
         {
-          "source": "trend-1",
-          "target": "tech-federated-learning",
-          "type": "uses",
-          "weight": 1.5
+          source: "journals_MB-JRN-006",
+          target: "keyword_electric_vehicles",
+          type: "has_keyword",
+          weight: 0.7,
         },
         {
-          "source": "trend-1",
-          "target": "tech-edge-ai",
-          "type": "uses",
-          "weight": 1.2
+          source: "journals_MB-JRN-006",
+          target: "keyword_vehicle-to-grid",
+          type: "has_keyword",
+          weight: 0.7,
         },
         {
-          "source": "trend-2",
-          "target": "tech-homomorphic-encryption",
-          "type": "uses",
-          "weight": 1.0
+          source: "journals_MB-JRN-006",
+          target: "keyword_v2g",
+          type: "has_keyword",
+          weight: 0.7,
         },
         {
-          "source": "trend-2",
-          "target": "tech-federated-learning",
-          "type": "uses",
-          "weight": 1.0
-        }
+          source: "journals_MB-JRN-006",
+          target: "keyword_fleet_management",
+          type: "has_keyword",
+          weight: 0.7,
+        },
+        {
+          source: "journals_MB-JRN-006",
+          target: "keyword_grid_services",
+          type: "has_keyword",
+          weight: 0.7,
+        },
+        {
+          reasons: ["same_domain", "similar_relevance"],
+          source: "journals_MB-JRN-006",
+          target: "patents_MB-PAT-009",
+          type: "related",
+          weight: 0.8,
+        },
+        {
+          reasons: ["same_domain", "similar_relevance", "shared_keywords"],
+          source: "journals_MB-JRN-006",
+          target: "journals_MB-JRN-001",
+          type: "related",
+          weight: 1.3,
+        },
+        {
+          reasons: ["same_domain", "similar_relevance"],
+          source: "journals_MB-JRN-006",
+          target: "patents_MB-PAT-002",
+          type: "related",
+          weight: 0.8,
+        },
+        {
+          reasons: ["same_domain", "similar_relevance"],
+          source: "journals_MB-JRN-006",
+          target: "patents_MB-PAT-020",
+          type: "related",
+          weight: 0.8,
+        },
+        {
+          reasons: ["same_domain", "similar_relevance"],
+          source: "journals_MB-JRN-006",
+          target: "patents_MB-PAT-012",
+          type: "related",
+          weight: 0.8,
+        },
+        {
+          reasons: ["same_domain", "similar_relevance"],
+          source: "journals_MB-JRN-006",
+          target: "journals_MB-JRN-004",
+          type: "related",
+          weight: 0.8,
+        },
+        {
+          reasons: ["same_domain", "similar_relevance"],
+          source: "journals_MB-JRN-006",
+          target: "patents_MB-PAT-013",
+          type: "related",
+          weight: 0.8,
+        },
+        {
+          reasons: ["same_domain", "similar_relevance"],
+          source: "journals_MB-JRN-006",
+          target: "journals_MB-JRN-008",
+          type: "related",
+          weight: 0.8,
+        },
+        {
+          reasons: ["same_domain", "similar_relevance"],
+          source: "journals_MB-JRN-006",
+          target: "journals_MB-JRN-002",
+          type: "related",
+          weight: 0.8,
+        },
+        {
+          source: "patents_MB-PAT-009",
+          target: "tech_electric_vehicles",
+          type: "uses_technology",
+          weight: 1,
+        },
+        {
+          source: "patents_MB-PAT-009",
+          target: "tech_power_electronics",
+          type: "uses_technology",
+          weight: 1,
+        },
+        {
+          source: "patents_MB-PAT-009",
+          target: "tech_wireless_charging",
+          type: "uses_technology",
+          weight: 1,
+        },
+        {
+          source: "patents_MB-PAT-009",
+          target: "keyword_electric_vehicle",
+          type: "has_keyword",
+          weight: 0.7,
+        },
+        {
+          source: "patents_MB-PAT-009",
+          target: "keyword_dynamic_charging",
+          type: "has_keyword",
+          weight: 0.7,
+        },
+        {
+          source: "patents_MB-PAT-009",
+          target: "keyword_wireless_power_transfer",
+          type: "has_keyword",
+          weight: 0.7,
+        },
+        {
+          source: "patents_MB-PAT-009",
+          target: "keyword_charging_infrastructure",
+          type: "has_keyword",
+          weight: 0.7,
+        },
+        {
+          reasons: ["same_domain", "similar_relevance"],
+          source: "patents_MB-PAT-009",
+          target: "journals_MB-JRN-001",
+          type: "related",
+          weight: 0.8,
+        },
+        {
+          reasons: [
+            "same_domain",
+            "similar_relevance",
+            "shared_technologies",
+            "shared_keywords",
+          ],
+          source: "patents_MB-PAT-009",
+          target: "patents_MB-PAT-002",
+          type: "related",
+          weight: 2,
+        },
+        {
+          reasons: ["same_domain", "similar_relevance", "shared_keywords"],
+          source: "patents_MB-PAT-009",
+          target: "patents_MB-PAT-020",
+          type: "related",
+          weight: 1.8,
+        },
+        {
+          reasons: ["same_domain", "similar_relevance"],
+          source: "patents_MB-PAT-009",
+          target: "patents_MB-PAT-012",
+          type: "related",
+          weight: 0.8,
+        },
+        {
+          reasons: ["same_domain", "similar_relevance"],
+          source: "patents_MB-PAT-009",
+          target: "journals_MB-JRN-004",
+          type: "related",
+          weight: 0.8,
+        },
+        {
+          reasons: ["same_domain", "similar_relevance", "shared_keywords"],
+          source: "patents_MB-PAT-009",
+          target: "patents_MB-PAT-013",
+          type: "related",
+          weight: 1.3,
+        },
+        {
+          reasons: ["same_domain", "similar_relevance"],
+          source: "patents_MB-PAT-009",
+          target: "journals_MB-JRN-008",
+          type: "related",
+          weight: 0.8,
+        },
+        {
+          reasons: ["same_domain", "similar_relevance"],
+          source: "patents_MB-PAT-009",
+          target: "journals_MB-JRN-002",
+          type: "related",
+          weight: 0.8,
+        },
+        {
+          source: "journals_MB-JRN-001",
+          target: "keyword_electric_vehicles",
+          type: "has_keyword",
+          weight: 0.7,
+        },
+        {
+          source: "journals_MB-JRN-001",
+          target: "keyword_battery_degradation",
+          type: "has_keyword",
+          weight: 0.7,
+        },
+        {
+          source: "journals_MB-JRN-001",
+          target: "keyword_lithium-ion",
+          type: "has_keyword",
+          weight: 0.7,
+        },
+        {
+          source: "journals_MB-JRN-001",
+          target: "keyword_battery_lifetime",
+          type: "has_keyword",
+          weight: 0.7,
+        },
+        {
+          source: "journals_MB-JRN-001",
+          target: "keyword_usage_patterns",
+          type: "has_keyword",
+          weight: 0.7,
+        },
+        {
+          reasons: ["same_domain", "similar_relevance"],
+          source: "journals_MB-JRN-001",
+          target: "patents_MB-PAT-002",
+          type: "related",
+          weight: 0.8,
+        },
+        {
+          reasons: ["same_domain", "similar_relevance"],
+          source: "journals_MB-JRN-001",
+          target: "patents_MB-PAT-020",
+          type: "related",
+          weight: 0.8,
+        },
+        {
+          reasons: ["same_domain", "similar_relevance"],
+          source: "journals_MB-JRN-001",
+          target: "patents_MB-PAT-012",
+          type: "related",
+          weight: 0.8,
+        },
+        {
+          reasons: ["same_domain", "similar_relevance"],
+          source: "journals_MB-JRN-001",
+          target: "journals_MB-JRN-004",
+          type: "related",
+          weight: 0.8,
+        },
+        {
+          reasons: ["same_domain", "similar_relevance"],
+          source: "journals_MB-JRN-001",
+          target: "patents_MB-PAT-013",
+          type: "related",
+          weight: 0.8,
+        },
+        {
+          reasons: ["same_domain", "similar_relevance"],
+          source: "journals_MB-JRN-001",
+          target: "journals_MB-JRN-008",
+          type: "related",
+          weight: 0.8,
+        },
+        {
+          reasons: ["same_domain", "similar_relevance"],
+          source: "journals_MB-JRN-001",
+          target: "journals_MB-JRN-002",
+          type: "related",
+          weight: 0.8,
+        },
+        {
+          source: "patents_MB-PAT-002",
+          target: "tech_battery_technology",
+          type: "uses_technology",
+          weight: 1,
+        },
+        {
+          source: "patents_MB-PAT-002",
+          target: "tech_thermal_management",
+          type: "uses_technology",
+          weight: 1,
+        },
+        {
+          source: "patents_MB-PAT-002",
+          target: "tech_electric_vehicles",
+          type: "uses_technology",
+          weight: 1,
+        },
+        {
+          source: "patents_MB-PAT-002",
+          target: "keyword_battery_cooling",
+          type: "has_keyword",
+          weight: 0.7,
+        },
+        {
+          source: "patents_MB-PAT-002",
+          target: "keyword_thermal_management",
+          type: "has_keyword",
+          weight: 0.7,
+        },
+        {
+          source: "patents_MB-PAT-002",
+          target: "keyword_electric_vehicle",
+          type: "has_keyword",
+          weight: 0.7,
+        },
+        {
+          source: "patents_MB-PAT-002",
+          target: "keyword_battery_longevity",
+          type: "has_keyword",
+          weight: 0.7,
+        },
+        {
+          reasons: ["same_domain", "similar_relevance", "shared_keywords"],
+          source: "patents_MB-PAT-002",
+          target: "patents_MB-PAT-020",
+          type: "related",
+          weight: 1.3,
+        },
+        {
+          reasons: ["same_domain", "similar_relevance"],
+          source: "patents_MB-PAT-002",
+          target: "patents_MB-PAT-012",
+          type: "related",
+          weight: 0.8,
+        },
+        {
+          reasons: ["same_domain", "similar_relevance"],
+          source: "patents_MB-PAT-002",
+          target: "journals_MB-JRN-004",
+          type: "related",
+          weight: 0.8,
+        },
+        {
+          reasons: ["same_domain", "similar_relevance", "shared_keywords"],
+          source: "patents_MB-PAT-002",
+          target: "patents_MB-PAT-013",
+          type: "related",
+          weight: 1.3,
+        },
+        {
+          reasons: ["same_domain", "similar_relevance"],
+          source: "patents_MB-PAT-002",
+          target: "journals_MB-JRN-008",
+          type: "related",
+          weight: 0.8,
+        },
+        {
+          reasons: ["same_domain", "similar_relevance"],
+          source: "patents_MB-PAT-002",
+          target: "journals_MB-JRN-002",
+          type: "related",
+          weight: 0.8,
+        },
+        {
+          source: "patents_MB-PAT-020",
+          target: "tech_computer_vision",
+          type: "uses_technology",
+          weight: 1,
+        },
+        {
+          source: "patents_MB-PAT-020",
+          target: "tech_robotics",
+          type: "uses_technology",
+          weight: 1,
+        },
+        {
+          source: "patents_MB-PAT-020",
+          target: "tech_electric_vehicle_charging",
+          type: "uses_technology",
+          weight: 1,
+        },
+        {
+          source: "patents_MB-PAT-020",
+          target: "keyword_electric_vehicle",
+          type: "has_keyword",
+          weight: 0.7,
+        },
+        {
+          source: "patents_MB-PAT-020",
+          target: "keyword_charging_infrastructure",
+          type: "has_keyword",
+          weight: 0.7,
+        },
+        {
+          source: "patents_MB-PAT-020",
+          target: "keyword_robotic_charging",
+          type: "has_keyword",
+          weight: 0.7,
+        },
+        {
+          source: "patents_MB-PAT-020",
+          target: "keyword_autonomous_charging",
+          type: "has_keyword",
+          weight: 0.7,
+        },
+        {
+          reasons: ["same_domain", "similar_relevance"],
+          source: "patents_MB-PAT-020",
+          target: "patents_MB-PAT-012",
+          type: "related",
+          weight: 0.8,
+        },
+        {
+          reasons: ["same_domain", "similar_relevance"],
+          source: "patents_MB-PAT-020",
+          target: "journals_MB-JRN-004",
+          type: "related",
+          weight: 0.8,
+        },
+        {
+          reasons: ["same_domain", "similar_relevance", "shared_keywords"],
+          source: "patents_MB-PAT-020",
+          target: "patents_MB-PAT-013",
+          type: "related",
+          weight: 1.3,
+        },
+        {
+          reasons: ["same_domain", "similar_relevance"],
+          source: "patents_MB-PAT-020",
+          target: "journals_MB-JRN-008",
+          type: "related",
+          weight: 0.8,
+        },
+        {
+          reasons: ["same_domain", "similar_relevance"],
+          source: "patents_MB-PAT-020",
+          target: "journals_MB-JRN-002",
+          type: "related",
+          weight: 0.8,
+        },
+        {
+          source: "patents_MB-PAT-012",
+          target: "tech_connected_infrastructure",
+          type: "uses_technology",
+          weight: 1,
+        },
+        {
+          source: "patents_MB-PAT-012",
+          target: "tech_v2i_communication",
+          type: "uses_technology",
+          weight: 1,
+        },
+        {
+          source: "patents_MB-PAT-012",
+          target: "tech_edge_computing",
+          type: "uses_technology",
+          weight: 1,
+        },
+        {
+          source: "patents_MB-PAT-012",
+          target: "keyword_connected_vehicles",
+          type: "has_keyword",
+          weight: 0.7,
+        },
+        {
+          source: "patents_MB-PAT-012",
+          target: "keyword_v2i",
+          type: "has_keyword",
+          weight: 0.7,
+        },
+        {
+          source: "patents_MB-PAT-012",
+          target: "keyword_smart_infrastructure",
+          type: "has_keyword",
+          weight: 0.7,
+        },
+        {
+          source: "patents_MB-PAT-012",
+          target: "keyword_cooperative_perception",
+          type: "has_keyword",
+          weight: 0.7,
+        },
+        {
+          reasons: ["same_domain", "similar_relevance"],
+          source: "patents_MB-PAT-012",
+          target: "journals_MB-JRN-004",
+          type: "related",
+          weight: 0.8,
+        },
+        {
+          reasons: ["same_domain", "similar_relevance"],
+          source: "patents_MB-PAT-012",
+          target: "patents_MB-PAT-013",
+          type: "related",
+          weight: 0.8,
+        },
+        {
+          reasons: ["same_domain", "similar_relevance"],
+          source: "patents_MB-PAT-012",
+          target: "journals_MB-JRN-008",
+          type: "related",
+          weight: 0.8,
+        },
+        {
+          reasons: ["same_domain", "similar_relevance"],
+          source: "patents_MB-PAT-012",
+          target: "journals_MB-JRN-002",
+          type: "related",
+          weight: 0.8,
+        },
+        {
+          source: "journals_MB-JRN-004",
+          target: "keyword_commercial_vehicles",
+          type: "has_keyword",
+          weight: 0.7,
+        },
+        {
+          source: "journals_MB-JRN-004",
+          target: "keyword_zero_emission",
+          type: "has_keyword",
+          weight: 0.7,
+        },
+        {
+          source: "journals_MB-JRN-004",
+          target: "keyword_hydrogen_fuel_cell",
+          type: "has_keyword",
+          weight: 0.7,
+        },
+        {
+          source: "journals_MB-JRN-004",
+          target: "keyword_heavy-duty_transportation",
+          type: "has_keyword",
+          weight: 0.7,
+        },
+        {
+          source: "journals_MB-JRN-004",
+          target: "keyword_sustainable_mobility",
+          type: "has_keyword",
+          weight: 0.7,
+        },
+        {
+          reasons: ["same_domain", "similar_relevance"],
+          source: "journals_MB-JRN-004",
+          target: "patents_MB-PAT-013",
+          type: "related",
+          weight: 0.8,
+        },
+        {
+          reasons: ["same_domain", "similar_relevance"],
+          source: "journals_MB-JRN-004",
+          target: "journals_MB-JRN-008",
+          type: "related",
+          weight: 0.8,
+        },
+        {
+          reasons: ["same_domain", "similar_relevance"],
+          source: "journals_MB-JRN-004",
+          target: "journals_MB-JRN-002",
+          type: "related",
+          weight: 0.8,
+        },
+        {
+          source: "patents_MB-PAT-013",
+          target: "tech_composite_materials",
+          type: "uses_technology",
+          weight: 1,
+        },
+        {
+          source: "patents_MB-PAT-013",
+          target: "tech_lightweight_structures",
+          type: "uses_technology",
+          weight: 1,
+        },
+        {
+          source: "patents_MB-PAT-013",
+          target: "tech_manufacturing_processes",
+          type: "uses_technology",
+          weight: 1,
+        },
+        {
+          source: "patents_MB-PAT-013",
+          target: "keyword_electric_vehicle",
+          type: "has_keyword",
+          weight: 0.7,
+        },
+        {
+          source: "patents_MB-PAT-013",
+          target: "keyword_carbon_fiber",
+          type: "has_keyword",
+          weight: 0.7,
+        },
+        {
+          source: "patents_MB-PAT-013",
+          target: "keyword_lightweight_materials",
+          type: "has_keyword",
+          weight: 0.7,
+        },
+        {
+          source: "patents_MB-PAT-013",
+          target: "keyword_battery_protection",
+          type: "has_keyword",
+          weight: 0.7,
+        },
+        {
+          reasons: ["same_domain", "similar_relevance"],
+          source: "patents_MB-PAT-013",
+          target: "journals_MB-JRN-008",
+          type: "related",
+          weight: 0.8,
+        },
+        {
+          reasons: ["same_domain", "similar_relevance"],
+          source: "patents_MB-PAT-013",
+          target: "journals_MB-JRN-002",
+          type: "related",
+          weight: 0.8,
+        },
+        {
+          source: "journals_MB-JRN-008",
+          target: "keyword_last-mile_logistics",
+          type: "has_keyword",
+          weight: 0.7,
+        },
+        {
+          source: "journals_MB-JRN-008",
+          target: "keyword_electric_delivery_vehicles",
+          type: "has_keyword",
+          weight: 0.7,
+        },
+        {
+          source: "journals_MB-JRN-008",
+          target: "keyword_life_cycle_assessment",
+          type: "has_keyword",
+          weight: 0.7,
+        },
+        {
+          source: "journals_MB-JRN-008",
+          target: "keyword_urban_freight",
+          type: "has_keyword",
+          weight: 0.7,
+        },
+        {
+          source: "journals_MB-JRN-008",
+          target: "keyword_sustainability",
+          type: "has_keyword",
+          weight: 0.7,
+        },
+        {
+          reasons: ["same_domain", "similar_relevance"],
+          source: "journals_MB-JRN-008",
+          target: "journals_MB-JRN-002",
+          type: "related",
+          weight: 0.8,
+        },
+        {
+          source: "journals_MB-JRN-002",
+          target: "keyword_autonomous_vehicles",
+          type: "has_keyword",
+          weight: 0.7,
+        },
+        {
+          source: "journals_MB-JRN-002",
+          target: "keyword_safety_assessment",
+          type: "has_keyword",
+          weight: 0.7,
+        },
+        {
+          source: "journals_MB-JRN-002",
+          target: "keyword_validation",
+          type: "has_keyword",
+          weight: 0.7,
+        },
+        {
+          source: "journals_MB-JRN-002",
+          target: "keyword_simulation",
+          type: "has_keyword",
+          weight: 0.7,
+        },
+        {
+          source: "journals_MB-JRN-002",
+          target: "keyword_physical_testing",
+          type: "has_keyword",
+          weight: 0.7,
+        },
       ],
-      "nodes": [
+      nodes: [
         {
-          "color": "#4a6de5",
-          "data": {
-            "assignees": ["Research Institute of Technology"],
-            "authors": ["Dr. Sarah Johnson", "Dr. Michael Lee"],
-            "country": "United States",
-            "cpcs": ["G06N 20/00", "G06F 16/35"],
-            "data_quality_score": 0.85,
-            "domain": "Artificial Intelligence",
-            "id": "AI2023-12345",
-            "inventors": ["Dr. Sarah Johnson", "Dr. Michael Lee"],
-            "ipcs": ["G06N 20/00", "G06F 16/35"],
-            "keywords": ["federated learning", "privacy-preserving AI", "distributed training", "edge computing", "healthcare AI"],
-            "knowledge_type": "Research Paper",
-            "publication_date": "2023-08-15",
-            "publishers": ["Tech Science Journal"],
-            "related_titles": [
-              "Advances in Federated Learning for Healthcare Applications",
-              "Privacy-Preserving Machine Learning: A Survey",
-              "Edge Computing for Distributed AI Systems"
+          color: "#4a6de5",
+          data: {
+            assignees: [],
+            authors: [
+              "Chang, Hyun-Joon",
+              "Oliveira, Paulo",
+              "Kramer, Sophia",
+              "Ahmed, Farid",
+              "Reynolds, Karen",
             ],
-            "similarity_score": 0.92,
-            "subdomains": ["Machine Learning", "Distributed Computing"],
-            "technologies": ["Federated Learning", "Edge AI", "Privacy-Preserving Machine Learning", "Neural Networks"],
-            "title": "Privacy-Preserving Federated Learning Framework for Healthcare Applications"
-          },
-          "domain": "Artificial Intelligence",
-          "id": "trend-1",
-          "knowledge_type": "Research Paper",
-          "publication_date": "2023-08-15",
-          "similarity_score": 0.92,
-          "size": 10,
-          "title": "Privacy-Preserving Federated Learning Framework for Healthcare Applications",
-          "type": "trend"
-        },
-        {
-          "color": "#28a745",
-          "data": {},
-          "domain": "Artificial Intelligence",
-          "id": "tech-federated-learning",
-          "size": 8,
-          "title": "Federated Learning",
-          "type": "technology"
-        },
-        {
-          "color": "#28a745",
-          "data": {},
-          "domain": "Artificial Intelligence",
-          "id": "tech-edge-ai",
-          "size": 8,
-          "title": "Edge AI",
-          "type": "technology"
-        },
-        {
-          "color": "#4a6de5",
-          "data": {
-            "assignees": ["Medical AI Solutions Inc."],
-            "authors": ["Dr. Emily Roberts", "Dr. James Chen"],
-            "country": "Canada",
-            "cpcs": ["G16H 50/20", "G06N 20/00"],
-            "data_quality_score": 0.78,
-            "domain": "Healthcare",
-            "id": "HEALTH2023-54321",
-            "inventors": ["Dr. Emily Roberts", "Dr. James Chen", "Dr. Lisa Wong"],
-            "ipcs": ["G16H 50/20", "G06N 20/00"],
-            "keywords": ["medical imaging", "diagnostic AI", "healthcare privacy", "secure computation", "medical data"],
-            "knowledge_type": "Patent",
-            "publication_date": "2023-05-22",
-            "publishers": ["World Patent Office"],
-            "related_titles": [
-              "Secure Medical Image Analysis System",
-              "Privacy-Preserving AI for Electronic Health Records",
-              "Distributed Medical Diagnostics Platform"
+            country: "United States",
+            cpcs: [],
+            data_quality_score: 0.89,
+            domain: "Mobility",
+            id: "journals_MB-JRN-006",
+            inventors: [],
+            ipcs: [],
+            keywords: [
+              "electric vehicles",
+              "vehicle-to-grid",
+              "V2G",
+              "fleet management",
+              "grid services",
             ],
-            "similarity_score": 0.85,
-            "subdomains": ["Medical Imaging", "Diagnostics"],
-            "technologies": ["Secure Multi-party Computation", "Differential Privacy", "Medical Imaging AI", "Federated Learning"],
-            "title": "Secure and Privacy-Preserving Medical Image Analysis System"
+            knowledge_type: "journal",
+            publication_date: "2023-02-20",
+            publishers: ["IEEE Transactions on Smart Grid"],
+            related_titles: [
+              "Electric Vehicle Battery Thermal Management System",
+              "Solid-State Battery with Silicon-Carbon Composite Anode",
+              "Dynamic Wireless Charging System for Electric Vehicles",
+              "Robotic Autonomous Charging System for Electric Vehicles",
+              "Comprehensive Analysis of Electric Vehicle Battery Degradation Across Multiple Vehicle Models and Usage Patterns",
+              "Quantifying Environmental Benefits of Electric Last-Mile Delivery: A Life Cycle Assessment",
+            ],
+            similarity_score: 0.7814,
+            subdomains: ["Electrification", "Energy Systems"],
+            summary_text: "No summary available",
+            technologies: [],
+            title:
+              "Secure and Efficient Vehicle-to-Grid Integration for Electric Vehicle Fleets",
           },
-          "domain": "Healthcare",
-          "id": "trend-2",
-          "knowledge_type": "Patent",
-          "publication_date": "2023-05-22",
-          "similarity_score": 0.85,
-          "size": 10,
-          "title": "Secure and Privacy-Preserving Medical Image Analysis System",
-          "type": "trend"
+          domain: "Mobility",
+          id: "journals_MB-JRN-006",
+          knowledge_type: "journal",
+          publication_date: "2023-02-20",
+          similarity_score: 0.7814,
+          size: 21.721,
+          title:
+            "Secure and Efficient Vehicle-to-Grid Integration for Electric Vehicle Fleets",
+          type: "trend",
         },
         {
-          "color": "#28a745",
-          "data": {},
-          "domain": "Security",
-          "id": "tech-homomorphic-encryption",
-          "size": 8,
-          "title": "Homomorphic Encryption",
-          "type": "technology"
-        }
-      ]
+          color: "#4a6de5",
+          data: {
+            assignees: ["ElectroRoad Systems"],
+            authors: [],
+            country: "United States",
+            cpcs: ["B60L53/12", "B60L53/30", "H02J50/12"],
+            data_quality_score: 0.9,
+            domain: "Mobility",
+            id: "patents_MB-PAT-009",
+            inventors: [
+              "Choi, Sung-Yul",
+              "Bennett, Rebecca",
+              "Lombardi, Francesco",
+            ],
+            ipcs: ["B60L53/12", "B60L53/30", "H02J50/12"],
+            keywords: [
+              "electric vehicle",
+              "dynamic charging",
+              "wireless power transfer",
+              "charging infrastructure",
+            ],
+            knowledge_type: "patent",
+            publication_date: "2021-05-20",
+            publishers: [],
+            related_titles: [
+              "Robotic Autonomous Charging System for Electric Vehicles",
+              "Electric Vehicle Battery Thermal Management System",
+              "Solid-State Battery with Silicon-Carbon Composite Anode",
+              "Lightweight Composite Materials for Electric Vehicle Structures",
+              "Comprehensive Analysis of Electric Vehicle Battery Degradation Across Multiple Vehicle Models and Usage Patterns",
+              "Secure and Efficient Vehicle-to-Grid Integration for Electric Vehicle Fleets",
+              "Quantifying Environmental Benefits of Electric Last-Mile Delivery: A Life Cycle Assessment",
+              "Smart Infrastructure for Connected and Autonomous Vehicles",
+              "Hyperloop Capsule Suspension and Propulsion System",
+              "Urban Air Mobility: Infrastructure Requirements and Operational Challenges",
+              "Hydrogen Fuel Cell System with Enhanced Power Density",
+            ],
+            similarity_score: 0.7524,
+            subdomains: ["Electrification", "Infrastructure"],
+            summary_text: "No summary available",
+            technologies: [
+              "electric vehicles",
+              "power electronics",
+              "wireless charging",
+            ],
+            title: "Dynamic Wireless Charging System for Electric Vehicles",
+          },
+          domain: "Mobility",
+          id: "patents_MB-PAT-009",
+          knowledge_type: "patent",
+          publication_date: "2021-05-20",
+          similarity_score: 0.7524,
+          size: 21.286,
+          title: "Dynamic Wireless Charging System for Electric Vehicles",
+          type: "trend",
+        },
+        {
+          color: "#4a6de5",
+          data: {
+            assignees: [],
+            authors: [
+              "Peterson, Sarah B.",
+              "Zhang, Tianqi",
+              "Garcia, Miguel",
+              "Johnson, Amanda",
+              "Kumar, Pradeep",
+            ],
+            country: "Netherlands",
+            cpcs: [],
+            data_quality_score: 0.93,
+            domain: "Mobility",
+            id: "journals_MB-JRN-001",
+            inventors: [],
+            ipcs: [],
+            keywords: [
+              "electric vehicles",
+              "battery degradation",
+              "lithium-ion",
+              "battery lifetime",
+              "usage patterns",
+            ],
+            knowledge_type: "journal",
+            publication_date: "2022-06-10",
+            publishers: ["Journal of Power Sources"],
+            related_titles: [
+              "Electric Vehicle Battery Thermal Management System",
+              "Solid-State Battery with Silicon-Carbon Composite Anode",
+              "Dynamic Wireless Charging System for Electric Vehicles",
+              "Robotic Autonomous Charging System for Electric Vehicles",
+              "Secure and Efficient Vehicle-to-Grid Integration for Electric Vehicle Fleets",
+              "Quantifying Environmental Benefits of Electric Last-Mile Delivery: A Life Cycle Assessment",
+            ],
+            similarity_score: 0.7515,
+            subdomains: ["Electrification", "Battery Technology"],
+            summary_text: "No summary available",
+            technologies: [],
+            title:
+              "Comprehensive Analysis of Electric Vehicle Battery Degradation Across Multiple Vehicle Models and Usage Patterns",
+          },
+          domain: "Mobility",
+          id: "journals_MB-JRN-001",
+          knowledge_type: "journal",
+          publication_date: "2022-06-10",
+          similarity_score: 0.7515,
+          size: 21.2725,
+          title:
+            "Comprehensive Analysis of Electric Vehicle Battery Degradation Across Multiple Vehicle Models and Usage Patterns",
+          type: "trend",
+        },
+        {
+          color: "#4a6de5",
+          data: {
+            assignees: ["EnergyTech Solutions"],
+            authors: [],
+            country: "United States",
+            cpcs: ["H01M10/60", "B60L58/26", "H01M10/6556"],
+            data_quality_score: 0.94,
+            domain: "Mobility",
+            id: "patents_MB-PAT-002",
+            inventors: ["Chen, Jian", "Patel, Nisha", "Schmidt, Erik"],
+            ipcs: ["H01M10/60", "B60L58/26", "H01M10/6556"],
+            keywords: [
+              "battery cooling",
+              "thermal management",
+              "electric vehicle",
+              "battery longevity",
+            ],
+            knowledge_type: "patent",
+            publication_date: "2021-08-12",
+            publishers: [],
+            related_titles: [
+              "Dynamic Wireless Charging System for Electric Vehicles",
+              "Solid-State Battery with Silicon-Carbon Composite Anode",
+              "Lightweight Composite Materials for Electric Vehicle Structures",
+              "Robotic Autonomous Charging System for Electric Vehicles",
+              "Comprehensive Analysis of Electric Vehicle Battery Degradation Across Multiple Vehicle Models and Usage Patterns",
+              "Secure and Efficient Vehicle-to-Grid Integration for Electric Vehicle Fleets",
+              "Quantifying Environmental Benefits of Electric Last-Mile Delivery: A Life Cycle Assessment",
+              "Advanced LiDAR System for Autonomous Vehicle Navigation",
+              "Machine Learning System for Predictive Vehicle Maintenance",
+              "Adaptive Vehicle Crash Avoidance System",
+            ],
+            similarity_score: 0.7413,
+            subdomains: ["Automotive Technology", "Electrification"],
+            summary_text: "No summary available",
+            technologies: [
+              "battery technology",
+              "thermal management",
+              "electric vehicles",
+            ],
+            title: "Electric Vehicle Battery Thermal Management System",
+          },
+          domain: "Mobility",
+          id: "patents_MB-PAT-002",
+          knowledge_type: "patent",
+          publication_date: "2021-08-12",
+          similarity_score: 0.7413,
+          size: 21.1195,
+          title: "Electric Vehicle Battery Thermal Management System",
+          type: "trend",
+        },
+        {
+          color: "#4a6de5",
+          data: {
+            assignees: ["AutoCharge Robotics"],
+            authors: [],
+            country: "United States",
+            cpcs: ["B60L53/30", "B25J9/1633", "G06V10/253"],
+            data_quality_score: 0.88,
+            domain: "Mobility",
+            id: "patents_MB-PAT-020",
+            inventors: ["Lindholm, Erik", "Gupta, Anjali", "Torres, Miguel"],
+            ipcs: ["B60L53/30", "B25J9/16", "G06V10/25"],
+            keywords: [
+              "electric vehicle",
+              "charging infrastructure",
+              "robotic charging",
+              "autonomous charging",
+            ],
+            knowledge_type: "patent",
+            publication_date: "2023-04-06",
+            publishers: [],
+            related_titles: [
+              "Dynamic Wireless Charging System for Electric Vehicles",
+              "Electric Vehicle Battery Thermal Management System",
+              "Solid-State Battery with Silicon-Carbon Composite Anode",
+              "Lightweight Composite Materials for Electric Vehicle Structures",
+              "Modular Autonomous Delivery Robot System",
+              "Comprehensive Analysis of Electric Vehicle Battery Degradation Across Multiple Vehicle Models and Usage Patterns",
+              "Secure and Efficient Vehicle-to-Grid Integration for Electric Vehicle Fleets",
+              "Quantifying Environmental Benefits of Electric Last-Mile Delivery: A Life Cycle Assessment",
+              "Autonomous Navigation in Unstructured Dynamic Environments: Challenges and Recent Advances",
+            ],
+            similarity_score: 0.7373,
+            subdomains: ["Electrification", "Robotics"],
+            summary_text: "No summary available",
+            technologies: [
+              "computer vision",
+              "robotics",
+              "electric vehicle charging",
+            ],
+            title: "Robotic Autonomous Charging System for Electric Vehicles",
+          },
+          domain: "Mobility",
+          id: "patents_MB-PAT-020",
+          knowledge_type: "patent",
+          publication_date: "2023-04-06",
+          similarity_score: 0.7373,
+          size: 21.0595,
+          title: "Robotic Autonomous Charging System for Electric Vehicles",
+          type: "trend",
+        },
+        {
+          color: "#4a6de5",
+          data: {
+            assignees: ["SmartRoad Technologies"],
+            authors: [],
+            country: "United States",
+            cpcs: ["G08G1/0104", "H04W4/44", "G08G1/166"],
+            data_quality_score: 0.89,
+            domain: "Mobility",
+            id: "patents_MB-PAT-012",
+            inventors: ["Zhang, Wei", "Thompson, Sarah", "Ochieng, Washington"],
+            ipcs: ["G08G1/01", "H04W4/44", "G08G1/16"],
+            keywords: [
+              "connected vehicles",
+              "V2I",
+              "smart infrastructure",
+              "cooperative perception",
+            ],
+            knowledge_type: "patent",
+            publication_date: "2022-07-28",
+            publishers: [],
+            related_titles: [
+              "V2X Communication System with Enhanced Security Protocol",
+              "Adaptive Vehicle Crash Avoidance System",
+              "Dynamic Wireless Charging System for Electric Vehicles",
+              "Hyperloop Capsule Suspension and Propulsion System",
+              "Urban Air Mobility: Infrastructure Requirements and Operational Challenges",
+            ],
+            similarity_score: 0.7172,
+            subdomains: ["Connected Vehicles", "Infrastructure"],
+            summary_text: "No summary available",
+            technologies: [
+              "connected infrastructure",
+              "V2I communication",
+              "edge computing",
+            ],
+            title: "Smart Infrastructure for Connected and Autonomous Vehicles",
+          },
+          domain: "Mobility",
+          id: "patents_MB-PAT-012",
+          knowledge_type: "patent",
+          publication_date: "2022-07-28",
+          similarity_score: 0.7172,
+          size: 20.758,
+          title: "Smart Infrastructure for Connected and Autonomous Vehicles",
+          type: "trend",
+        },
+        {
+          color: "#4a6de5",
+          data: {
+            assignees: [],
+            authors: [
+              "Wang, Jianlong",
+              "Singh, Rajveer",
+              "Müller, Kristina",
+              "Ibrahim, Omar",
+              "Davis, Peter",
+            ],
+            country: "United Kingdom",
+            cpcs: [],
+            data_quality_score: 0.92,
+            domain: "Mobility",
+            id: "journals_MB-JRN-004",
+            inventors: [],
+            ipcs: [],
+            keywords: [
+              "commercial vehicles",
+              "zero emission",
+              "hydrogen fuel cell",
+              "heavy-duty transportation",
+              "sustainable mobility",
+            ],
+            knowledge_type: "journal",
+            publication_date: "2021-06-15",
+            publishers: ["Progress in Energy and Combustion Science"],
+            related_titles: [
+              "Hydrogen Fuel Cell System with Enhanced Power Density",
+              "Adaptive Aerodynamic System for Commercial Vehicles",
+            ],
+            similarity_score: 0.7156,
+            subdomains: ["Alternative Powertrains", "Commercial Vehicles"],
+            summary_text: "No summary available",
+            technologies: [],
+            title:
+              "A Comprehensive Review of Hydrogen Fuel Cell Technologies for Heavy-Duty Transportation",
+          },
+          domain: "Mobility",
+          id: "journals_MB-JRN-004",
+          knowledge_type: "journal",
+          publication_date: "2021-06-15",
+          similarity_score: 0.7156,
+          size: 20.734,
+          title:
+            "A Comprehensive Review of Hydrogen Fuel Cell Technologies for Heavy-Duty Transportation",
+          type: "trend",
+        },
+        {
+          color: "#4a6de5",
+          data: {
+            assignees: ["LightweightEV Materials"],
+            authors: [],
+            country: "United States",
+            cpcs: ["B29C70/086", "B60K1/04", "B60R16/04"],
+            data_quality_score: 0.9,
+            domain: "Mobility",
+            id: "patents_MB-PAT-013",
+            inventors: ["Wu, Hong", "Johannson, Lars", "Matthews, Catherine"],
+            ipcs: ["B29C70/08", "B60K1/04", "B60R16/04"],
+            keywords: [
+              "electric vehicle",
+              "carbon fiber",
+              "lightweight materials",
+              "battery protection",
+            ],
+            knowledge_type: "patent",
+            publication_date: "2021-12-09",
+            publishers: [],
+            related_titles: [
+              "Electric Vehicle Battery Thermal Management System",
+              "Solid-State Battery with Silicon-Carbon Composite Anode",
+              "Dynamic Wireless Charging System for Electric Vehicles",
+              "Robotic Autonomous Charging System for Electric Vehicles",
+            ],
+            similarity_score: 0.7146,
+            subdomains: ["Materials Technology", "Vehicle Structures"],
+            summary_text: "No summary available",
+            technologies: [
+              "composite materials",
+              "lightweight structures",
+              "manufacturing processes",
+            ],
+            title:
+              "Lightweight Composite Materials for Electric Vehicle Structures",
+          },
+          domain: "Mobility",
+          id: "patents_MB-PAT-013",
+          knowledge_type: "patent",
+          publication_date: "2021-12-09",
+          similarity_score: 0.7146,
+          size: 20.719,
+          title:
+            "Lightweight Composite Materials for Electric Vehicle Structures",
+          type: "trend",
+        },
+        {
+          color: "#4a6de5",
+          data: {
+            assignees: [],
+            authors: [
+              "Kaplan, Eleanor",
+              "Figliozzi, Miguel",
+              "Holguín-Veras, José",
+              "Zhang, Renshu",
+              "Baumgartner, Michael",
+            ],
+            country: "Netherlands",
+            cpcs: [],
+            data_quality_score: 0.91,
+            domain: "Mobility",
+            id: "journals_MB-JRN-008",
+            inventors: [],
+            ipcs: [],
+            keywords: [
+              "last-mile logistics",
+              "electric delivery vehicles",
+              "life cycle assessment",
+              "urban freight",
+              "sustainability",
+            ],
+            knowledge_type: "journal",
+            publication_date: "2022-12-08",
+            publishers: ["Journal of Cleaner Production"],
+            related_titles: [
+              "Electric Vehicle Battery Thermal Management System",
+              "Solid-State Battery with Silicon-Carbon Composite Anode",
+              "Dynamic Wireless Charging System for Electric Vehicles",
+              "Robotic Autonomous Charging System for Electric Vehicles",
+              "Comprehensive Analysis of Electric Vehicle Battery Degradation Across Multiple Vehicle Models and Usage Patterns",
+              "Secure and Efficient Vehicle-to-Grid Integration for Electric Vehicle Fleets",
+              "Modular Autonomous Delivery Robot System",
+            ],
+            similarity_score: 0.7045,
+            subdomains: ["Electrification", "Last-Mile Delivery"],
+            summary_text: "No summary available",
+            technologies: [],
+            title:
+              "Quantifying Environmental Benefits of Electric Last-Mile Delivery: A Life Cycle Assessment",
+          },
+          domain: "Mobility",
+          id: "journals_MB-JRN-008",
+          knowledge_type: "journal",
+          publication_date: "2022-12-08",
+          similarity_score: 0.7045,
+          size: 20.567500000000003,
+          title:
+            "Quantifying Environmental Benefits of Electric Last-Mile Delivery: A Life Cycle Assessment",
+          type: "trend",
+        },
+        {
+          color: "#4a6de5",
+          data: {
+            assignees: [],
+            authors: [
+              "Kim, Jiyong",
+              "Martínez, Carlos",
+              "Frazzoli, Emilio",
+              "Seshia, Sanjit A.",
+              "Tomizuka, Masayoshi",
+            ],
+            country: "United States",
+            cpcs: [],
+            data_quality_score: 0.94,
+            domain: "Mobility",
+            id: "journals_MB-JRN-002",
+            inventors: [],
+            ipcs: [],
+            keywords: [
+              "autonomous vehicles",
+              "safety assessment",
+              "validation",
+              "simulation",
+              "physical testing",
+            ],
+            knowledge_type: "journal",
+            publication_date: "2021-10-22",
+            publishers: [
+              "IEEE Transactions on Intelligent Transportation Systems",
+            ],
+            related_titles: [
+              "Adaptive Vehicle Crash Avoidance System",
+              "Advanced LiDAR System for Autonomous Vehicle Navigation",
+              "Modular Autonomous Delivery Robot System",
+              "Autonomous Navigation in Unstructured Dynamic Environments: Challenges and Recent Advances",
+            ],
+            similarity_score: 0.6963,
+            subdomains: ["Autonomous Systems", "Vehicle Safety"],
+            summary_text: "No summary available",
+            technologies: [],
+            title:
+              "Safety Assessment Framework for Autonomous Vehicles: Combining Virtual and Physical Testing",
+          },
+          domain: "Mobility",
+          id: "journals_MB-JRN-002",
+          knowledge_type: "journal",
+          publication_date: "2021-10-22",
+          similarity_score: 0.6963,
+          size: 20.444499999999998,
+          title:
+            "Safety Assessment Framework for Autonomous Vehicles: Combining Virtual and Physical Testing",
+          type: "trend",
+        },
+        {
+          color: "#fd7e14",
+          domain: "Mobility",
+          id: "keyword_electric_vehicles",
+          size: 6,
+          title: "electric vehicles",
+          type: "keyword",
+        },
+        {
+          color: "#fd7e14",
+          domain: "Mobility",
+          id: "keyword_vehicle-to-grid",
+          size: 6,
+          title: "vehicle-to-grid",
+          type: "keyword",
+        },
+        {
+          color: "#fd7e14",
+          domain: "Mobility",
+          id: "keyword_v2g",
+          size: 6,
+          title: "V2G",
+          type: "keyword",
+        },
+        {
+          color: "#fd7e14",
+          domain: "Mobility",
+          id: "keyword_fleet_management",
+          size: 6,
+          title: "fleet management",
+          type: "keyword",
+        },
+        {
+          color: "#fd7e14",
+          domain: "Mobility",
+          id: "keyword_grid_services",
+          size: 6,
+          title: "grid services",
+          type: "keyword",
+        },
+        {
+          color: "#28a745",
+          domain: "Mobility",
+          id: "tech_electric_vehicles",
+          size: 8,
+          title: "electric vehicles",
+          type: "technology",
+        },
+        {
+          color: "#28a745",
+          domain: "Mobility",
+          id: "tech_power_electronics",
+          size: 8,
+          title: "power electronics",
+          type: "technology",
+        },
+        {
+          color: "#28a745",
+          domain: "Mobility",
+          id: "tech_wireless_charging",
+          size: 8,
+          title: "wireless charging",
+          type: "technology",
+        },
+        {
+          color: "#fd7e14",
+          domain: "Mobility",
+          id: "keyword_electric_vehicle",
+          size: 6,
+          title: "electric vehicle",
+          type: "keyword",
+        },
+        {
+          color: "#fd7e14",
+          domain: "Mobility",
+          id: "keyword_dynamic_charging",
+          size: 6,
+          title: "dynamic charging",
+          type: "keyword",
+        },
+        {
+          color: "#fd7e14",
+          domain: "Mobility",
+          id: "keyword_wireless_power_transfer",
+          size: 6,
+          title: "wireless power transfer",
+          type: "keyword",
+        },
+        {
+          color: "#fd7e14",
+          domain: "Mobility",
+          id: "keyword_charging_infrastructure",
+          size: 6,
+          title: "charging infrastructure",
+          type: "keyword",
+        },
+        {
+          color: "#fd7e14",
+          domain: "Mobility",
+          id: "keyword_battery_degradation",
+          size: 6,
+          title: "battery degradation",
+          type: "keyword",
+        },
+        {
+          color: "#fd7e14",
+          domain: "Mobility",
+          id: "keyword_lithium-ion",
+          size: 6,
+          title: "lithium-ion",
+          type: "keyword",
+        },
+        {
+          color: "#fd7e14",
+          domain: "Mobility",
+          id: "keyword_battery_lifetime",
+          size: 6,
+          title: "battery lifetime",
+          type: "keyword",
+        },
+        {
+          color: "#fd7e14",
+          domain: "Mobility",
+          id: "keyword_usage_patterns",
+          size: 6,
+          title: "usage patterns",
+          type: "keyword",
+        },
+        {
+          color: "#28a745",
+          domain: "Mobility",
+          id: "tech_battery_technology",
+          size: 8,
+          title: "battery technology",
+          type: "technology",
+        },
+        {
+          color: "#28a745",
+          domain: "Mobility",
+          id: "tech_thermal_management",
+          size: 8,
+          title: "thermal management",
+          type: "technology",
+        },
+        {
+          color: "#fd7e14",
+          domain: "Mobility",
+          id: "keyword_battery_cooling",
+          size: 6,
+          title: "battery cooling",
+          type: "keyword",
+        },
+        {
+          color: "#fd7e14",
+          domain: "Mobility",
+          id: "keyword_thermal_management",
+          size: 6,
+          title: "thermal management",
+          type: "keyword",
+        },
+        {
+          color: "#fd7e14",
+          domain: "Mobility",
+          id: "keyword_battery_longevity",
+          size: 6,
+          title: "battery longevity",
+          type: "keyword",
+        },
+        {
+          color: "#28a745",
+          domain: "Mobility",
+          id: "tech_computer_vision",
+          size: 8,
+          title: "computer vision",
+          type: "technology",
+        },
+        {
+          color: "#28a745",
+          domain: "Mobility",
+          id: "tech_robotics",
+          size: 8,
+          title: "robotics",
+          type: "technology",
+        },
+        {
+          color: "#28a745",
+          domain: "Mobility",
+          id: "tech_electric_vehicle_charging",
+          size: 8,
+          title: "electric vehicle charging",
+          type: "technology",
+        },
+        {
+          color: "#fd7e14",
+          domain: "Mobility",
+          id: "keyword_robotic_charging",
+          size: 6,
+          title: "robotic charging",
+          type: "keyword",
+        },
+        {
+          color: "#fd7e14",
+          domain: "Mobility",
+          id: "keyword_autonomous_charging",
+          size: 6,
+          title: "autonomous charging",
+          type: "keyword",
+        },
+        {
+          color: "#28a745",
+          domain: "Mobility",
+          id: "tech_connected_infrastructure",
+          size: 8,
+          title: "connected infrastructure",
+          type: "technology",
+        },
+        {
+          color: "#28a745",
+          domain: "Mobility",
+          id: "tech_v2i_communication",
+          size: 8,
+          title: "V2I communication",
+          type: "technology",
+        },
+        {
+          color: "#28a745",
+          domain: "Mobility",
+          id: "tech_edge_computing",
+          size: 8,
+          title: "edge computing",
+          type: "technology",
+        },
+        {
+          color: "#fd7e14",
+          domain: "Mobility",
+          id: "keyword_connected_vehicles",
+          size: 6,
+          title: "connected vehicles",
+          type: "keyword",
+        },
+        {
+          color: "#fd7e14",
+          domain: "Mobility",
+          id: "keyword_v2i",
+          size: 6,
+          title: "V2I",
+          type: "keyword",
+        },
+        {
+          color: "#fd7e14",
+          domain: "Mobility",
+          id: "keyword_smart_infrastructure",
+          size: 6,
+          title: "smart infrastructure",
+          type: "keyword",
+        },
+        {
+          color: "#fd7e14",
+          domain: "Mobility",
+          id: "keyword_cooperative_perception",
+          size: 6,
+          title: "cooperative perception",
+          type: "keyword",
+        },
+        {
+          color: "#fd7e14",
+          domain: "Mobility",
+          id: "keyword_commercial_vehicles",
+          size: 6,
+          title: "commercial vehicles",
+          type: "keyword",
+        },
+        {
+          color: "#fd7e14",
+          domain: "Mobility",
+          id: "keyword_zero_emission",
+          size: 6,
+          title: "zero emission",
+          type: "keyword",
+        },
+        {
+          color: "#fd7e14",
+          domain: "Mobility",
+          id: "keyword_hydrogen_fuel_cell",
+          size: 6,
+          title: "hydrogen fuel cell",
+          type: "keyword",
+        },
+        {
+          color: "#fd7e14",
+          domain: "Mobility",
+          id: "keyword_heavy-duty_transportation",
+          size: 6,
+          title: "heavy-duty transportation",
+          type: "keyword",
+        },
+        {
+          color: "#fd7e14",
+          domain: "Mobility",
+          id: "keyword_sustainable_mobility",
+          size: 6,
+          title: "sustainable mobility",
+          type: "keyword",
+        },
+        {
+          color: "#28a745",
+          domain: "Mobility",
+          id: "tech_composite_materials",
+          size: 8,
+          title: "composite materials",
+          type: "technology",
+        },
+        {
+          color: "#28a745",
+          domain: "Mobility",
+          id: "tech_lightweight_structures",
+          size: 8,
+          title: "lightweight structures",
+          type: "technology",
+        },
+        {
+          color: "#28a745",
+          domain: "Mobility",
+          id: "tech_manufacturing_processes",
+          size: 8,
+          title: "manufacturing processes",
+          type: "technology",
+        },
+        {
+          color: "#fd7e14",
+          domain: "Mobility",
+          id: "keyword_carbon_fiber",
+          size: 6,
+          title: "carbon fiber",
+          type: "keyword",
+        },
+        {
+          color: "#fd7e14",
+          domain: "Mobility",
+          id: "keyword_lightweight_materials",
+          size: 6,
+          title: "lightweight materials",
+          type: "keyword",
+        },
+        {
+          color: "#fd7e14",
+          domain: "Mobility",
+          id: "keyword_battery_protection",
+          size: 6,
+          title: "battery protection",
+          type: "keyword",
+        },
+        {
+          color: "#fd7e14",
+          domain: "Mobility",
+          id: "keyword_last-mile_logistics",
+          size: 6,
+          title: "last-mile logistics",
+          type: "keyword",
+        },
+        {
+          color: "#fd7e14",
+          domain: "Mobility",
+          id: "keyword_electric_delivery_vehicles",
+          size: 6,
+          title: "electric delivery vehicles",
+          type: "keyword",
+        },
+        {
+          color: "#fd7e14",
+          domain: "Mobility",
+          id: "keyword_life_cycle_assessment",
+          size: 6,
+          title: "life cycle assessment",
+          type: "keyword",
+        },
+        {
+          color: "#fd7e14",
+          domain: "Mobility",
+          id: "keyword_urban_freight",
+          size: 6,
+          title: "urban freight",
+          type: "keyword",
+        },
+        {
+          color: "#fd7e14",
+          domain: "Mobility",
+          id: "keyword_sustainability",
+          size: 6,
+          title: "sustainability",
+          type: "keyword",
+        },
+        {
+          color: "#fd7e14",
+          domain: "Mobility",
+          id: "keyword_autonomous_vehicles",
+          size: 6,
+          title: "autonomous vehicles",
+          type: "keyword",
+        },
+        {
+          color: "#fd7e14",
+          domain: "Mobility",
+          id: "keyword_safety_assessment",
+          size: 6,
+          title: "safety assessment",
+          type: "keyword",
+        },
+        {
+          color: "#fd7e14",
+          domain: "Mobility",
+          id: "keyword_validation",
+          size: 6,
+          title: "validation",
+          type: "keyword",
+        },
+        {
+          color: "#fd7e14",
+          domain: "Mobility",
+          id: "keyword_simulation",
+          size: 6,
+          title: "simulation",
+          type: "keyword",
+        },
+        {
+          color: "#fd7e14",
+          domain: "Mobility",
+          id: "keyword_physical_testing",
+          size: 6,
+          title: "physical testing",
+          type: "keyword",
+        },
+      ],
     },
-    "graph_insights": {
-      "central_technologies": {
-        "analysis": "Federated Learning emerges as the most central technology in this knowledge graph, appearing in multiple high-relevance research papers and patents across both AI and healthcare domains. This technology is experiencing significant growth due to its unique ability to address the fundamental tension between leveraging collective data intelligence and preserving privacy. Edge AI appears as a complementary technology, enabling distributed computation at the network edge and reinforcing the privacy-preserving paradigm. Together, these technologies form a privacy-centric computational framework particularly valuable in regulated domains like healthcare.",
-        "technologies": [
+    graph_insights: {
+      central_technologies: {
+        analysis:
+          "The central technologies identified in this knowledge graph are primarily focused on the mobility sector, specifically electric vehicles. Their centrality (0.1016) and degree (16) show that these technologies are highly interconnected and influential in the trending developments within this domain. They share common goals of enhancing electric vehicle efficiency and user experience through innovations in charging systems and materials. The presence of multiple patents demonstrates active research and significant investment in these technologies, indicating they are pivotal in shaping the future of mobility.",
+        technologies: [
           {
-            "analysis": "Federated Learning is the most connected technology in the knowledge graph, appearing in high-quality research from both AI specialists and healthcare researchers. Its centrality indicates its role as a bridge technology that connects privacy concerns with advanced AI applications.",
-            "impact": "High impact across regulated industries and sensitive data domains",
-            "title": "Federated Learning"
+            analysis:
+              "This technology is crucial as it allows for conductive charging while in motion, significantly reducing downtime for electric vehicles. It can foster widespread EV adoption by eliminating range anxiety and improving user convenience.",
+            impact:
+              "Potential impact includes transforming the landscape of charging infrastructure and vehicle design, leading to more efficient EV operations.",
+            title: "Dynamic Wireless Charging System for Electric Vehicles",
           },
           {
-            "analysis": "Edge AI shows strong connectivity to Federated Learning, creating a complementary technical framework that enables distributed computation while minimizing centralized data exposure.",
-            "impact": "Medium-high impact, particularly in IoT and mobile healthcare applications",
-            "title": "Edge AI"
+            analysis:
+              "Effective thermal management is essential for battery performance, lifespan, and safety. This technology enhances the overall operational stability of electric vehicles, making them safer and more reliable.",
+            impact:
+              "Could increase consumer confidence in EVs and reduce battery-related hazards.",
+            title: "Electric Vehicle Battery Thermal Management System",
           },
           {
-            "analysis": "Homomorphic Encryption appears as a specialized security technology that enables computation on encrypted data, further enhancing privacy preservation in medical applications.",
-            "impact": "Medium impact, primarily in high-security healthcare applications",
-            "title": "Homomorphic Encryption"
-          }
-        ]
+            analysis:
+              "This technology streamlines the charging process, especially in urban environments where parking space is limited. Its autonomous nature can significantly enhance user convenience.",
+            impact:
+              "May lead to the development of smart cities where electric vehicles interact seamlessly with charging infrastructure.",
+            title: "Robotic Autonomous Charging System for Electric Vehicles",
+          },
+          {
+            analysis:
+              "Integrating smart infrastructure is essential for the operation of connected and autonomous vehicles, facilitating better communication between vehicles and infrastructure.",
+            impact:
+              "This technology can reshape urban planning and traffic management, potentially reducing congestion and improving safety.",
+            title: "Smart Infrastructure for Connected and Autonomous Vehicles",
+          },
+          {
+            analysis:
+              "Utilizing lightweight materials is critical for increasing efficiency and range in electric vehicles. These materials contribute to improved performance while maintaining structural integrity.",
+            impact:
+              "Could revolutionize vehicle design, leading to lighter and more energy-efficient vehicles.",
+            title:
+              "Lightweight Composite Materials for Electric Vehicle Structures",
+          },
+        ],
       },
-      "cross_domain_connections": {
-        "analysis": "The knowledge graph reveals significant cross-domain connections between Artificial Intelligence and Healthcare, mediated primarily through privacy-preserving technologies. This intersection represents a high-value innovation space where AI capabilities are being adapted to the strict privacy and regulatory requirements of healthcare. The connections indicate a mature understanding of both domains, with technologies being specifically designed to address healthcare's unique constraints rather than simply applying generic AI solutions.",
-        "opportunities": [
+      cross_domain_connections: {
+        analysis:
+          "Currently, there are no identified cross-domain connections within the knowledge graph. However, the absence of these connections suggests an untapped potential for innovation at the intersection of mobility and other sectors such as energy, infrastructure, and consumer technology.",
+        opportunities: [
           {
-            "connection": "AI and Healthcare via Federated Learning",
-            "potential": "Development of privacy-preserving diagnostic systems that can learn from distributed medical data without compromising patient privacy or violating regulations like HIPAA and GDPR."
+            connection:
+              "Integration of Mobility Technologies with Renewable Energy Sources",
+            potential:
+              "Innovations could emerge from combining electric vehicle technologies with solar or wind energy solutions, providing sustainable charging options.",
           },
           {
-            "connection": "Security technologies adapted for Medical Imaging",
-            "potential": "Creation of secure medical image analysis frameworks that maintain diagnostic accuracy while enabling multi-institution collaboration without data sharing."
-          }
-        ]
+            connection: "Collaboration with Smart City Initiatives",
+            potential:
+              "Enhancing urban infrastructure to support EVs could lead to improved urban mobility and environmental sustainability.",
+          },
+          {
+            connection: "Development of AI-Driven Traffic Optimization Systems",
+            potential:
+              "Leveraging EV data to optimize traffic flow and reduce emissions could significantly enhance the performance of urban transport systems.",
+          },
+        ],
       },
-      "innovation_pathways": {
-        "analysis": "The knowledge graph indicates an emerging innovation pathway that begins with privacy-preserving AI research and progresses toward specialized healthcare applications. This pathway demonstrates how foundational AI technologies are being adapted to meet healthcare's specific needs through the integration of security technologies. The evolution shows increasing specialization and domain-specificity as technologies move from general AI research to healthcare implementation.",
-        "implications": [
+      innovation_pathways: {
+        analysis:
+          "The identified innovation pathways showcase how emerging technologies in electric vehicles are evolving through systemic interrelations. They represent a roadmap for integrated technological developments that could inform future research and applications.",
+        implications: [
           {
-            "implication": "Organizations investing in this space should combine AI expertise with healthcare domain knowledge and security/privacy specialization for maximum competitive advantage.",
-            "path": "Research → Privacy Technology → Healthcare Application"
+            implication:
+              "Understanding battery performance variability across different usage patterns can lead to tailored solutions that maximize battery lifespan and efficiency.",
+            path: "Dynamic Wireless Charging System for Electric Vehicles → Comprehensive Analysis of Electric Vehicle Battery Degradation Across Multiple Vehicle Models and Usage Patterns",
           },
           {
-            "implication": "Regulatory expertise becomes increasingly important as innovations move closer to clinical implementation, suggesting the need for multi-disciplinary teams.",
-            "path": "Privacy-Preserving Technology → Medical Imaging → Clinical Diagnostics"
-          }
-        ]
-      }
+            implication:
+              "This pathway signifies the importance of combining charging innovations with effective battery cooling solutions to enhance overall vehicle functionality.",
+            path: "Dynamic Wireless Charging System for Electric Vehicles → Electric Vehicle Battery Thermal Management System",
+          },
+          {
+            implication:
+              "Integration of these technologies could pave the way for fully autonomous efficient charging ecosystems, significantly changing the EV user experience.",
+            path: "Dynamic Wireless Charging System for Electric Vehicles → Robotic Autonomous Charging System for Electric Vehicles",
+          },
+          {
+            implication:
+              "This connection highlights the need for advanced infrastructure capable of supporting dynamic charging needs, which is critical for the future of transport systems.",
+            path: "Dynamic Wireless Charging System for Electric Vehicles → Smart Infrastructure for Connected and Autonomous Vehicles",
+          },
+          {
+            implication:
+              "Exploring alternative energy solutions in conjunction with electric mobility technologies could enhance the versatility and environmental footprint of transportation options.",
+            path: "Dynamic Wireless Charging System for Electric Vehicles → A Comprehensive Review of Hydrogen Fuel Cell Technologies for Heavy-Duty Transportation",
+          },
+        ],
+      },
     },
-    "original_scout_data": {
-      "data_from_source": [
+    original_scout_data: {
+      data_from_source: [
         {
-          "assignees": ["Research Institute of Technology"],
-          "authors": ["Dr. Sarah Johnson", "Dr. Michael Lee"],
-          "country": "United States",
-          "cpcs": ["G06N 20/00", "G06F 16/35"],
-          "data_quality_score": 0.85,
-          "domain": "Artificial Intelligence",
-          "id": "AI2023-12345",
-          "inventors": ["Dr. Sarah Johnson", "Dr. Michael Lee"],
-          "ipcs": ["G06N 20/00", "G06F 16/35"],
-          "keywords": ["federated learning", "privacy-preserving AI", "distributed training", "edge computing", "healthcare AI"],
-          "knowledge_type": "Research Paper",
-          "publication_date": "2023-08-15",
-          "publishers": ["Tech Science Journal"],
-          "related_titles": [
-            "Advances in Federated Learning for Healthcare Applications",
-            "Privacy-Preserving Machine Learning: A Survey",
-            "Edge Computing for Distributed AI Systems"
+          assignees: [],
+          authors: [
+            "Chang, Hyun-Joon",
+            "Oliveira, Paulo",
+            "Kramer, Sophia",
+            "Ahmed, Farid",
+            "Reynolds, Karen",
           ],
-          "similarity_score": 0.92,
-          "subdomains": ["Machine Learning", "Distributed Computing"],
-          "technologies": ["Federated Learning", "Edge AI", "Privacy-Preserving Machine Learning", "Neural Networks"],
-          "title": "Privacy-Preserving Federated Learning Framework for Healthcare Applications"
+          country: "United States",
+          cpcs: [],
+          data_quality_score: 0.89,
+          domain: "Mobility",
+          id: "journals_MB-JRN-006",
+          inventors: [],
+          ipcs: [],
+          keywords: [
+            "electric vehicles",
+            "vehicle-to-grid",
+            "V2G",
+            "fleet management",
+            "grid services",
+          ],
+          knowledge_type: "journal",
+          publication_date: "2023-02-20",
+          publishers: ["IEEE Transactions on Smart Grid"],
+          related_titles: [
+            "Electric Vehicle Battery Thermal Management System",
+            "Solid-State Battery with Silicon-Carbon Composite Anode",
+            "Dynamic Wireless Charging System for Electric Vehicles",
+            "Robotic Autonomous Charging System for Electric Vehicles",
+            "Comprehensive Analysis of Electric Vehicle Battery Degradation Across Multiple Vehicle Models and Usage Patterns",
+            "Quantifying Environmental Benefits of Electric Last-Mile Delivery: A Life Cycle Assessment",
+          ],
+          similarity_score: 0.7814297676086426,
+          subdomains: ["Electrification", "Energy Systems"],
+          summary_text: "No summary available",
+          technologies: [],
+          title:
+            "Secure and Efficient Vehicle-to-Grid Integration for Electric Vehicle Fleets",
         },
         {
-          "assignees": ["Medical AI Solutions Inc."],
-          "authors": ["Dr. Emily Roberts", "Dr. James Chen"],
-          "country": "Canada",
-          "cpcs": ["G16H 50/20", "G06N 20/00"],
-          "data_quality_score": 0.78,
-          "domain": "Healthcare",
-          "id": "HEALTH2023-54321",
-          "inventors": ["Dr. Emily Roberts", "Dr. James Chen", "Dr. Lisa Wong"],
-          "ipcs": ["G16H 50/20", "G06N 20/00"],
-          "keywords": ["medical imaging", "diagnostic AI", "healthcare privacy", "secure computation", "medical data"],
-          "knowledge_type": "Patent",
-          "publication_date": "2023-05-22",
-          "publishers": ["World Patent Office"],
-          "related_titles": [
-            "Secure Medical Image Analysis System",
-            "Privacy-Preserving AI for Electronic Health Records",
-            "Distributed Medical Diagnostics Platform"
+          assignees: ["ElectroRoad Systems"],
+          authors: [],
+          country: "United States",
+          cpcs: ["B60L53/12", "B60L53/30", "H02J50/12"],
+          data_quality_score: 0.9,
+          domain: "Mobility",
+          id: "patents_MB-PAT-009",
+          inventors: [
+            "Choi, Sung-Yul",
+            "Bennett, Rebecca",
+            "Lombardi, Francesco",
           ],
-          "similarity_score": 0.85,
-          "subdomains": ["Medical Imaging", "Diagnostics"],
-          "technologies": ["Secure Multi-party Computation", "Differential Privacy", "Medical Imaging AI", "Federated Learning"],
-          "title": "Secure and Privacy-Preserving Medical Image Analysis System"
-        }
-      ],
-      "insights": [
-        "Federated learning is emerging as a leading approach for privacy-preserving AI, particularly in healthcare where data sensitivity is paramount",
-        "The integration of edge computing with federated learning creates more efficient and scalable distributed AI systems",
-        "Privacy-preserving techniques like differential privacy and secure multi-party computation are becoming essential components of AI systems in regulated industries",
-        "Healthcare applications are driving significant innovation in privacy-preserving AI techniques",
-        "Organizations are actively patenting methods that combine privacy protection with high-performance AI for sensitive data"
-      ],
-      "isData": true,
-      "message": "Successfully generated insights.",
-      "notes": "The convergence of federated learning and healthcare represents a significant opportunity area. The technologies enable AI to learn from distributed medical data without compromising patient privacy, addressing one of the key barriers to AI adoption in healthcare. Organizations investing in this space are positioning themselves at the intersection of two major trends: increased emphasis on data privacy and the growing application of AI in healthcare diagnostics and treatment planning.",
-      "prompt": "federated learning healthcare applications",
-      "recommendations": [
-        "Consider investing in privacy-preserving AI techniques as they're becoming essential for working with sensitive data across industries",
-        "Explore partnerships with healthcare institutions to develop federated learning applications that respect patient data privacy while enabling advanced AI diagnostics",
-        "Monitor regulatory developments around AI and data privacy, as these will shape the adoption trajectory of federated learning technologies"
-      ],
-      "relevant_trends": [
-        {
-          "assignees": ["Research Institute of Technology"],
-          "authors": ["Dr. Sarah Johnson", "Dr. Michael Lee"],
-          "country": "United States",
-          "cpcs": ["G06N 20/00", "G06F 16/35"],
-          "data_quality_score": 0.85,
-          "domain": "Artificial Intelligence",
-          "id": "AI2023-12345",
-          "inventors": ["Dr. Sarah Johnson", "Dr. Michael Lee"],
-          "ipcs": ["G06N 20/00", "G06F 16/35"],
-          "keywords": ["federated learning", "privacy-preserving AI", "distributed training", "edge computing", "healthcare AI"],
-          "knowledge_type": "Research Paper",
-          "publication_date": "2023-08-15",
-          "publishers": ["Tech Science Journal"],
-          "related_titles": [
-            "Advances in Federated Learning for Healthcare Applications",
-            "Privacy-Preserving Machine Learning: A Survey",
-            "Edge Computing for Distributed AI Systems"
+          ipcs: ["B60L53/12", "B60L53/30", "H02J50/12"],
+          keywords: [
+            "electric vehicle",
+            "dynamic charging",
+            "wireless power transfer",
+            "charging infrastructure",
           ],
-          "similarity_score": 0.92,
-          "subdomains": ["Machine Learning", "Distributed Computing"],
-          "technologies": ["Federated Learning", "Edge AI", "Privacy-Preserving Machine Learning", "Neural Networks"],
-          "title": "Privacy-Preserving Federated Learning Framework for Healthcare Applications"
+          knowledge_type: "patent",
+          publication_date: "2021-05-20",
+          publishers: [],
+          related_titles: [
+            "Robotic Autonomous Charging System for Electric Vehicles",
+            "Electric Vehicle Battery Thermal Management System",
+            "Solid-State Battery with Silicon-Carbon Composite Anode",
+            "Lightweight Composite Materials for Electric Vehicle Structures",
+            "Comprehensive Analysis of Electric Vehicle Battery Degradation Across Multiple Vehicle Models and Usage Patterns",
+            "Secure and Efficient Vehicle-to-Grid Integration for Electric Vehicle Fleets",
+            "Quantifying Environmental Benefits of Electric Last-Mile Delivery: A Life Cycle Assessment",
+            "Smart Infrastructure for Connected and Autonomous Vehicles",
+            "Hyperloop Capsule Suspension and Propulsion System",
+            "Urban Air Mobility: Infrastructure Requirements and Operational Challenges",
+            "Hydrogen Fuel Cell System with Enhanced Power Density",
+          ],
+          similarity_score: 0.7524106502532959,
+          subdomains: ["Electrification", "Infrastructure"],
+          summary_text: "No summary available",
+          technologies: [
+            "electric vehicles",
+            "power electronics",
+            "wireless charging",
+          ],
+          title: "Dynamic Wireless Charging System for Electric Vehicles",
         },
         {
-          "assignees": ["Medical AI Solutions Inc."],
-          "authors": ["Dr. Emily Roberts", "Dr. James Chen"],
-          "country": "Canada",
-          "cpcs": ["G16H 50/20", "G06N 20/00"],
-          "data_quality_score": 0.78,
-          "domain": "Healthcare",
-          "id": "HEALTH2023-54321",
-          "inventors": ["Dr. Emily Roberts", "Dr. James Chen", "Dr. Lisa Wong"],
-          "ipcs": ["G16H 50/20", "G06N 20/00"],
-          "keywords": ["medical imaging", "diagnostic AI", "healthcare privacy", "secure computation", "medical data"],
-          "knowledge_type": "Patent",
-          "publication_date": "2023-05-22",
-          "publishers": ["World Patent Office"],
-          "related_titles": [
-            "Secure Medical Image Analysis System",
-            "Privacy-Preserving AI for Electronic Health Records",
-            "Distributed Medical Diagnostics Platform"
+          assignees: [],
+          authors: [
+            "Peterson, Sarah B.",
+            "Zhang, Tianqi",
+            "Garcia, Miguel",
+            "Johnson, Amanda",
+            "Kumar, Pradeep",
           ],
-          "similarity_score": 0.85,
-          "subdomains": ["Medical Imaging", "Diagnostics"],
-          "technologies": ["Secure Multi-party Computation", "Differential Privacy", "Medical Imaging AI", "Federated Learning"],
-          "title": "Secure and Privacy-Preserving Medical Image Analysis System"
+          country: "Netherlands",
+          cpcs: [],
+          data_quality_score: 0.93,
+          domain: "Mobility",
+          id: "journals_MB-JRN-001",
+          inventors: [],
+          ipcs: [],
+          keywords: [
+            "electric vehicles",
+            "battery degradation",
+            "lithium-ion",
+            "battery lifetime",
+            "usage patterns",
+          ],
+          knowledge_type: "journal",
+          publication_date: "2022-06-10",
+          publishers: ["Journal of Power Sources"],
+          related_titles: [
+            "Electric Vehicle Battery Thermal Management System",
+            "Solid-State Battery with Silicon-Carbon Composite Anode",
+            "Dynamic Wireless Charging System for Electric Vehicles",
+            "Robotic Autonomous Charging System for Electric Vehicles",
+            "Secure and Efficient Vehicle-to-Grid Integration for Electric Vehicle Fleets",
+            "Quantifying Environmental Benefits of Electric Last-Mile Delivery: A Life Cycle Assessment",
+          ],
+          similarity_score: 0.7515311241149902,
+          subdomains: ["Electrification", "Battery Technology"],
+          summary_text: "No summary available",
+          technologies: [],
+          title:
+            "Comprehensive Analysis of Electric Vehicle Battery Degradation Across Multiple Vehicle Models and Usage Patterns",
         },
         {
-          "assignees": ["DataSecure Technologies"],
-          "authors": ["Dr. Robert Chang", "Dr. Maria Garcia"],
-          "country": "Germany",
-          "cpcs": ["G06F 21/62", "G06N 20/00"],
-          "data_quality_score": 0.82,
-          "domain": "Data Security",
-          "id": "SECURITY2023-78901",
-          "inventors": ["Dr. Robert Chang", "Dr. Maria Garcia"],
-          "ipcs": ["G06F 21/62", "G06N 20/00"],
-          "keywords": ["privacy-enhancing technologies", "federated learning", "encrypted computation", "data anonymization", "GDPR compliance"],
-          "knowledge_type": "Patent",
-          "publication_date": "2023-02-10",
-          "publishers": ["European Patent Office"],
-          "related_titles": [
-            "GDPR-Compliant AI Training Framework",
-            "Anonymization Techniques for Machine Learning",
-            "Secure Multi-party Computing Systems"
+          assignees: ["EnergyTech Solutions"],
+          authors: [],
+          country: "United States",
+          cpcs: ["H01M10/60", "B60L58/26", "H01M10/6556"],
+          data_quality_score: 0.94,
+          domain: "Mobility",
+          id: "patents_MB-PAT-002",
+          inventors: ["Chen, Jian", "Patel, Nisha", "Schmidt, Erik"],
+          ipcs: ["H01M10/60", "B60L58/26", "H01M10/6556"],
+          keywords: [
+            "battery cooling",
+            "thermal management",
+            "electric vehicle",
+            "battery longevity",
           ],
-          "similarity_score": 0.79,
-          "subdomains": ["Privacy Technology", "Regulatory Compliance"],
-          "technologies": ["Homomorphic Encryption", "Federated Learning", "Data Anonymization", "Secure Enclaves"],
-          "title": "Privacy-Enhancing System for GDPR-Compliant AI Model Training"
-        }
+          knowledge_type: "patent",
+          publication_date: "2021-08-12",
+          publishers: [],
+          related_titles: [
+            "Dynamic Wireless Charging System for Electric Vehicles",
+            "Solid-State Battery with Silicon-Carbon Composite Anode",
+            "Lightweight Composite Materials for Electric Vehicle Structures",
+            "Robotic Autonomous Charging System for Electric Vehicles",
+            "Comprehensive Analysis of Electric Vehicle Battery Degradation Across Multiple Vehicle Models and Usage Patterns",
+            "Secure and Efficient Vehicle-to-Grid Integration for Electric Vehicle Fleets",
+            "Quantifying Environmental Benefits of Electric Last-Mile Delivery: A Life Cycle Assessment",
+            "Advanced LiDAR System for Autonomous Vehicle Navigation",
+            "Machine Learning System for Predictive Vehicle Maintenance",
+            "Adaptive Vehicle Crash Avoidance System",
+          ],
+          similarity_score: 0.7412984371185303,
+          subdomains: ["Automotive Technology", "Electrification"],
+          summary_text: "No summary available",
+          technologies: [
+            "battery technology",
+            "thermal management",
+            "electric vehicles",
+          ],
+          title: "Electric Vehicle Battery Thermal Management System",
+        },
+        {
+          assignees: ["AutoCharge Robotics"],
+          authors: [],
+          country: "United States",
+          cpcs: ["B60L53/30", "B25J9/1633", "G06V10/253"],
+          data_quality_score: 0.88,
+          domain: "Mobility",
+          id: "patents_MB-PAT-020",
+          inventors: ["Lindholm, Erik", "Gupta, Anjali", "Torres, Miguel"],
+          ipcs: ["B60L53/30", "B25J9/16", "G06V10/25"],
+          keywords: [
+            "electric vehicle",
+            "charging infrastructure",
+            "robotic charging",
+            "autonomous charging",
+          ],
+          knowledge_type: "patent",
+          publication_date: "2023-04-06",
+          publishers: [],
+          related_titles: [
+            "Dynamic Wireless Charging System for Electric Vehicles",
+            "Electric Vehicle Battery Thermal Management System",
+            "Solid-State Battery with Silicon-Carbon Composite Anode",
+            "Lightweight Composite Materials for Electric Vehicle Structures",
+            "Modular Autonomous Delivery Robot System",
+            "Comprehensive Analysis of Electric Vehicle Battery Degradation Across Multiple Vehicle Models and Usage Patterns",
+            "Secure and Efficient Vehicle-to-Grid Integration for Electric Vehicle Fleets",
+            "Quantifying Environmental Benefits of Electric Last-Mile Delivery: A Life Cycle Assessment",
+            "Autonomous Navigation in Unstructured Dynamic Environments: Challenges and Recent Advances",
+          ],
+          similarity_score: 0.737293004989624,
+          subdomains: ["Electrification", "Robotics"],
+          summary_text: "No summary available",
+          technologies: [
+            "computer vision",
+            "robotics",
+            "electric vehicle charging",
+          ],
+          title: "Robotic Autonomous Charging System for Electric Vehicles",
+        },
+        {
+          assignees: ["SmartRoad Technologies"],
+          authors: [],
+          country: "United States",
+          cpcs: ["G08G1/0104", "H04W4/44", "G08G1/166"],
+          data_quality_score: 0.89,
+          domain: "Mobility",
+          id: "patents_MB-PAT-012",
+          inventors: ["Zhang, Wei", "Thompson, Sarah", "Ochieng, Washington"],
+          ipcs: ["G08G1/01", "H04W4/44", "G08G1/16"],
+          keywords: [
+            "connected vehicles",
+            "V2I",
+            "smart infrastructure",
+            "cooperative perception",
+          ],
+          knowledge_type: "patent",
+          publication_date: "2022-07-28",
+          publishers: [],
+          related_titles: [
+            "V2X Communication System with Enhanced Security Protocol",
+            "Adaptive Vehicle Crash Avoidance System",
+            "Dynamic Wireless Charging System for Electric Vehicles",
+            "Hyperloop Capsule Suspension and Propulsion System",
+            "Urban Air Mobility: Infrastructure Requirements and Operational Challenges",
+          ],
+          similarity_score: 0.7172195911407471,
+          subdomains: ["Connected Vehicles", "Infrastructure"],
+          summary_text: "No summary available",
+          technologies: [
+            "connected infrastructure",
+            "V2I communication",
+            "edge computing",
+          ],
+          title: "Smart Infrastructure for Connected and Autonomous Vehicles",
+        },
+        {
+          assignees: [],
+          authors: [
+            "Wang, Jianlong",
+            "Singh, Rajveer",
+            "Müller, Kristina",
+            "Ibrahim, Omar",
+            "Davis, Peter",
+          ],
+          country: "United Kingdom",
+          cpcs: [],
+          data_quality_score: 0.92,
+          domain: "Mobility",
+          id: "journals_MB-JRN-004",
+          inventors: [],
+          ipcs: [],
+          keywords: [
+            "commercial vehicles",
+            "zero emission",
+            "hydrogen fuel cell",
+            "heavy-duty transportation",
+            "sustainable mobility",
+          ],
+          knowledge_type: "journal",
+          publication_date: "2021-06-15",
+          publishers: ["Progress in Energy and Combustion Science"],
+          related_titles: [
+            "Hydrogen Fuel Cell System with Enhanced Power Density",
+            "Adaptive Aerodynamic System for Commercial Vehicles",
+          ],
+          similarity_score: 0.7156195640563965,
+          subdomains: ["Alternative Powertrains", "Commercial Vehicles"],
+          summary_text: "No summary available",
+          technologies: [],
+          title:
+            "A Comprehensive Review of Hydrogen Fuel Cell Technologies for Heavy-Duty Transportation",
+        },
+        {
+          assignees: ["LightweightEV Materials"],
+          authors: [],
+          country: "United States",
+          cpcs: ["B29C70/086", "B60K1/04", "B60R16/04"],
+          data_quality_score: 0.9,
+          domain: "Mobility",
+          id: "patents_MB-PAT-013",
+          inventors: ["Wu, Hong", "Johannson, Lars", "Matthews, Catherine"],
+          ipcs: ["B29C70/08", "B60K1/04", "B60R16/04"],
+          keywords: [
+            "electric vehicle",
+            "carbon fiber",
+            "lightweight materials",
+            "battery protection",
+          ],
+          knowledge_type: "patent",
+          publication_date: "2021-12-09",
+          publishers: [],
+          related_titles: [
+            "Electric Vehicle Battery Thermal Management System",
+            "Solid-State Battery with Silicon-Carbon Composite Anode",
+            "Dynamic Wireless Charging System for Electric Vehicles",
+            "Robotic Autonomous Charging System for Electric Vehicles",
+          ],
+          similarity_score: 0.7146034240722656,
+          subdomains: ["Materials Technology", "Vehicle Structures"],
+          summary_text: "No summary available",
+          technologies: [
+            "composite materials",
+            "lightweight structures",
+            "manufacturing processes",
+          ],
+          title:
+            "Lightweight Composite Materials for Electric Vehicle Structures",
+        },
+        {
+          assignees: [],
+          authors: [
+            "Kaplan, Eleanor",
+            "Figliozzi, Miguel",
+            "Holguín-Veras, José",
+            "Zhang, Renshu",
+            "Baumgartner, Michael",
+          ],
+          country: "Netherlands",
+          cpcs: [],
+          data_quality_score: 0.91,
+          domain: "Mobility",
+          id: "journals_MB-JRN-008",
+          inventors: [],
+          ipcs: [],
+          keywords: [
+            "last-mile logistics",
+            "electric delivery vehicles",
+            "life cycle assessment",
+            "urban freight",
+            "sustainability",
+          ],
+          knowledge_type: "journal",
+          publication_date: "2022-12-08",
+          publishers: ["Journal of Cleaner Production"],
+          related_titles: [
+            "Electric Vehicle Battery Thermal Management System",
+            "Solid-State Battery with Silicon-Carbon Composite Anode",
+            "Dynamic Wireless Charging System for Electric Vehicles",
+            "Robotic Autonomous Charging System for Electric Vehicles",
+            "Comprehensive Analysis of Electric Vehicle Battery Degradation Across Multiple Vehicle Models and Usage Patterns",
+            "Secure and Efficient Vehicle-to-Grid Integration for Electric Vehicle Fleets",
+            "Modular Autonomous Delivery Robot System",
+          ],
+          similarity_score: 0.7045173645019531,
+          subdomains: ["Electrification", "Last-Mile Delivery"],
+          summary_text: "No summary available",
+          technologies: [],
+          title:
+            "Quantifying Environmental Benefits of Electric Last-Mile Delivery: A Life Cycle Assessment",
+        },
+        {
+          assignees: [],
+          authors: [
+            "Kim, Jiyong",
+            "Martínez, Carlos",
+            "Frazzoli, Emilio",
+            "Seshia, Sanjit A.",
+            "Tomizuka, Masayoshi",
+          ],
+          country: "United States",
+          cpcs: [],
+          data_quality_score: 0.94,
+          domain: "Mobility",
+          id: "journals_MB-JRN-002",
+          inventors: [],
+          ipcs: [],
+          keywords: [
+            "autonomous vehicles",
+            "safety assessment",
+            "validation",
+            "simulation",
+            "physical testing",
+          ],
+          knowledge_type: "journal",
+          publication_date: "2021-10-22",
+          publishers: [
+            "IEEE Transactions on Intelligent Transportation Systems",
+          ],
+          related_titles: [
+            "Adaptive Vehicle Crash Avoidance System",
+            "Advanced LiDAR System for Autonomous Vehicle Navigation",
+            "Modular Autonomous Delivery Robot System",
+            "Autonomous Navigation in Unstructured Dynamic Environments: Challenges and Recent Advances",
+          ],
+          similarity_score: 0.6963181495666504,
+          subdomains: ["Autonomous Systems", "Vehicle Safety"],
+          summary_text: "No summary available",
+          technologies: [],
+          title:
+            "Safety Assessment Framework for Autonomous Vehicles: Combining Virtual and Physical Testing",
+        },
       ],
-      "response_to_user_prompt": "Federated learning is rapidly emerging as a critical technology for healthcare applications, addressing the fundamental tension between leveraging AI for medical advancements and protecting sensitive patient data. The search results reveal significant research and patenting activity in this space, with major innovations focused on privacy-preserving federated learning frameworks specifically designed for healthcare contexts. Key applications include medical imaging analysis, diagnostic support systems, and electronic health record analysis—all leveraging federated learning to enable AI training across distributed datasets without centralizing sensitive patient information. Organizations working in this field are developing sophisticated approaches that combine federated learning with complementary privacy technologies like differential privacy, secure multi-party computation, and homomorphic encryption to create comprehensive privacy-preserving AI systems. This trend is likely to accelerate as healthcare regulations around data privacy continue to tighten globally, while simultaneously the demand for advanced AI applications in medicine grows.",
-      "source": "neo4j",
-      "trend_summary": "The retrieved data highlights significant research and development activity in privacy-preserving federated learning for healthcare applications. Major contributions include frameworks for medical image analysis, secure model training systems, and GDPR-compliant approaches. Leading organizations in both academia and industry are actively developing these technologies, with a particular focus on combining federated learning with techniques like differential privacy, homomorphic encryption, and secure multi-party computation. There's a notable trend toward edge-based implementations that can operate within existing healthcare IT infrastructures."
+      insights: [
+        "Current trends show a significant focus on electric vehicle (EV) integration with energy systems, specifically through vehicle-to-grid (V2G) technologies, which enhance energy efficiency and fleet management capabilities.",
+        "The development of dynamic wireless charging systems and autonomous robotic charging mechanisms indicates a shift toward more flexible and efficient charging infrastructure, making electric vehicles more accessible and user-friendly.",
+        "Research indicates that battery technology is critical for the longevity and performance of electric vehicles, with innovations in thermal management systems playing a crucial role in extending battery life.",
+        "The rise of connected vehicles necessitates smart infrastructure solutions that enable vehicle-to-infrastructure (V2I) communication, which enhances safety and operational efficiency for autonomous vehicles.",
+        "There's a growing interest in sustainable transportation options beyond electric vehicles, such as hydrogen fuel cells, highlighting the importance of cross-domain innovation in the mobility sector.",
+      ],
+      isData: true,
+      message: "Successfully generated insights.",
+      notes:
+        "The mobility sector is undergoing a transformative phase with electric vehicles at the forefront. Current trends highlight innovations in integrating EVs with energy systems like vehicle-to-grid technology, enhancing both the efficiency of energy usage and fleet management. Furthermore, advancements in wireless and robotic charging systems signal a move towards a more user-friendly charging infrastructure. Critical research into battery technology, particularly concerning thermal management systems, has emerged as essential for extending battery life and performance. The cross-saving implications of connected vehicles necessitate the need for smart infrastructure that enables effective V2I communication, particularly as autonomous vehicle technologies continue to evolve. Additionally, exploring alternative power sources such as hydrogen fuel cells reflects an encouraging trend towards sustainability in transportation. In light of these insights, strategies must focus on fostering partnerships for renewable energy integration, investing in smart infrastructure, and advancing material technology for electric vehicles to create a sustainable and efficient mobility ecosystem.",
+      prompt: "electric vehicle and its cross domains",
+      recommendations: [
+        "Invest in research and partnerships focused on integrating electric vehicles with renewable energy sources through advanced V2G systems to enhance grid stability and sustainability.",
+        "Promote the development of smart infrastructure that accommodates both electric and autonomous vehicles, ensuring that transportation systems can adapt to future technological advancements.",
+        "Encourage collaboration between automotive companies and material science industries to innovate lightweight materials that enhance vehicle efficiency without compromising safety.",
+      ],
+      relevant_trends: [
+        {
+          assignees: [],
+          authors: [
+            "Chang, Hyun-Joon",
+            "Oliveira, Paulo",
+            "Kramer, Sophia",
+            "Ahmed, Farid",
+            "Reynolds, Karen",
+          ],
+          country: "United States",
+          cpcs: [],
+          data_quality_score: 0.89,
+          domain: "Mobility",
+          id: "journals_MB-JRN-006",
+          inventors: [],
+          ipcs: [],
+          keywords: [
+            "electric vehicles",
+            "vehicle-to-grid",
+            "V2G",
+            "fleet management",
+            "grid services",
+          ],
+          knowledge_type: "journal",
+          publication_date: "2023-02-20",
+          publishers: ["IEEE Transactions on Smart Grid"],
+          related_titles: [
+            "Electric Vehicle Battery Thermal Management System",
+            "Solid-State Battery with Silicon-Carbon Composite Anode",
+            "Dynamic Wireless Charging System for Electric Vehicles",
+            "Robotic Autonomous Charging System for Electric Vehicles",
+            "Comprehensive Analysis of Electric Vehicle Battery Degradation Across Multiple Vehicle Models and Usage Patterns",
+            "Quantifying Environmental Benefits of Electric Last-Mile Delivery: A Life Cycle Assessment",
+          ],
+          similarity_score: 0.7814,
+          subdomains: ["Electrification", "Energy Systems"],
+          summary_text: "No summary available",
+          technologies: [],
+          title:
+            "Secure and Efficient Vehicle-to-Grid Integration for Electric Vehicle Fleets",
+        },
+        {
+          assignees: ["ElectroRoad Systems"],
+          authors: [],
+          country: "United States",
+          cpcs: ["B60L53/12", "B60L53/30", "H02J50/12"],
+          data_quality_score: 0.9,
+          domain: "Mobility",
+          id: "patents_MB-PAT-009",
+          inventors: [
+            "Choi, Sung-Yul",
+            "Bennett, Rebecca",
+            "Lombardi, Francesco",
+          ],
+          ipcs: ["B60L53/12", "B60L53/30", "H02J50/12"],
+          keywords: [
+            "electric vehicle",
+            "dynamic charging",
+            "wireless power transfer",
+            "charging infrastructure",
+          ],
+          knowledge_type: "patent",
+          publication_date: "2021-05-20",
+          publishers: [],
+          related_titles: [
+            "Robotic Autonomous Charging System for Electric Vehicles",
+            "Electric Vehicle Battery Thermal Management System",
+            "Solid-State Battery with Silicon-Carbon Composite Anode",
+            "Lightweight Composite Materials for Electric Vehicle Structures",
+            "Comprehensive Analysis of Electric Vehicle Battery Degradation Across Multiple Vehicle Models and Usage Patterns",
+            "Secure and Efficient Vehicle-to-Grid Integration for Electric Vehicle Fleets",
+            "Quantifying Environmental Benefits of Electric Last-Mile Delivery: A Life Cycle Assessment",
+            "Smart Infrastructure for Connected and Autonomous Vehicles",
+            "Hyperloop Capsule Suspension and Propulsion System",
+            "Urban Air Mobility: Infrastructure Requirements and Operational Challenges",
+            "Hydrogen Fuel Cell System with Enhanced Power Density",
+          ],
+          similarity_score: 0.7524,
+          subdomains: ["Electrification", "Infrastructure"],
+          summary_text: "No summary available",
+          technologies: [
+            "electric vehicles",
+            "power electronics",
+            "wireless charging",
+          ],
+          title: "Dynamic Wireless Charging System for Electric Vehicles",
+        },
+        {
+          assignees: [],
+          authors: [
+            "Peterson, Sarah B.",
+            "Zhang, Tianqi",
+            "Garcia, Miguel",
+            "Johnson, Amanda",
+            "Kumar, Pradeep",
+          ],
+          country: "Netherlands",
+          cpcs: [],
+          data_quality_score: 0.93,
+          domain: "Mobility",
+          id: "journals_MB-JRN-001",
+          inventors: [],
+          ipcs: [],
+          keywords: [
+            "electric vehicles",
+            "battery degradation",
+            "lithium-ion",
+            "battery lifetime",
+            "usage patterns",
+          ],
+          knowledge_type: "journal",
+          publication_date: "2022-06-10",
+          publishers: ["Journal of Power Sources"],
+          related_titles: [
+            "Electric Vehicle Battery Thermal Management System",
+            "Solid-State Battery with Silicon-Carbon Composite Anode",
+            "Dynamic Wireless Charging System for Electric Vehicles",
+            "Robotic Autonomous Charging System for Electric Vehicles",
+            "Secure and Efficient Vehicle-to-Grid Integration for Electric Vehicle Fleets",
+            "Quantifying Environmental Benefits of Electric Last-Mile Delivery: A Life Cycle Assessment",
+          ],
+          similarity_score: 0.7515,
+          subdomains: ["Electrification", "Battery Technology"],
+          summary_text: "No summary available",
+          technologies: [],
+          title:
+            "Comprehensive Analysis of Electric Vehicle Battery Degradation Across Multiple Vehicle Models and Usage Patterns",
+        },
+        {
+          assignees: ["EnergyTech Solutions"],
+          authors: [],
+          country: "United States",
+          cpcs: ["H01M10/60", "B60L58/26", "H01M10/6556"],
+          data_quality_score: 0.94,
+          domain: "Mobility",
+          id: "patents_MB-PAT-002",
+          inventors: ["Chen, Jian", "Patel, Nisha", "Schmidt, Erik"],
+          ipcs: ["H01M10/60", "B60L58/26", "H01M10/6556"],
+          keywords: [
+            "battery cooling",
+            "thermal management",
+            "electric vehicle",
+            "battery longevity",
+          ],
+          knowledge_type: "patent",
+          publication_date: "2021-08-12",
+          publishers: [],
+          related_titles: [
+            "Dynamic Wireless Charging System for Electric Vehicles",
+            "Solid-State Battery with Silicon-Carbon Composite Anode",
+            "Lightweight Composite Materials for Electric Vehicle Structures",
+            "Robotic Autonomous Charging System for Electric Vehicles",
+            "Comprehensive Analysis of Electric Vehicle Battery Degradation Across Multiple Vehicle Models and Usage Patterns",
+            "Secure and Efficient Vehicle-to-Grid Integration for Electric Vehicle Fleets",
+            "Quantifying Environmental Benefits of Electric Last-Mile Delivery: A Life Cycle Assessment",
+            "Advanced LiDAR System for Autonomous Vehicle Navigation",
+            "Machine Learning System for Predictive Vehicle Maintenance",
+            "Adaptive Vehicle Crash Avoidance System",
+          ],
+          similarity_score: 0.7413,
+          subdomains: ["Automotive Technology", "Electrification"],
+          summary_text: "No summary available",
+          technologies: [
+            "battery technology",
+            "thermal management",
+            "electric vehicles",
+          ],
+          title: "Electric Vehicle Battery Thermal Management System",
+        },
+        {
+          assignees: ["AutoCharge Robotics"],
+          authors: [],
+          country: "United States",
+          cpcs: ["B60L53/30", "B25J9/1633", "G06V10/253"],
+          data_quality_score: 0.88,
+          domain: "Mobility",
+          id: "patents_MB-PAT-020",
+          inventors: ["Lindholm, Erik", "Gupta, Anjali", "Torres, Miguel"],
+          ipcs: ["B60L53/30", "B25J9/16", "G06V10/25"],
+          keywords: [
+            "electric vehicle",
+            "charging infrastructure",
+            "robotic charging",
+            "autonomous charging",
+          ],
+          knowledge_type: "patent",
+          publication_date: "2023-04-06",
+          publishers: [],
+          related_titles: [
+            "Dynamic Wireless Charging System for Electric Vehicles",
+            "Electric Vehicle Battery Thermal Management System",
+            "Solid-State Battery with Silicon-Carbon Composite Anode",
+            "Lightweight Composite Materials for Electric Vehicle Structures",
+            "Modular Autonomous Delivery Robot System",
+            "Comprehensive Analysis of Electric Vehicle Battery Degradation Across Multiple Vehicle Models and Usage Patterns",
+            "Secure and Efficient Vehicle-to-Grid Integration for Electric Vehicle Fleets",
+            "Quantifying Environmental Benefits of Electric Last-Mile Delivery: A Life Cycle Assessment",
+            "Autonomous Navigation in Unstructured Dynamic Environments: Challenges and Recent Advances",
+          ],
+          similarity_score: 0.7373,
+          subdomains: ["Electrification", "Robotics"],
+          summary_text: "No summary available",
+          technologies: [
+            "computer vision",
+            "robotics",
+            "electric vehicle charging",
+          ],
+          title: "Robotic Autonomous Charging System for Electric Vehicles",
+        },
+        {
+          assignees: ["SmartRoad Technologies"],
+          authors: [],
+          country: "United States",
+          cpcs: ["G08G1/0104", "H04W4/44", "G08G1/166"],
+          data_quality_score: 0.89,
+          domain: "Mobility",
+          id: "patents_MB-PAT-012",
+          inventors: ["Zhang, Wei", "Thompson, Sarah", "Ochieng, Washington"],
+          ipcs: ["G08G1/01", "H04W4/44", "G08G1/16"],
+          keywords: [
+            "connected vehicles",
+            "V2I",
+            "smart infrastructure",
+            "cooperative perception",
+          ],
+          knowledge_type: "patent",
+          publication_date: "2022-07-28",
+          publishers: [],
+          related_titles: [
+            "V2X Communication System with Enhanced Security Protocol",
+            "Adaptive Vehicle Crash Avoidance System",
+            "Dynamic Wireless Charging System for Electric Vehicles",
+            "Hyperloop Capsule Suspension and Propulsion System",
+            "Urban Air Mobility: Infrastructure Requirements and Operational Challenges",
+          ],
+          similarity_score: 0.7172,
+          subdomains: ["Connected Vehicles", "Infrastructure"],
+          summary_text: "No summary available",
+          technologies: [
+            "connected infrastructure",
+            "V2I communication",
+            "edge computing",
+          ],
+          title: "Smart Infrastructure for Connected and Autonomous Vehicles",
+        },
+        {
+          assignees: [],
+          authors: [
+            "Wang, Jianlong",
+            "Singh, Rajveer",
+            "Müller, Kristina",
+            "Ibrahim, Omar",
+            "Davis, Peter",
+          ],
+          country: "United Kingdom",
+          cpcs: [],
+          data_quality_score: 0.92,
+          domain: "Mobility",
+          id: "journals_MB-JRN-004",
+          inventors: [],
+          ipcs: [],
+          keywords: [
+            "commercial vehicles",
+            "zero emission",
+            "hydrogen fuel cell",
+            "heavy-duty transportation",
+            "sustainable mobility",
+          ],
+          knowledge_type: "journal",
+          publication_date: "2021-06-15",
+          publishers: ["Progress in Energy and Combustion Science"],
+          related_titles: [
+            "Hydrogen Fuel Cell System with Enhanced Power Density",
+            "Adaptive Aerodynamic System for Commercial Vehicles",
+          ],
+          similarity_score: 0.7156,
+          subdomains: ["Alternative Powertrains", "Commercial Vehicles"],
+          summary_text: "No summary available",
+          technologies: [],
+          title:
+            "A Comprehensive Review of Hydrogen Fuel Cell Technologies for Heavy-Duty Transportation",
+        },
+        {
+          assignees: ["LightweightEV Materials"],
+          authors: [],
+          country: "United States",
+          cpcs: ["B29C70/086", "B60K1/04", "B60R16/04"],
+          data_quality_score: 0.9,
+          domain: "Mobility",
+          id: "patents_MB-PAT-013",
+          inventors: ["Wu, Hong", "Johannson, Lars", "Matthews, Catherine"],
+          ipcs: ["B29C70/08", "B60K1/04", "B60R16/04"],
+          keywords: [
+            "electric vehicle",
+            "carbon fiber",
+            "lightweight materials",
+            "battery protection",
+          ],
+          knowledge_type: "patent",
+          publication_date: "2021-12-09",
+          publishers: [],
+          related_titles: [
+            "Electric Vehicle Battery Thermal Management System",
+            "Solid-State Battery with Silicon-Carbon Composite Anode",
+            "Dynamic Wireless Charging System for Electric Vehicles",
+            "Robotic Autonomous Charging System for Electric Vehicles",
+          ],
+          similarity_score: 0.7146,
+          subdomains: ["Materials Technology", "Vehicle Structures"],
+          summary_text: "No summary available",
+          technologies: [
+            "composite materials",
+            "lightweight structures",
+            "manufacturing processes",
+          ],
+          title:
+            "Lightweight Composite Materials for Electric Vehicle Structures",
+        },
+        {
+          assignees: [],
+          authors: [
+            "Kaplan, Eleanor",
+            "Figliozzi, Miguel",
+            "Holguín-Veras, José",
+            "Zhang, Renshu",
+            "Baumgartner, Michael",
+          ],
+          country: "Netherlands",
+          cpcs: [],
+          data_quality_score: 0.91,
+          domain: "Mobility",
+          id: "journals_MB-JRN-008",
+          inventors: [],
+          ipcs: [],
+          keywords: [
+            "last-mile logistics",
+            "electric delivery vehicles",
+            "life cycle assessment",
+            "urban freight",
+            "sustainability",
+          ],
+          knowledge_type: "journal",
+          publication_date: "2022-12-08",
+          publishers: ["Journal of Cleaner Production"],
+          related_titles: [
+            "Electric Vehicle Battery Thermal Management System",
+            "Solid-State Battery with Silicon-Carbon Composite Anode",
+            "Dynamic Wireless Charging System for Electric Vehicles",
+            "Robotic Autonomous Charging System for Electric Vehicles",
+            "Comprehensive Analysis of Electric Vehicle Battery Degradation Across Multiple Vehicle Models and Usage Patterns",
+            "Secure and Efficient Vehicle-to-Grid Integration for Electric Vehicle Fleets",
+            "Modular Autonomous Delivery Robot System",
+          ],
+          similarity_score: 0.7045,
+          subdomains: ["Electrification", "Last-Mile Delivery"],
+          summary_text: "No summary available",
+          technologies: [],
+          title:
+            "Quantifying Environmental Benefits of Electric Last-Mile Delivery: A Life Cycle Assessment",
+        },
+        {
+          assignees: [],
+          authors: [
+            "Kim, Jiyong",
+            "Martínez, Carlos",
+            "Frazzoli, Emilio",
+            "Seshia, Sanjit A.",
+            "Tomizuka, Masayoshi",
+          ],
+          country: "United States",
+          cpcs: [],
+          data_quality_score: 0.94,
+          domain: "Mobility",
+          id: "journals_MB-JRN-002",
+          inventors: [],
+          ipcs: [],
+          keywords: [
+            "autonomous vehicles",
+            "safety assessment",
+            "validation",
+            "simulation",
+            "physical testing",
+          ],
+          knowledge_type: "journal",
+          publication_date: "2021-10-22",
+          publishers: [
+            "IEEE Transactions on Intelligent Transportation Systems",
+          ],
+          related_titles: [
+            "Adaptive Vehicle Crash Avoidance System",
+            "Advanced LiDAR System for Autonomous Vehicle Navigation",
+            "Modular Autonomous Delivery Robot System",
+            "Autonomous Navigation in Unstructured Dynamic Environments: Challenges and Recent Advances",
+          ],
+          similarity_score: 0.6963,
+          subdomains: ["Autonomous Systems", "Vehicle Safety"],
+          summary_text: "No summary available",
+          technologies: [],
+          title:
+            "Safety Assessment Framework for Autonomous Vehicles: Combining Virtual and Physical Testing",
+        },
+      ],
+      response_to_user_prompt:
+        "The current trend highlights significant advancements in electric vehicle integration with energy systems via vehicle-to-grid technologies, innovative charging infrastructures, and the importance of battery longevity. Strategies should focus on improving V2G systems, developing smart infrastructures for autonomous vehicles, and advancing lightweight materials to enhance efficiency.",
+      source: "neo4j",
+      timestamp: 1745227760,
+      trend_summary:
+        "- ID: journals_MB-JRN-006 | Title: Secure and Efficient Vehicle-to-Grid Integration for Electric Vehicle Fleets | Domain: Mobility | Knowledge Type: journal | Publication Date: 2023-02-20 | Quality Score: 0.89 | Country: United States | Score: 0.7814\n  Subdomains: Electrification, Energy Systems\n  Keywords: electric vehicles, vehicle-to-grid, V2G, fleet management, grid services\n- ID: patents_MB-PAT-009 | Title: Dynamic Wireless Charging System for Electric Vehicles | Domain: Mobility | Knowledge Type: patent | Publication Date: 2021-05-20 | Quality Score: 0.9 | Country: United States | Score: 0.7524\n  Assignees: ElectroRoad Systems\n  Inventors: Choi, Sung-Yul, Bennett, Rebecca, Lombardi, Francesco\n  Technologies: electric vehicles, power electronics, wireless charging\n  Subdomains: Electrification, Infrastructure\n  Keywords: electric vehicle, dynamic charging, wireless power transfer, charging infrastructure\n- ID: journals_MB-JRN-001 | Title: Comprehensive Analysis of Electric Vehicle Battery Degradation Across Multiple Vehicle Models and Usage Patterns | Domain: Mobility | Knowledge Type: journal | Publication Date: 2022-06-10 | Quality Score: 0.93 | Country: Netherlands | Score: 0.7515\n  Subdomains: Electrification, Battery Technology\n  Keywords: electric vehicles, battery degradation, lithium-ion, battery lifetime, usage patterns\n- ID: patents_MB-PAT-002 | Title: Electric Vehicle Battery Thermal Management System | Domain: Mobility | Knowledge Type: patent | Publication Date: 2021-08-12 | Quality Score: 0.94 | Country: United States | Score: 0.7413\n  Assignees: EnergyTech Solutions\n  Inventors: Chen, Jian, Patel, Nisha, Schmidt, Erik\n  Technologies: battery technology, thermal management, electric vehicles\n  Subdomains: Automotive Technology, Electrification\n  Keywords: battery cooling, thermal management, electric vehicle, battery longevity\n- ID: patents_MB-PAT-020 | Title: Robotic Autonomous Charging System for Electric Vehicles | Domain: Mobility | Knowledge Type: patent | Publication Date: 2023-04-06 | Quality Score: 0.88 | Country: United States | Score: 0.7373\n  Assignees: AutoCharge Robotics\n  Inventors: Lindholm, Erik, Gupta, Anjali, Torres, Miguel\n  Technologies: computer vision, robotics, electric vehicle charging\n  Subdomains: Electrification, Robotics\n  Keywords: electric vehicle, charging infrastructure, robotic charging, autonomous charging\n",
     },
-    "s_curve_data": {
-      "domains": ["Artificial Intelligence", "Healthcare", "Data Security"],
-      "max_year": 2023,
-      "min_year": 2019,
-      "technologies": [
+    prompt: "electric vehicle and its cross domains",
+    s_curve_data: {
+      domains: ["Mobility"],
+      max_year: 2023,
+      min_year: 2021,
+      technologies: [
         {
-          "data": [
+          data: [
             {
-              "count": 3,
-              "cumulative": 3,
-              "year": 2019
+              count: 2,
+              cumulative: 2,
+              year: 2021,
             },
             {
-              "count": 5,
-              "cumulative": 8,
-              "year": 2020
+              count: 0,
+              cumulative: 2,
+              year: 2022,
             },
             {
-              "count": 12,
-              "cumulative": 20,
-              "year": 2021
+              count: 0,
+              cumulative: 2,
+              year: 2023,
             },
-            {
-              "count": 23,
-              "cumulative": 43,
-              "year": 2022
-            },
-            {
-              "count": 42,
-              "cumulative": 85,
-              "year": 2023
-            }
           ],
-          "domains": ["Artificial Intelligence", "Healthcare", "Data Security"],
-          "growth_data": [
+          domains: ["Mobility"],
+          growth_data: [
             {
-              "growth": 1.67,
-              "year": 2020
+              growth: 0,
+              year: 2022,
             },
             {
-              "growth": 1.5,
-              "year": 2021
+              growth: 0,
+              year: 2023,
             },
-            {
-              "growth": 1.15,
-              "year": 2022
-            },
-            {
-              "growth": 0.98,
-              "year": 2023
-            }
           ],
-          "stage": "growth",
-          "technology": "Federated Learning",
-          "total_mentions": 85
+          stage: "saturation",
+          technology: "electric vehicles",
+          total_mentions: 2,
         },
         {
-          "data": [
+          data: [
             {
-              "count": 1,
-              "cumulative": 1,
-              "year": 2019
+              count: 1,
+              cumulative: 1,
+              year: 2021,
             },
             {
-              "count": 4,
-              "cumulative": 5,
-              "year": 2020
+              count: 0,
+              cumulative: 1,
+              year: 2022,
             },
             {
-              "count": 7,
-              "cumulative": 12,
-              "year": 2021
+              count: 0,
+              cumulative: 1,
+              year: 2023,
             },
-            {
-              "count": 15,
-              "cumulative": 27,
-              "year": 2022
-            },
-            {
-              "count": 28,
-              "cumulative": 55,
-              "year": 2023
-            }
           ],
-          "domains": ["Artificial Intelligence", "Healthcare"],
-          "growth_data": [
+          domains: ["Mobility"],
+          growth_data: [
             {
-              "growth": 4.0,
-              "year": 2020
+              growth: 0,
+              year: 2022,
             },
             {
-              "growth": 1.4,
-              "year": 2021
+              growth: 0,
+              year: 2023,
             },
-            {
-              "growth": 1.25,
-              "year": 2022
-            },
-            {
-              "growth": 1.04,
-              "year": 2023
-            }
           ],
-          "stage": "growth",
-          "technology": "Edge AI",
-          "total_mentions": 55
+          stage: "saturation",
+          technology: "power electronics",
+          total_mentions: 1,
         },
         {
-          "data": [
+          data: [
             {
-              "count": 2,
-              "cumulative": 2,
-              "year": 2019
+              count: 1,
+              cumulative: 1,
+              year: 2021,
             },
             {
-              "count": 3,
-              "cumulative": 5,
-              "year": 2020
+              count: 0,
+              cumulative: 1,
+              year: 2022,
             },
             {
-              "count": 6,
-              "cumulative": 11,
-              "year": 2021
+              count: 0,
+              cumulative: 1,
+              year: 2023,
             },
-            {
-              "count": 10,
-              "cumulative": 21,
-              "year": 2022
-            },
-            {
-              "count": 18,
-              "cumulative": 39,
-              "year": 2023
-            }
           ],
-          "domains": ["Data Security", "Healthcare"],
-          "growth_data": [
+          domains: ["Mobility"],
+          growth_data: [
             {
-              "growth": 1.5,
-              "year": 2020
+              growth: 0,
+              year: 2022,
             },
             {
-              "growth": 1.2,
-              "year": 2021
+              growth: 0,
+              year: 2023,
             },
-            {
-              "growth": 0.91,
-              "year": 2022
-            },
-            {
-              "growth": 0.86,
-              "year": 2023
-            }
           ],
-          "stage": "maturity",
-          "technology": "Homomorphic Encryption",
-          "total_mentions": 39
-        }
+          stage: "saturation",
+          technology: "wireless charging",
+          total_mentions: 1,
+        },
+        {
+          data: [
+            {
+              count: 1,
+              cumulative: 1,
+              year: 2021,
+            },
+            {
+              count: 0,
+              cumulative: 1,
+              year: 2022,
+            },
+            {
+              count: 0,
+              cumulative: 1,
+              year: 2023,
+            },
+          ],
+          domains: ["Mobility"],
+          growth_data: [
+            {
+              growth: 0,
+              year: 2022,
+            },
+            {
+              growth: 0,
+              year: 2023,
+            },
+          ],
+          stage: "saturation",
+          technology: "battery technology",
+          total_mentions: 1,
+        },
+        {
+          data: [
+            {
+              count: 1,
+              cumulative: 1,
+              year: 2021,
+            },
+            {
+              count: 0,
+              cumulative: 1,
+              year: 2022,
+            },
+            {
+              count: 0,
+              cumulative: 1,
+              year: 2023,
+            },
+          ],
+          domains: ["Mobility"],
+          growth_data: [
+            {
+              growth: 0,
+              year: 2022,
+            },
+            {
+              growth: 0,
+              year: 2023,
+            },
+          ],
+          stage: "saturation",
+          technology: "thermal management",
+          total_mentions: 1,
+        },
+        {
+          data: [
+            {
+              count: 0,
+              cumulative: 0,
+              year: 2021,
+            },
+            {
+              count: 0,
+              cumulative: 0,
+              year: 2022,
+            },
+            {
+              count: 1,
+              cumulative: 1,
+              year: 2023,
+            },
+          ],
+          domains: ["Mobility"],
+          growth_data: [
+            {
+              growth: 0,
+              year: 2022,
+            },
+            {
+              growth: 0,
+              year: 2023,
+            },
+          ],
+          stage: "saturation",
+          technology: "computer vision",
+          total_mentions: 1,
+        },
+        {
+          data: [
+            {
+              count: 0,
+              cumulative: 0,
+              year: 2021,
+            },
+            {
+              count: 0,
+              cumulative: 0,
+              year: 2022,
+            },
+            {
+              count: 1,
+              cumulative: 1,
+              year: 2023,
+            },
+          ],
+          domains: ["Mobility"],
+          growth_data: [
+            {
+              growth: 0,
+              year: 2022,
+            },
+            {
+              growth: 0,
+              year: 2023,
+            },
+          ],
+          stage: "saturation",
+          technology: "robotics",
+          total_mentions: 1,
+        },
+        {
+          data: [
+            {
+              count: 0,
+              cumulative: 0,
+              year: 2021,
+            },
+            {
+              count: 0,
+              cumulative: 0,
+              year: 2022,
+            },
+            {
+              count: 1,
+              cumulative: 1,
+              year: 2023,
+            },
+          ],
+          domains: ["Mobility"],
+          growth_data: [
+            {
+              growth: 0,
+              year: 2022,
+            },
+            {
+              growth: 0,
+              year: 2023,
+            },
+          ],
+          stage: "saturation",
+          technology: "electric vehicle charging",
+          total_mentions: 1,
+        },
+        {
+          data: [
+            {
+              count: 0,
+              cumulative: 0,
+              year: 2021,
+            },
+            {
+              count: 1,
+              cumulative: 1,
+              year: 2022,
+            },
+            {
+              count: 0,
+              cumulative: 1,
+              year: 2023,
+            },
+          ],
+          domains: ["Mobility"],
+          growth_data: [
+            {
+              growth: 0,
+              year: 2022,
+            },
+            {
+              growth: 0,
+              year: 2023,
+            },
+          ],
+          stage: "saturation",
+          technology: "connected infrastructure",
+          total_mentions: 1,
+        },
+        {
+          data: [
+            {
+              count: 0,
+              cumulative: 0,
+              year: 2021,
+            },
+            {
+              count: 1,
+              cumulative: 1,
+              year: 2022,
+            },
+            {
+              count: 0,
+              cumulative: 1,
+              year: 2023,
+            },
+          ],
+          domains: ["Mobility"],
+          growth_data: [
+            {
+              growth: 0,
+              year: 2022,
+            },
+            {
+              growth: 0,
+              year: 2023,
+            },
+          ],
+          stage: "saturation",
+          technology: "V2I communication",
+          total_mentions: 1,
+        },
       ],
-      "years": [2019, 2020, 2021, 2022, 2023]
+      years: [2021, 2022, 2023],
     },
-    "timestamp": 1713819420
+    timestamp: 1745401297,
   };
 
-  document.getElementById("analyst-data").value = JSON.stringify(template, null, 2);
+  document.getElementById("analyst-data").value = JSON.stringify(
+    template,
+    null,
+    2
+  );
   logToConsole("Analyst data template loaded", "info");
 }
 
@@ -1295,33 +3779,37 @@ function loadAnalystTemplate() {
  */
 function handleCompanyFileUpload(input) {
   if (!input.files || input.files.length === 0) return;
-  
+
   const file = input.files[0];
   if (file.type !== "application/json") {
     showToast("Please upload a JSON file");
     logToConsole("Invalid file type. Expected JSON", "error");
     return;
   }
-  
+
   const fileNameDisplay = document.getElementById("company-filename");
   fileNameDisplay.textContent = file.name;
-  
+
   // Read the file
   const reader = new FileReader();
-  reader.onload = function(e) {
+  reader.onload = function (e) {
     try {
       // Validate JSON
       const content = JSON.parse(e.target.result);
-      
+
       // Update textarea
-      document.getElementById("company-profile").value = JSON.stringify(content, null, 2);
+      document.getElementById("company-profile").value = JSON.stringify(
+        content,
+        null,
+        2
+      );
       logToConsole("Company profile file loaded successfully", "info");
     } catch (e) {
       showToast("Invalid JSON file");
       logToConsole("Error parsing JSON file: " + e.message, "error");
     }
   };
-  
+
   reader.readAsText(file);
 }
 
@@ -1330,33 +3818,37 @@ function handleCompanyFileUpload(input) {
  */
 function handleCompetitorFileUpload(input) {
   if (!input.files || input.files.length === 0) return;
-  
+
   const file = input.files[0];
   if (file.type !== "application/json") {
     showToast("Please upload a JSON file");
     logToConsole("Invalid file type. Expected JSON", "error");
     return;
   }
-  
+
   const fileNameDisplay = document.getElementById("competitor-filename");
   fileNameDisplay.textContent = file.name;
-  
+
   // Read the file
   const reader = new FileReader();
-  reader.onload = function(e) {
+  reader.onload = function (e) {
     try {
       // Validate JSON
       const content = JSON.parse(e.target.result);
-      
+
       // Update textarea
-      document.getElementById("competitor-data").value = JSON.stringify(content, null, 2);
+      document.getElementById("competitor-data").value = JSON.stringify(
+        content,
+        null,
+        2
+      );
       logToConsole("Competitor data file loaded successfully", "info");
     } catch (e) {
       showToast("Invalid JSON file");
       logToConsole("Error parsing JSON file: " + e.message, "error");
     }
   };
-  
+
   reader.readAsText(file);
 }
 
@@ -1365,33 +3857,37 @@ function handleCompetitorFileUpload(input) {
  */
 function handleAnalystFileUpload(input) {
   if (!input.files || input.files.length === 0) return;
-  
+
   const file = input.files[0];
   if (file.type !== "application/json") {
     showToast("Please upload a JSON file");
     logToConsole("Invalid file type. Expected JSON", "error");
     return;
   }
-  
+
   const fileNameDisplay = document.getElementById("analyst-filename");
   fileNameDisplay.textContent = file.name;
-  
+
   // Read the file
   const reader = new FileReader();
-  reader.onload = function(e) {
+  reader.onload = function (e) {
     try {
       // Validate JSON
       const content = JSON.parse(e.target.result);
-      
+
       // Update textarea
-      document.getElementById("analyst-data").value = JSON.stringify(content, null, 2);
+      document.getElementById("analyst-data").value = JSON.stringify(
+        content,
+        null,
+        2
+      );
       logToConsole("Analyst data file loaded successfully", "info");
     } catch (e) {
       showToast("Invalid JSON file");
       logToConsole("Error parsing JSON file: " + e.message, "error");
     }
   };
-  
+
   reader.readAsText(file);
 }
 
@@ -1402,10 +3898,10 @@ function loadAnalystResultsFromLocalStorage() {
     const storedAnalyst = localStorage.getItem("analystResultsIndex");
     if (storedAnalyst) {
       const indexData = JSON.parse(storedAnalyst);
-      
+
       // Clear current results
       analystResults = [];
-      
+
       // Load each result
       indexData.forEach((item) => {
         const storedData = localStorage.getItem(`analystResult_${item.id}`);
@@ -1419,7 +3915,7 @@ function loadAnalystResultsFromLocalStorage() {
           });
         }
       });
-      
+
       logToConsole(
         `Loaded ${analystResults.length} analyst results from localStorage`,
         "system"
@@ -1429,7 +3925,7 @@ function loadAnalystResultsFromLocalStorage() {
       logToConsole("No analyst results found in localStorage", "info");
       analystResults = [];
     }
-    
+
     // Update select dropdown
     updateAnalystSelect();
   } catch (e) {
@@ -1447,7 +3943,8 @@ function saveAnalystResultsToLocalStorage() {
       date: result.date,
       prompt: result.prompt,
       // Only store essential data to save space
-      trendsCount: result.data.original_scout_data?.relevant_trends?.length || 0,
+      trendsCount:
+        result.data.original_scout_data?.relevant_trends?.length || 0,
     }));
 
     localStorage.setItem("analystResultsIndex", JSON.stringify(storageData));
@@ -1472,7 +3969,7 @@ function handleAnalystResult(result) {
 
   // Create a unique ID if not present
   const resultId = result.id || "analyst-" + Date.now();
-  
+
   // Create result object
   const resultObject = {
     id: resultId,
@@ -1483,7 +3980,7 @@ function handleAnalystResult(result) {
   };
 
   // Check if we already have this result
-  const existingIndex = analystResults.findIndex(r => r.id === resultId);
+  const existingIndex = analystResults.findIndex((r) => r.id === resultId);
   if (existingIndex >= 0) {
     // Update existing result
     analystResults[existingIndex] = resultObject;
@@ -1494,9 +3991,12 @@ function handleAnalystResult(result) {
 
   // Save to localStorage
   saveAnalystResultsToLocalStorage();
-  
+
   // Update dropdown
   updateAnalystSelect();
 
-  logToConsole(`Added/updated analyst result for "${result.prompt.substring(0, 20)}..."`, "info");
+  logToConsole(
+    `Added/updated analyst result for "${result.prompt.substring(0, 20)}..."`,
+    "info"
+  );
 }
