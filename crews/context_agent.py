@@ -30,42 +30,74 @@ class ContextAgent:
         """Analyze a technology trend in the context of a business profile"""
         self.emit_log("Starting context analysis for technology trend...")
         
+        # Extract the data structures needed
         company_profile = data.get("company_profile")
-        competitor_data = data.get("company_profile")
-        scout_result = data.get("response_to_user_prompt")
+        competitor_data = data.get("competitor_data")
+        analyst_data = data.get("analyst_data")
         
         if not company_profile:
             self.emit_log("⚠️ Missing company profile data")
             return {"error": "Missing company profile data"}, 400
             
-        if not scout_result:
-            self.emit_log("⚠️ Missing scout result data")
-            return {"error": "Missing scout result data"}, 400
+        if not analyst_data:
+            self.emit_log("⚠️ Missing analyst data")
+            return {"error": "Missing analyst data"}, 400
             
-        # Extract trend information from scout result
-        # Using the first trend with highest similarity score as the main trend to analyze
+        # Extract trend information from analyst data
+        # First try to get relevant trends from original_scout_data
         trend_data = {}
-        if scout_result.get("relevant_trends") and len(scout_result.get("relevant_trends")) > 0:
-            # Sort by similarity score (highest first)
-            sorted_trends = sorted(
-                scout_result.get("relevant_trends"), 
-                key=lambda x: x.get("similarity_score", 0), 
-                reverse=True
-            )
-            
-            # Get the top trend
-            top_trend = sorted_trends[0]
-            
-            trend_data = {
-                "title": top_trend.get("title", "Unnamed Technology Trend"),
-                "domain": top_trend.get("domain", "Unknown"),
-                "type": top_trend.get("knowledge_type", "Unknown"),
-                "publication_date": top_trend.get("publication_date", "Unknown"),
-                "similarity_score": top_trend.get("similarity_score", 0),
-                "technologies": top_trend.get("technologies", []),
-                "keywords": top_trend.get("keywords", []),
-                "id": top_trend.get("id", "")
-            }
+        relevant_trends = []
+        
+        if analyst_data.get("original_scout_data") and analyst_data["original_scout_data"].get("relevant_trends"):
+            relevant_trends = analyst_data["original_scout_data"].get("relevant_trends", [])
+            self.emit_log(f"Found {len(relevant_trends)} trends in original_scout_data")
+        else:
+            self.emit_log("⚠️ No relevant_trends found in original_scout_data")
+            # Try to find trends in graph_data.nodes
+            if analyst_data.get("graph_data") and analyst_data["graph_data"].get("nodes"):
+                nodes = analyst_data["graph_data"].get("nodes", [])
+                # Filter nodes that are trends
+                trend_nodes = [node for node in nodes if node.get("type") == "trend"]
+                if trend_nodes:
+                    # Convert trend nodes to the format expected by relevant_trends
+                    for node in trend_nodes:
+                        node_data = node.get("data", {})
+                        trend = {
+                            "title": node.get("title", "Unnamed Trend"),
+                            "domain": node.get("domain", "Unknown"),
+                            "knowledge_type": node.get("knowledge_type", "Unknown"),
+                            "publication_date": node.get("publication_date", "Unknown"),
+                            "similarity_score": node.get("similarity_score", 0),
+                            "technologies": node_data.get("technologies", []),
+                            "keywords": node_data.get("keywords", []),
+                            "id": node.get("id", "")
+                        }
+                        relevant_trends.append(trend)
+                    self.emit_log(f"Extracted {len(relevant_trends)} trends from graph_data.nodes")
+                
+        if not relevant_trends:
+            self.emit_log("⚠️ No trend data found in analyst data")
+            return {"error": "No trend data found in analyst data"}, 400
+        
+        # Sort by similarity score (highest first) and get the top trend
+        sorted_trends = sorted(
+            relevant_trends, 
+            key=lambda x: x.get("similarity_score", 0), 
+            reverse=True
+        )
+        
+        top_trend = sorted_trends[0]
+        
+        trend_data = {
+            "title": top_trend.get("title", "Unnamed Technology Trend"),
+            "domain": top_trend.get("domain", "Unknown"),
+            "type": top_trend.get("knowledge_type", "Unknown"),
+            "publication_date": top_trend.get("publication_date", "Unknown"),
+            "similarity_score": top_trend.get("similarity_score", 0),
+            "technologies": top_trend.get("technologies", []),
+            "keywords": top_trend.get("keywords", []),
+            "id": top_trend.get("id", "")
+        }
             
         # Format data for analysis
         self.emit_log("Preparing data for context analysis...")
@@ -79,10 +111,15 @@ class ContextAgent:
         # Create a formatted string representation of trend data
         trend_data_str = self._format_trend_data(trend_data)
         
+        # Include graph insights if available
+        graph_insights_str = ""
+        if analyst_data.get("graph_insights"):
+            graph_insights_str = self._format_graph_insights(analyst_data.get("graph_insights"))
+        
         # Format additional trends if available
         related_trends_str = ""
-        if scout_result.get("relevant_trends") and len(scout_result.get("relevant_trends")) > 1:
-            related_trends = scout_result.get("relevant_trends")[1:5]  # Get next 4 related trends
+        if len(sorted_trends) > 1:
+            related_trends = sorted_trends[1:5]  # Get next 4 related trends
             related_trends_str = self._format_related_trends(related_trends)
             
         # Create analysis task
@@ -102,6 +139,9 @@ class ContextAgent:
 
             # TECHNOLOGY TREND TO ANALYZE
             {trend_data_str}
+
+            # GRAPH INSIGHTS
+            {graph_insights_str}
 
             # RELATED TRENDS
             {related_trends_str}
@@ -133,73 +173,77 @@ class ContextAgent:
             ## Output Format Example:
 
             {{
-            "trend_name": "Name of the technology trend",
-            "context_analysis": {{
+              "trend_name": "Name of the technology trend",
+              "context_analysis": {{
                 "strategic_alignment": {{
-                "score": 0.82,
-                "aligned_priorities": [
+                  "score": 0.82,
+                  "aligned_priorities": [
                     {{ "priority": "Priority name", "relevance": 0.9 }}
-                ],
-                "rationale": "Detailed explanation"
+                  ],
+                  "rationale": "Detailed explanation"
                 }},
                 "capability_assessment": {{
-                "score": 0.65,
-                "existing_capabilities": [
+                  "score": 0.65,
+                  "existing_capabilities": [
                     {{ "capability": "Capability name", "relevance": 0.8, "leverage_potential": "High" }}
-                ],
-                "capability_gaps": [
+                  ],
+                  "capability_gaps": [
                     {{ "gap": "Gap description", "criticality": "High", "development_difficulty": "Medium" }}
-                ],
-                "rationale": "Detailed explanation"
+                  ],
+                  "rationale": "Detailed explanation"
                 }},
                 "competitive_landscape": {{
-                "score": 0.45,
-                "position": "Current position description",
-                "key_competitors": [
+                  "score": 0.45,
+                  "position": "Current position description",
+                  "key_competitors": [
                     {{ "name": "Competitor name", "position": "Their position", "threat_level": "High" }}
-                ],
-                "market_opportunity": "Opportunity description",
-                "rationale": "Detailed explanation"
+                  ],
+                  "market_opportunity": "Opportunity description",
+                  "rationale": "Detailed explanation"
                 }},
                 "integration_opportunities": {{
-                "score": 0.78,
-                "project_synergies": [
+                  "score": 0.78,
+                  "project_synergies": [
                     {{ "project": "Project name", "synergy_level": "High", "integration_path": "Integration details" }}
-                ],
-                "rationale": "Detailed explanation"
+                  ],
+                  "rationale": "Detailed explanation"
                 }},
                 "resource_requirements": {{
-                "estimated_investment": {{
+                  "estimated_investment": {{
                     "r_and_d": 3500000,
                     "talent_acquisition": 1200000,
                     "technology_licensing": 800000,
                     "total": 5500000
-                }},
-                "talent_needs": [
+                  }},
+                  "talent_needs": [
                     {{ "role": "Role title", "count": 3, "priority": "High" }}
-                ],
-                "timeline": {{
+                  ],
+                  "timeline": {{
                     "research_phase": "3-6 months",
                     "development_phase": "9-12 months",
                     "market_entry": "15-18 months"
-                }},
-                "feasibility": "Medium",
-                "rationale": "Detailed explanation"
+                  }},
+                  "feasibility": "Medium",
+                  "rationale": "Detailed explanation"
                 }}
-            }},
-            "overall_assessment": {{
+              }},
+              "overall_assessment": {{
                 "relevance_score": 0.76,
                 "pursuit_recommendation": "Strategic Opportunity",
                 "recommended_approach": "Partner or Acquire",
                 "priority_level": "High",
                 "key_considerations": [
-                "Consideration 1"
+                  "Consideration 1"
                 ],
                 "next_steps": [
-                "Step 1"
+                  "Step 1"
                 ]
-                }}
-            }}""")
+              }}
+            }}""",
+            expected_output="Structured JSON analysis of the technology trend in business context",
+            agent=self.agent
+        )
+        
         # Run the analysis
         self.emit_log("Running context analysis task...")
         
@@ -250,38 +294,57 @@ class ContextAgent:
             
         output = f"Company Name: {profile.get('name', 'Unnamed')}\n"
         
-        # Add domains
-        if profile.get('primary_domains'):
-            output += f"Primary Domains: {', '.join(profile.get('primary_domains'))}\n"
-        if profile.get('secondary_domains'):
-            output += f"Secondary Domains: {', '.join(profile.get('secondary_domains'))}\n"
+        # Add basic company info
+        if profile.get('founded'):
+            output += f"Founded: {profile.get('founded')}\n"
+        if profile.get('headquarters'):
+            output += f"Headquarters: {profile.get('headquarters')}\n"
+        if profile.get('industry'):
+            if isinstance(profile.get('industry'), list):
+                output += f"Industry: {', '.join(profile.get('industry'))}\n"
+            else:
+                output += f"Industry: {profile.get('industry')}\n"
+        if profile.get('numberOfEmployees'):
+            output += f"Employees: {profile.get('numberOfEmployees')}\n"
+        
+        # Add focus areas
+        if profile.get('focusAreas'):
+            output += "\nFocus Areas:\n"
+            for area in profile.get('focusAreas'):
+                output += f"- {area}\n"
+                
+        # Add products
+        if profile.get('products'):
+            output += "\nProducts:\n"
+            for product in profile.get('products'):
+                output += f"- {product}\n"
+                
+        # Add initiatives
+        if profile.get('initiatives'):
+            output += "\nInitiatives:\n"
+            for initiative in profile.get('initiatives'):
+                output += f"- {initiative}\n"
+                
+        # Add R&D info
+        if profile.get('researchAndDevelopment'):
+            rd = profile.get('researchAndDevelopment')
+            output += "\nResearch and Development:\n"
             
-        # Add capabilities
-        if profile.get('core_capabilities'):
-            output += "\nCore Capabilities:\n"
-            for cap in profile.get('core_capabilities'):
-                output += f"- {cap.get('name')}: Maturity {cap.get('maturity', 0):.1f}, Patents: {cap.get('patents', 0)}\n"
+            if rd.get('facilities'):
+                output += f"- Facilities: {', '.join(rd.get('facilities'))}\n"
+            
+            if rd.get('recentInvestmentsUSD'):
+                output += f"- Recent Investments: ${rd.get('recentInvestmentsUSD'):,} USD\n"
+            
+            if rd.get('annualInvestment'):
+                annual = rd.get('annualInvestment')
+                output += f"- Annual Investment: {annual.get('amountINR')} INR ({annual.get('percentageOfTurnover')}% of turnover) for fiscal year {annual.get('fiscalYear')}\n"
                 
-        # Add strategic priorities
-        if profile.get('strategic_priorities'):
-            output += "\nStrategic Priorities:\n"
-            for priority in profile.get('strategic_priorities'):
-                output += f"- {priority.get('name')}: Weight {priority.get('weight', 0):.1f}, Timeframe: {priority.get('timeframe', 'Unknown')}\n"
-                
-        # Add active projects
-        if profile.get('active_projects'):
-            output += "\nActive Projects:\n"
-            for project in profile.get('active_projects'):
-                output += f"- {project.get('name')} (ID: {project.get('id')}): Domain: {project.get('domain')}, Stage: {project.get('stage')}\n"
-                
-        # Add resource constraints
-        if profile.get('resource_constraints'):
-            constraints = profile.get('resource_constraints')
-            output += "\nResource Constraints:\n"
-            output += f"- R&D Budget: ${constraints.get('r_and_d_budget', 0):,}\n"
-            output += f"- Technical Staff: {constraints.get('technical_staff', 0)} people\n"
-            if constraints.get('manufacturing_capabilities'):
-                output += f"- Manufacturing Capabilities: {', '.join(constraints.get('manufacturing_capabilities'))}\n"
+        # Add latest news if available
+        if profile.get('latestNews') and len(profile.get('latestNews')) > 0:
+            output += "\nLatest News:\n"
+            for news in profile.get('latestNews')[:3]:  # Limit to 3 news items
+                output += f"- {news.get('title')}\n"
                 
         return output
     
@@ -289,36 +352,54 @@ class ContextAgent:
         """Format competitor data as a string"""
         if not competitors:
             return "No competitor data available."
+         
+        # Handle both single competitor and list of competitors
+        if not isinstance(competitors, list):
+            competitors = [competitors]
             
         output = "Competitor Information:\n"
         
         for i, competitor in enumerate(competitors):
             output += f"\nCompetitor {i+1}: {competitor.get('name', 'Unnamed')}\n"
-            output += f"- Market Share: {competitor.get('market_share', 0):.2%}\n"
-            output += f"- Primary Domains: {', '.join(competitor.get('primary_domains', []))}\n"
             
-            # Add key products
-            if competitor.get('key_products'):
-                output += "- Key Products:\n"
-                for product in competitor.get('key_products'):
-                    output += f"  • {product.get('name')}: Position: {product.get('market_position')}, Strength: {product.get('strength', 0):.2f}\n"
-            
-            # Add recent moves
-            if competitor.get('recent_moves'):
-                output += "- Recent Moves:\n"
-                for move in competitor.get('recent_moves'):
-                    move_type = move.get('type', 'Activity')
-                    move_details = move.get('target') if move_type == 'Acquisition' else move.get('name')
-                    output += f"  • {move_type}: {move_details} ({move.get('date', 'No date')})\n"
-            
-            # Add patents
-            if competitor.get('patents'):
-                output += "- Patents:\n"
-                for patent in competitor.get('patents')[:3]:  # Limit to 3 patents to avoid excessive text
-                    output += f"  • {patent.get('title')} (ID: {patent.get('id')})\n"
+            # Add basic company info
+            if competitor.get('founded'):
+                output += f"- Founded: {competitor.get('founded')}\n"
+            if competitor.get('headquarters'):
+                output += f"- Headquarters: {competitor.get('headquarters')}\n"
+            if competitor.get('industry'):
+                if isinstance(competitor.get('industry'), list):
+                    output += f"- Industry: {', '.join(competitor.get('industry'))}\n"
+                else:
+                    output += f"- Industry: {competitor.get('industry')}\n"
+            if competitor.get('numberOfEmployees'):
+                output += f"- Employees: {competitor.get('numberOfEmployees')}\n"
                 
-                if len(competitor.get('patents')) > 3:
-                    output += f"  • Plus {len(competitor.get('patents')) - 3} more patents\n"
+            # Add focus areas
+            if competitor.get('focusAreas'):
+                output += "- Focus Areas:\n"
+                for area in competitor.get('focusAreas')[:5]:  # Limit to 5 areas
+                    output += f"  • {area}\n"
+                
+            # Add products
+            if competitor.get('products'):
+                output += "- Key Products:\n"
+                for product in competitor.get('products')[:5]:  # Limit to 5 products
+                    output += f"  • {product}\n"
+            
+            # Add R&D info if available
+            if competitor.get('researchAndDevelopment'):
+                rd = competitor.get('researchAndDevelopment')
+                output += "- R&D Information:\n"
+                
+                if rd.get('recentInvestmentsUSD'):
+                    output += f"  • Recent Investments: ${rd.get('recentInvestmentsUSD'):,} USD\n"
+                
+            # Add latest news
+            if competitor.get('latestNews') and len(competitor.get('latestNews')) > 0:
+                output += "- Recent News:\n"
+                for news in competitor.get('latestNews')[:2]:  # Limit to 2 news items
+                    output += f"  • {news.get('title')}\n"
         
         return output
     
@@ -363,6 +444,71 @@ class ContextAgent:
                 if len(trend.get('technologies')) > 5:
                     output += f" (plus {len(trend.get('technologies')) - 5} more)"
                 output += "\n"
+        
+        return output
+    
+    def _format_graph_insights(self, insights):
+        """Format graph insights data as a string"""
+        if not insights:
+            return "No graph insights available."
+        
+        output = "Graph Insights:\n\n"
+        
+        # Add central technologies
+        if insights.get("central_technologies"):
+            output += "Central Technologies:\n"
+            central_tech = insights.get("central_technologies")
+            
+            # Add main analysis
+            if isinstance(central_tech, dict) and central_tech.get("analysis"):
+                output += f"{central_tech.get('analysis')}\n\n"
+                
+                # Add individual technology analyses
+                if central_tech.get("technologies"):
+                    output += "Key technologies:\n"
+                    for tech in central_tech.get("technologies"):
+                        output += f"- {tech.get('title', 'Unnamed Tech')}: {tech.get('impact', 'No impact information')}\n"
+                        output += f"  {tech.get('analysis', 'No analysis available')}\n"
+            elif isinstance(central_tech, str):
+                output += f"{central_tech}\n"
+            
+            output += "\n"
+            
+        # Add cross-domain connections
+        if insights.get("cross_domain_connections"):
+            output += "Cross-Domain Connections:\n"
+            cross_domain = insights.get("cross_domain_connections")
+            
+            # Add main analysis
+            if isinstance(cross_domain, dict) and cross_domain.get("analysis"):
+                output += f"{cross_domain.get('analysis')}\n\n"
+                
+                # Add opportunities
+                if cross_domain.get("opportunities"):
+                    output += "Key opportunities:\n"
+                    for opp in cross_domain.get("opportunities"):
+                        output += f"- {opp.get('connection', 'Unnamed Connection')}: {opp.get('potential', 'No potential information')}\n"
+            elif isinstance(cross_domain, str):
+                output += f"{cross_domain}\n"
+                
+            output += "\n"
+            
+        # Add innovation pathways
+        if insights.get("innovation_pathways"):
+            output += "Innovation Pathways:\n"
+            innovation = insights.get("innovation_pathways")
+            
+            # Add main analysis
+            if isinstance(innovation, dict) and innovation.get("analysis"):
+                output += f"{innovation.get('analysis')}\n\n"
+                
+                # Add implications
+                if innovation.get("implications"):
+                    output += "Key implications:\n"
+                    for imp in innovation.get("implications"):
+                        output += f"- {imp.get('path', 'Unnamed Path')}: {imp.get('implication', 'No implication information')}\n"
+            elif isinstance(innovation, str):
+                output += f"{innovation}\n"
         
         return output
     

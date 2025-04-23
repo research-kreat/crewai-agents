@@ -118,7 +118,6 @@
 }
 
 .panel-list li {
-    padding: 0.5rem 0;
     border-bottom: 1px solid var(--gray-100);
 }
 
@@ -149,11 +148,17 @@
 }
 
 .assessment-summary {
-    background-color: var(--gray-800);
-    color: white;
-    border-radius: var(--border-radius);
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
+    display: block;
+    background-color: #ffffff; 
+    color: #1f2937; 
+    border: 1px solid #d1d5db; 
+    border-radius: 1rem; 
+    padding: 1.5rem 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04); 
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    line-height: 1.6;
+    transition: box-shadow 0.3s ease, transform 0.2s ease;
 }
 
 .summary-heading {
@@ -218,9 +223,103 @@
     margin-bottom: 0.25rem;
 }
 
-/* Scout result select styles */
-.scout-select {
+/* Analyst result select styles */
+.analyst-select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--gray-300);
+    border-radius: var(--border-radius);
+    font-family: inherit;
+    font-size: 0.95rem;
+    transition: var(--transition);
+    background-color: white;
     margin-bottom: 1rem;
+}
+
+.analyst-select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(74, 109, 229, 0.2);
+}
+
+/* Data File Input Styles */
+.file-input-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.file-input-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--gray-700);
+    font-size: 0.9rem;
+}
+
+.file-input {
+    display: none;
+}
+
+.file-input-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border: 1px dashed var(--gray-400);
+    border-radius: var(--border-radius);
+    background-color: var(--gray-50);
+    color: var(--gray-700);
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: 0.9rem;
+}
+
+.file-input-button:hover {
+    background-color: var(--gray-100);
+    border-color: var(--gray-500);
+}
+
+.file-name {
+    margin-top: 0.25rem;
+    font-size: 0.8rem;
+    color: var(--gray-600);
+}
+
+/* Template button styles */
+.template-button {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8rem;
+    background-color: var(--gray-100);
+    border: 1px solid var(--gray-300);
+    border-radius: var(--border-radius);
+    color: var(--gray-700);
+    cursor: pointer;
+    transition: var(--transition);
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.template-button:hover {
+    background-color: var(--gray-200);
+    color: var(--gray-800);
+}
+
+/* Input with actions container */
+.input-with-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.input-with-actions label {
+    margin-bottom: 0;
+    flex: 1;
 }
 
 /* Responsive adjustments */

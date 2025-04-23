@@ -157,10 +157,10 @@ def run_context_analysis():
             socketio.emit('context_log', {'message': '⚠️ Error: Missing company profile data'})
             return jsonify({"error": "Missing company profile data"}), 400
             
-        if not data.get("scout_result"):
-            logger.error("Missing scout result data")
-            socketio.emit('context_log', {'message': '⚠️ Error: Missing scout result data'})
-            return jsonify({"error": "Missing scout result data"}), 400
+        if not data.get("analyst_data"):
+            logger.error("Missing analyst data")
+            socketio.emit('context_log', {'message': '⚠️ Error: Missing analyst data'})
+            return jsonify({"error": "Missing analyst data"}), 400
         
         # Process with Context Agent
         result, status_code = context.process_context_query(data)
@@ -181,7 +181,7 @@ def run_context_analysis():
             "error": str(e),
             "message": "Failed to process context analysis"
         }), 500
-
+    
 #___________________VISUALIZATION AGENT ENDPOINTS____________________
 
 @app.route("/agent/visualization/generate", methods=["POST"])
@@ -218,7 +218,6 @@ def run_visualization_generation():
             "message": "Failed to generate visualization"
         }), 500
 
-#___________________VISUALIZATION INSIGHTS ENDPOINT____________________
 
 @app.route("/agent/visualization/insights", methods=["POST"])
 def run_visualization_insights():
@@ -297,8 +296,6 @@ def run_orchestrator_workflow():
             "error": str(e),
             "message": "Failed to run orchestrator workflow"
         }), 500
-
-#___________________FINAL REPORT GENERATION ENDPOINT____________________
 
 @app.route("/agent/orchestrator/report", methods=["POST"])
 def generate_final_report():

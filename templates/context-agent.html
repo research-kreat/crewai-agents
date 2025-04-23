@@ -52,36 +52,79 @@
             <div class="context-interface">
                 <div class="context-input-section">
                     <div class="form-group">
-                        <label for="company-profile">
-                            Company Profile
-                            <span class="tooltip" data-tooltip="Enter or upload your company profile JSON">
-                                <i class="fas fa-info-circle"></i>
-                            </span>
-                        </label>
+                        <div class="input-with-actions">
+                            <label for="company-profile">
+                                Company Profile
+                                <span class="tooltip" data-tooltip="Enter or upload your company profile JSON">
+                                    <i class="fas fa-info-circle"></i>
+                                </span>
+                            </label>
+                            <button class="template-button" onclick="loadCompanyTemplate()">
+                                <i class="fas fa-file-code"></i> Load Template
+                            </button>
+                        </div>
+                        
+                        <div class="file-input-wrapper">
+                            <label for="company-file" class="file-input-button">
+                                <i class="fas fa-upload"></i> Upload JSON File
+                            </label>
+                            <input type="file" id="company-file" class="file-input" accept=".json" onchange="handleCompanyFileUpload(this)">
+                            <div id="company-filename" class="file-name"></div>
+                        </div>
+                        
                         <textarea id="company-profile" rows="8" placeholder="Paste your company profile JSON here..."></textarea>
                     </div>
 
                     <div class="form-group">
-                        <label for="competitor-data">
-                            Competitor Data
-                            <span class="tooltip" data-tooltip="Enter or upload competitor information JSON">
-                                <i class="fas fa-info-circle"></i>
-                            </span>
-                        </label>
+                        <div class="input-with-actions">
+                            <label for="competitor-data">
+                                Competitor Data
+                                <span class="tooltip" data-tooltip="Enter or upload competitor information JSON">
+                                    <i class="fas fa-info-circle"></i>
+                                </span>
+                            </label>
+                            <button class="template-button" onclick="loadCompetitorTemplate()">
+                                <i class="fas fa-file-code"></i> Load Template
+                            </button>
+                        </div>
+                        
+                        <div class="file-input-wrapper">
+                            <label for="competitor-file" class="file-input-button">
+                                <i class="fas fa-upload"></i> Upload JSON File
+                            </label>
+                            <input type="file" id="competitor-file" class="file-input" accept=".json" onchange="handleCompetitorFileUpload(this)">
+                            <div id="competitor-filename" class="file-name"></div>
+                        </div>
+                        
                         <textarea id="competitor-data" rows="8" placeholder="Paste your competitor data JSON here..."></textarea>
                     </div>
 
                     <div class="form-group">
-                        <label for="scout-result">
-                            Scout Result
-                            <span class="tooltip" data-tooltip="Select from recent Scout Agent results or paste JSON">
-                                <i class="fas fa-info-circle"></i>
-                            </span>
-                        </label>
-                        <select id="scout-select" class="scout-select" onchange="loadScoutResult()">
-                            <option value="">Select a recent Scout Agent result...</option>
+                        <div class="input-with-actions">
+                            <label for="analyst-data">
+                                Analyst Data
+                                <span class="tooltip" data-tooltip="Select from recent Analyst results or paste JSON">
+                                    <i class="fas fa-info-circle"></i>
+                                </span>
+                            </label>
+                            <button class="template-button" onclick="loadAnalystTemplate()">
+                                <i class="fas fa-file-code"></i> Load Template
+                            </button>
+                        </div>
+                        
+                        <select id="analyst-select" class="analyst-select" onchange="loadAnalystResult()">
+                            <option value="">Select a recent Analyst result...</option>
                         </select>
-                        <textarea id="scout-result" rows="8" placeholder="Paste Scout Agent result JSON here..."></textarea>
+                        
+                        <div class="file-input-wrapper">
+                            <label for="analyst-file" class="file-input-button">
+                                <i class="fas fa-upload"></i> Upload JSON File
+                            </label>
+                            <input type="file" id="analyst-file" class="file-input" accept=".json" onchange="handleAnalystFileUpload(this)">
+                            <div id="analyst-filename" class="file-name"></div>
+                        </div>
+                        
+                        <textarea id="analyst-data" rows="8" placeholder="Paste Analyst Agent result JSON here..."></textarea>
                     </div>
 
                     <div class="form-actions">
@@ -102,9 +145,7 @@
                             </button>
                         </div>
                         <div id="console-log" class="console-log">
-                            <div class="log-message system">
-                                <span class="log-timestamp">System</span> Context Agent ready to analyze trends
-                            </div>
+                            <div class="log-message system"><span class="log-timestamp">System</span> Context Agent ready to analyze trends</div>
                         </div>
                     </div>
                 </div>
@@ -153,14 +194,14 @@
                             <div id="approach" class="summary-approach">Recommended Approach: Analyzing...</div>
                             
                             <div class="considerations-section">
-                                <h5>Key Considerations</h5>
+                                <h4>Key Considerations</h4>
                                 <ul id="considerations-list" class="considerations-list">
                                     <li>Analyzing key factors...</li>
                                 </ul>
                             </div>
                             
                             <div class="next-steps-section">
-                                <h5>Next Steps</h5>
+                                <h4>Next Steps</h4>
                                 <ul id="next-steps-list" class="next-steps-list">
                                     <li>Determining next steps...</li>
                                 </ul>
@@ -194,12 +235,12 @@
                                 </div>
                             </div>
                             <div class="panel-content">
-                                <h5>Existing Capabilities</h5>
+                                <h4>Existing Capabilities</h4>
                                 <ul id="existing-capabilities" class="panel-list">
                                     <li>Loading capabilities...</li>
                                 </ul>
                                 
-                                <h5>Capability Gaps</h5>
+                                <h4>Capability Gaps</h4>
                                 <ul id="capability-gaps" class="panel-list">
                                     <li>Identifying capability gaps...</li>
                                 </ul>
@@ -224,7 +265,7 @@
                                     <span id="competitive-position" class="panel-value">Analyzing...</span>
                                 </div>
                                 
-                                <h5>Key Competitors</h5>
+                                <h4>Key Competitors</h4>
                                 <ul id="key-competitors" class="panel-list">
                                     <li>Analyzing competitors...</li>
                                 </ul>
@@ -249,7 +290,7 @@
                                 </div>
                             </div>
                             <div class="panel-content">
-                                <h5>Project Synergies</h5>
+                                <h4>Project Synergies</h4>
                                 <ul id="project-synergies" class="panel-list">
                                     <li>Identifying integration opportunities...</li>
                                 </ul>
@@ -266,17 +307,17 @@
                                 <h4>Resource Requirements</h4>
                             </div>
                             <div class="panel-content">
-                                <h5>Estimated Investment</h5>
+                                <h4>Estimated Investment</h4>
                                 <ul id="estimated-investment" class="panel-list">
                                     <li>Calculating investment needs...</li>
                                 </ul>
                                 
-                                <h5>Talent Needs</h5>
+                                <h4>Talent Needs</h4>
                                 <ul id="talent-needs" class="panel-list">
                                     <li>Identifying talent requirements...</li>
                                 </ul>
                                 
-                                <h5>Timeline</h5>
+                                <h4>Timeline</h4>
                                 <ul id="timeline" class="panel-list">
                                     <li>Calculating timeline...</li>
                                 </ul>
