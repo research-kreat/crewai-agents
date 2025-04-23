@@ -1394,3 +1394,109 @@ function handleAnalystFileUpload(input) {
   
   reader.readAsText(file);
 }
+
+// Update loadAnalystResultsFromLocalStorage function
+function loadAnalystResultsFromLocalStorage() {
+  try {
+    // Try to load analyst results directly from localStorage
+    const storedAnalyst = localStorage.getItem("analystResultsIndex");
+    if (storedAnalyst) {
+      const indexData = JSON.parse(storedAnalyst);
+      
+      // Clear current results
+      analystResults = [];
+      
+      // Load each result
+      indexData.forEach((item) => {
+        const storedData = localStorage.getItem(`analystResult_${item.id}`);
+        if (storedData) {
+          analystResults.push({
+            id: item.id,
+            timestamp: item.timestamp,
+            date: item.date,
+            prompt: item.prompt,
+            data: JSON.parse(storedData),
+          });
+        }
+      });
+      
+      logToConsole(
+        `Loaded ${analystResults.length} analyst results from localStorage`,
+        "system"
+      );
+    } else {
+      // No analyst results found in localStorage
+      logToConsole("No analyst results found in localStorage", "info");
+      analystResults = [];
+    }
+    
+    // Update select dropdown
+    updateAnalystSelect();
+  } catch (e) {
+    logToConsole(`Error loading from localStorage: ${e.message}`, "error");
+  }
+}
+
+// Add a new function to save analyst results to localStorage
+function saveAnalystResultsToLocalStorage() {
+  try {
+    // Create a version suitable for storage
+    const storageData = analystResults.map((result) => ({
+      id: result.id,
+      timestamp: result.timestamp,
+      date: result.date,
+      prompt: result.prompt,
+      // Only store essential data to save space
+      trendsCount: result.data.original_scout_data?.relevant_trends?.length || 0,
+    }));
+
+    localStorage.setItem("analystResultsIndex", JSON.stringify(storageData));
+
+    // Store each full result separately to avoid size limits
+    analystResults.forEach((result) => {
+      localStorage.setItem(
+        `analystResult_${result.id}`,
+        JSON.stringify(result.data)
+      );
+    });
+
+    logToConsole("Analyst results saved to localStorage", "system");
+  } catch (e) {
+    logToConsole(`Error saving to localStorage: ${e.message}`, "error");
+  }
+}
+
+// Add a function to handle incoming analyst results
+function handleAnalystResult(result) {
+  if (!result || !result.prompt) return;
+
+  // Create a unique ID if not present
+  const resultId = result.id || "analyst-" + Date.now();
+  
+  // Create result object
+  const resultObject = {
+    id: resultId,
+    timestamp: result.timestamp || new Date().toLocaleTimeString(),
+    date: result.date || new Date().toLocaleDateString(),
+    prompt: result.prompt,
+    data: result,
+  };
+
+  // Check if we already have this result
+  const existingIndex = analystResults.findIndex(r => r.id === resultId);
+  if (existingIndex >= 0) {
+    // Update existing result
+    analystResults[existingIndex] = resultObject;
+  } else {
+    // Add new result
+    analystResults.push(resultObject);
+  }
+
+  // Save to localStorage
+  saveAnalystResultsToLocalStorage();
+  
+  // Update dropdown
+  updateAnalystSelect();
+
+  logToConsole(`Added/updated analyst result for "${result.prompt.substring(0, 20)}..."`, "info");
+}

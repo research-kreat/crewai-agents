@@ -221,6 +221,15 @@ function connectSocket() {
       addScoutResult(data);
     }
   });
+  socket.on("analyst_result", (data) => {
+    handleAnalystResult(data);
+  });
+  socket.on("context_log", (data) => {
+    logToConsole(
+      data.message,
+      data.message.includes("⚠️") ? "warning" : "info"
+    );
+  });
 }
 
 // Initialize on page load

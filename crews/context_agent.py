@@ -44,17 +44,21 @@ class ContextAgent:
             return {"error": "Missing analyst data"}, 400
             
         # Extract trend information from analyst data
-        # First try to get relevant trends from original_scout_data
+        # First check if this is analyst data with graph insights
         trend_data = {}
         relevant_trends = []
         
-        if analyst_data.get("original_scout_data") and analyst_data["original_scout_data"].get("relevant_trends"):
-            relevant_trends = analyst_data["original_scout_data"].get("relevant_trends", [])
-            self.emit_log(f"Found {len(relevant_trends)} trends in original_scout_data")
-        else:
-            self.emit_log("⚠️ No relevant_trends found in original_scout_data")
-            # Try to find trends in graph_data.nodes
-            if analyst_data.get("graph_data") and analyst_data["graph_data"].get("nodes"):
+        if analyst_data.get("graph_insights") and analyst_data.get("original_scout_data"):
+            # This is full analyst data with graph insights
+            self.emit_log("Detected full analyst data with graph insights")
+            
+            # Get relevant trends from original_scout_data
+            if analyst_data["original_scout_data"].get("relevant_trends"):
+                relevant_trends = analyst_data["original_scout_data"].get("relevant_trends", [])
+                self.emit_log(f"Found {len(relevant_trends)} trends in original_scout_data")
+            
+            # If no trends in original data, try extracting from graph_data.nodes
+            if not relevant_trends and analyst_data.get("graph_data") and analyst_data["graph_data"].get("nodes"):
                 nodes = analyst_data["graph_data"].get("nodes", [])
                 # Filter nodes that are trends
                 trend_nodes = [node for node in nodes if node.get("type") == "trend"]
@@ -74,7 +78,40 @@ class ContextAgent:
                         }
                         relevant_trends.append(trend)
                     self.emit_log(f"Extracted {len(relevant_trends)} trends from graph_data.nodes")
-                
+        elif analyst_data.get("relevant_trends"):
+            # This might be scout data directly
+            self.emit_log("Detected scout data structure")
+            relevant_trends = analyst_data.get("relevant_trends", [])
+            self.emit_log(f"Found {len(relevant_trends)} trends directly in data")
+        else:
+            # Try to find trends in original_scout_data
+            if analyst_data.get("original_scout_data") and analyst_data["original_scout_data"].get("relevant_trends"):
+                relevant_trends = analyst_data["original_scout_data"].get("relevant_trends", [])
+                self.emit_log(f"Found {len(relevant_trends)} trends in original_scout_data")
+            else:
+                self.emit_log("⚠️ No relevant_trends found in original_scout_data")
+                # Try to find trends in graph_data.nodes
+                if analyst_data.get("graph_data") and analyst_data["graph_data"].get("nodes"):
+                    nodes = analyst_data["graph_data"].get("nodes", [])
+                    # Filter nodes that are trends
+                    trend_nodes = [node for node in nodes if node.get("type") == "trend"]
+                    if trend_nodes:
+                        # Convert trend nodes to the format expected by relevant_trends
+                        for node in trend_nodes:
+                            node_data = node.get("data", {})
+                            trend = {
+                                "title": node.get("title", "Unnamed Trend"),
+                                "domain": node.get("domain", "Unknown"),
+                                "knowledge_type": node.get("knowledge_type", "Unknown"),
+                                "publication_date": node.get("publication_date", "Unknown"),
+                                "similarity_score": node.get("similarity_score", 0),
+                                "technologies": node_data.get("technologies", []),
+                                "keywords": node_data.get("keywords", []),
+                                "id": node.get("id", "")
+                            }
+                            relevant_trends.append(trend)
+                        self.emit_log(f"Extracted {len(relevant_trends)} trends from graph_data.nodes")
+                    
         if not relevant_trends:
             self.emit_log("⚠️ No trend data found in analyst data")
             return {"error": "No trend data found in analyst data"}, 400
@@ -173,72 +210,72 @@ class ContextAgent:
             ## Output Format Example:
 
             {{
-              "trend_name": "Name of the technology trend",
-              "context_analysis": {{
+            "trend_name": "Name of the technology trend",
+            "context_analysis": {{
                 "strategic_alignment": {{
-                  "score": 0.82,
-                  "aligned_priorities": [
+                "score": 0.82,
+                "aligned_priorities": [
                     {{ "priority": "Priority name", "relevance": 0.9 }}
-                  ],
-                  "rationale": "Detailed explanation"
+                ],
+                "rationale": "Detailed explanation"
                 }},
                 "capability_assessment": {{
-                  "score": 0.65,
-                  "existing_capabilities": [
+                "score": 0.65,
+                "existing_capabilities": [
                     {{ "capability": "Capability name", "relevance": 0.8, "leverage_potential": "High" }}
-                  ],
-                  "capability_gaps": [
+                ],
+                "capability_gaps": [
                     {{ "gap": "Gap description", "criticality": "High", "development_difficulty": "Medium" }}
-                  ],
-                  "rationale": "Detailed explanation"
+                ],
+                "rationale": "Detailed explanation"
                 }},
                 "competitive_landscape": {{
-                  "score": 0.45,
-                  "position": "Current position description",
-                  "key_competitors": [
+                "score": 0.45,
+                "position": "Current position description",
+                "key_competitors": [
                     {{ "name": "Competitor name", "position": "Their position", "threat_level": "High" }}
-                  ],
-                  "market_opportunity": "Opportunity description",
-                  "rationale": "Detailed explanation"
+                ],
+                "market_opportunity": "Opportunity description",
+                "rationale": "Detailed explanation"
                 }},
                 "integration_opportunities": {{
-                  "score": 0.78,
-                  "project_synergies": [
+                "score": 0.78,
+                "project_synergies": [
                     {{ "project": "Project name", "synergy_level": "High", "integration_path": "Integration details" }}
-                  ],
-                  "rationale": "Detailed explanation"
+                ],
+                "rationale": "Detailed explanation"
                 }},
                 "resource_requirements": {{
-                  "estimated_investment": {{
+                "estimated_investment": {{
                     "r_and_d": 3500000,
                     "talent_acquisition": 1200000,
                     "technology_licensing": 800000,
                     "total": 5500000
-                  }},
-                  "talent_needs": [
+                }},
+                "talent_needs": [
                     {{ "role": "Role title", "count": 3, "priority": "High" }}
-                  ],
-                  "timeline": {{
+                ],
+                "timeline": {{
                     "research_phase": "3-6 months",
                     "development_phase": "9-12 months",
                     "market_entry": "15-18 months"
-                  }},
-                  "feasibility": "Medium",
-                  "rationale": "Detailed explanation"
+                }},
+                "feasibility": "Medium",
+                "rationale": "Detailed explanation"
                 }}
-              }},
-              "overall_assessment": {{
+            }},
+            "overall_assessment": {{
                 "relevance_score": 0.76,
                 "pursuit_recommendation": "Strategic Opportunity",
                 "recommended_approach": "Partner or Acquire",
                 "priority_level": "High",
                 "key_considerations": [
-                  "Consideration 1"
+                "Consideration 1"
                 ],
                 "next_steps": [
-                  "Step 1"
+                "Step 1"
                 ]
-              }}
+            }}
             }}""",
             expected_output="Structured JSON analysis of the technology trend in business context",
             agent=self.agent
@@ -286,7 +323,7 @@ class ContextAgent:
                 "error": f"Analysis failed: {str(e)}",
                 "trend_name": trend_data.get("title", "Unnamed Technology Trend")
             }, 500
-    
+        
     def _format_company_profile(self, profile):
         """Format company profile data as a string"""
         if not profile:
@@ -334,7 +371,7 @@ class ContextAgent:
                 output += f"- Facilities: {', '.join(rd.get('facilities'))}\n"
             
             if rd.get('recentInvestmentsUSD'):
-                output += f"- Recent Investments: ${rd.get('recentInvestmentsUSD'):,} USD\n"
+                output += f"- Recent Investments: ${rd.get('recentInvestmentsUSD'):,} INR\n"
             
             if rd.get('annualInvestment'):
                 annual = rd.get('annualInvestment')

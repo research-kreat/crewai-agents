@@ -446,6 +446,8 @@ function processAnalystQuery(predefinedData = null) {
     })
     .then((data) => {
       logToConsole("Analysis complete", "system");
+      saveAnalystResultToLocalStorage(data);
+
       graphData = data;
 
       // Populate domain filter
@@ -2611,5 +2613,54 @@ function renderSCurveContent(svgGroup, data, width, height, margin) {
   } catch (e) {
     console.error("Error rendering S-Curve content:", e);
     throw e;
+  }
+}
+
+
+function saveAnalystResultToLocalStorage(data) {
+  try {
+    // Get existing index or create new one
+    const storedIndex = localStorage.getItem("analystResultsIndex");
+    let indexData = storedIndex ? JSON.parse(storedIndex) : [];
+    
+    // Create result metadata
+    const resultId = "analyst-" + Date.now();
+    const timestamp = new Date().toLocaleTimeString();
+    const date = new Date().toLocaleDateString();
+    
+    // Determine prompt from data
+    let prompt = "Analyst query";
+    if (data.original_scout_data && data.original_scout_data.prompt) {
+      prompt = data.original_scout_data.prompt;
+    } else if (data.original_scout_data && data.original_scout_data.response_to_user_prompt) {
+      prompt = data.original_scout_data.response_to_user_prompt.substring(0, 50) + "...";
+    }
+    
+    // Create index entry
+    const indexEntry = {
+      id: resultId,
+      timestamp: timestamp,
+      date: date,
+      prompt: prompt,
+      trendsCount: data.original_scout_data?.relevant_trends?.length || 0
+    };
+    
+    // Add to index
+    indexData.push(indexEntry);
+    
+    // Keep only the last 20 results
+    if (indexData.length > 20) {
+      indexData = indexData.slice(-20);
+    }
+    
+    // Save index and full data
+    localStorage.setItem("analystResultsIndex", JSON.stringify(indexData));
+    localStorage.setItem(`analystResult_${resultId}`, JSON.stringify(data));
+    
+    logToConsole("Analyst result saved to localStorage", "info");
+    return resultId;
+  } catch (e) {
+    logToConsole(`Error saving to localStorage: ${e.message}`, "error");
+    return null;
   }
 }

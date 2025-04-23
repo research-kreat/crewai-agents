@@ -33,6 +33,9 @@ orchestrator = OrchestratorAgent(socket_instance=socketio)
 recent_scout_results = []
 MAX_STORED_RESULTS = 20  # Increased max results to store
 
+recent_analyst_results = []
+MAX_STORED_RESULTS = 20 
+
 #________________SOCKET.IO EVENT HANDLERS_________________
 
 @socketio.on('connect')
@@ -53,6 +56,12 @@ def handle_get_scout_results():
     logger.info('Client requested scout results')
     for result in recent_scout_results:
         socketio.emit('scout_result', result)
+
+@socketio.on('get_analyst_results')
+def handle_get_analyst_results():
+    logger.info('Client requested analyst results')
+    for result in recent_analyst_results:
+        socketio.emit('analyst_result', result)
 
 #___________________CHATBOT AGENT____________________
 
@@ -132,6 +141,28 @@ def run_analyst_query():
         logger.info(f"Analysis complete with {len(result.get('graph_data', {}).get('nodes', []))} nodes")
         socketio.emit('analyst_log', {'message': f'Analysis complete with {len(result.get("graph_data", {}).get("nodes", []))} graph nodes'})
         
+        # Add query info and timestamp to result
+        if scout_data.get('prompt'):
+            result['prompt'] = scout_data.get('prompt')
+        elif scout_data.get('response_to_user_prompt'):
+            result['prompt'] = scout_data.get('response_to_user_prompt')[:50] + "..."
+        else:
+            result['prompt'] = "Analyst query"
+        
+        result['timestamp'] = int(time.time())
+        result['date'] = time.strftime('%Y-%m-%d')
+        
+        # Store result
+        global recent_analyst_results
+        recent_analyst_results.append(result)
+        
+        # Limit stored results
+        if len(recent_analyst_results) > MAX_STORED_RESULTS:
+            recent_analyst_results = recent_analyst_results[-MAX_STORED_RESULTS:]
+        
+        # Broadcast result
+        socketio.emit('analyst_result', result)
+        
         return jsonify(result), 200
     except Exception as e:
         logger.error(f"Error in analyst query processing: {str(e)}")
@@ -140,7 +171,6 @@ def run_analyst_query():
             "error": str(e),
             "message": "Failed to process analyst query"
         }), 500
-
 #___________________CONTEXT AGENT ENDPOINTS____________________
 
 @app.route("/agent/context/analyze", methods=["POST"])
