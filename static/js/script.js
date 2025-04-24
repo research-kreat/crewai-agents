@@ -373,3 +373,120 @@ function handleButtonState(selector, isLoading, loadingText = "Processing...") {
   // Return true to allow for function chaining
   return true;
 }
+
+function saveAnalystResultToLocalStorage(data = null) {
+  try {
+    // If data is provided, we're saving a single result
+    if (data) {
+      // Get existing index or create new one
+      const storedIndex = localStorage.getItem("analystResultsIndex");
+      let indexData = storedIndex ? JSON.parse(storedIndex) : [];
+      
+      // Create result metadata
+      const resultId = "analyst-" + Date.now();
+      const timestamp = new Date().toLocaleTimeString();
+      const date = new Date().toLocaleDateString();
+      
+      // Determine prompt from data
+      let prompt = "Analyst query";
+      if (data.original_scout_data && data.original_scout_data.prompt) {
+        prompt = data.original_scout_data.prompt;
+      } else if (data.original_scout_data && data.original_scout_data.response_to_user_prompt) {
+        prompt = data.original_scout_data.response_to_user_prompt.substring(0, 50) + "...";
+      }
+      
+      // Create index entry
+      const indexEntry = {
+        id: resultId,
+        timestamp: timestamp,
+        date: date,
+        prompt: prompt,
+        trendsCount: data.original_scout_data?.relevant_trends?.length || 0
+      };
+      
+      // Add to index
+      indexData.push(indexEntry);
+      
+      // Keep only the last 20 results
+      if (indexData.length > 20) {
+        indexData = indexData.slice(-20);
+      }
+      
+      // Save index and full data
+      localStorage.setItem("analystResultsIndex", JSON.stringify(indexData));
+      localStorage.setItem(`analystResult_${resultId}`, JSON.stringify(data));
+      
+      logToConsole("Analyst result saved to localStorage", "info");
+      return resultId;
+    } 
+    // If no data is provided, we're saving all results from the analystResults array
+    else if (typeof analystResults !== 'undefined' && Array.isArray(analystResults)) {
+      // Create a version suitable for storage
+      const storageData = analystResults.map((result) => ({
+        id: result.id,
+        timestamp: result.timestamp,
+        date: result.date,
+        prompt: result.prompt,
+        // Only store essential data to save space
+        trendsCount: result.data.original_scout_data?.relevant_trends?.length || 0,
+      }));
+
+      localStorage.setItem("analystResultsIndex", JSON.stringify(storageData));
+
+      // Store each full result separately to avoid size limits
+      analystResults.forEach((result) => {
+        localStorage.setItem(
+          `analystResult_${result.id}`,
+          JSON.stringify(result.data)
+        );
+      });
+
+      logToConsole("All analyst results saved to localStorage", "info");
+      return null;
+    } else {
+      logToConsole("No data to save to localStorage", "warning");
+      return null;
+    }
+  } catch (e) {
+    logToConsole(`Error saving to localStorage: ${e.message}`, "error");
+    return null;
+  }
+}
+
+// Add a function to handle incoming analyst results
+function handleAnalystResult(result) {
+  if (!result || !result.prompt) return;
+
+  // Create a unique ID if not present
+  const resultId = result.id || "analyst-" + Date.now();
+
+  // Create result object
+  const resultObject = {
+    id: resultId,
+    timestamp: result.timestamp || new Date().toLocaleTimeString(),
+    date: result.date || new Date().toLocaleDateString(),
+    prompt: result.prompt,
+    data: result,
+  };
+
+  // Check if we already have this result
+  const existingIndex = analystResults.findIndex((r) => r.id === resultId);
+  if (existingIndex >= 0) {
+    // Update existing result
+    analystResults[existingIndex] = resultObject;
+  } else {
+    // Add new result
+    analystResults.push(resultObject);
+  }
+
+  // Save to localStorage
+  saveAnalystResultToLocalStorage();
+
+  // Update dropdown
+  updateAnalystSelect();
+
+  logToConsole(
+    `Added/updated analyst result for "${result.prompt.substring(0, 20)}..."`,
+    "info"
+  );
+}

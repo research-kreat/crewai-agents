@@ -255,36 +255,3 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 });
-
-  /**
-   * Determine which page we're currently on
-   */
-  function getCurrentPage() {
-    // Check for page-specific elements
-    if (document.getElementById("chat-query")) {
-      return "chatbot";
-    } else if (document.getElementById("scout-prompt")) {
-      return "scout";
-    } else if (document.getElementById("scout-data-input")) {
-      return "analyst";
-    }
-  
-    // Default to home page
-    return "home";
-  }
-  
-  /**
-   * Dynamically load a script
-   */
-  function loadScript(url, callback) {
-    const script = document.createElement("script");
-    script.type = "text/javascript";
-    script.src = url;
-    
-    // If callback is provided, execute it when script is loaded
-    if (callback) {
-      script.onload = callback;
-    }
-    
-    document.head.appendChild(script);
-  }

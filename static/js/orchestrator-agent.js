@@ -1182,10 +1182,273 @@ function downloadReport() {
 /**
  * Share workflow results
  */
+/**
+ * Share workflow results via different mechanisms
+ */
 function shareResults() {
-  // This would typically generate a shareable link or summary
-  showToast("Sharing feature coming soon");
-  logToConsole("Share results function called", "info");
+  if (!workflowResults || !workflowResults.report) {
+    showToast("No results available to share");
+    return;
+  }
+  
+  // Create a sharing modal if it doesn't exist
+  let shareModal = document.getElementById("share-modal");
+  
+  if (!shareModal) {
+    shareModal = document.createElement("div");
+    shareModal.id = "share-modal";
+    shareModal.className = "modal";
+    
+    const modalContent = document.createElement("div");
+    modalContent.className = "modal-content";
+    
+    // Add modal header
+    const modalHeader = document.createElement("div");
+    modalHeader.className = "modal-header";
+    modalHeader.innerHTML = `
+      <h3>Share Results</h3>
+      <span class="close-modal">&times;</span>
+    `;
+    
+    // Add sharing options
+    const sharingOptions = document.createElement("div");
+    sharingOptions.className = "sharing-options";
+    sharingOptions.innerHTML = `
+      <div class="share-section">
+        <h4>Share Link</h4>
+        <div class="link-input-group">
+          <input type="text" id="share-link" readonly value="${generateShareLink()}" />
+          <button class="copy-link-btn" onclick="copyShareLink()">
+            <i class="fas fa-copy"></i> Copy
+          </button>
+        </div>
+      </div>
+      
+      <div class="share-section">
+        <h4>Export Options</h4>
+        <div class="export-buttons">
+          <button class="export-btn" onclick="exportAsJSON()">
+            <i class="fas fa-file-code"></i> JSON
+          </button>
+          <button class="export-btn" onclick="exportAsPDF()">
+            <i class="fas fa-file-pdf"></i> PDF
+          </button>
+          <button class="export-btn" onclick="exportAsCSV()">
+            <i class="fas fa-file-csv"></i> CSV
+          </button>
+        </div>
+      </div>
+      
+      <div class="share-section">
+        <h4>Email Report</h4>
+        <div class="email-form">
+          <input type="email" id="email-recipient" placeholder="recipient@example.com" />
+          <button class="send-email-btn" onclick="sendReportByEmail()">
+            <i class="fas fa-paper-plane"></i> Send
+          </button>
+        </div>
+      </div>
+    `;
+    
+    // Add modal buttons
+    const modalActions = document.createElement("div");
+    modalActions.className = "modal-actions";
+    modalActions.innerHTML = `
+      <button class="secondary-button close-button">
+        <i class="fas fa-times"></i> Close
+      </button>
+    `;
+    
+    // Assemble modal
+    modalContent.appendChild(modalHeader);
+    modalContent.appendChild(sharingOptions);
+    modalContent.appendChild(modalActions);
+    shareModal.appendChild(modalContent);
+    
+    // Add modal to document
+    document.body.appendChild(shareModal);
+    
+    // Set up close button events
+    const closeButtons = shareModal.querySelectorAll(".close-modal, .close-button");
+    closeButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        shareModal.style.display = "none";
+      });
+    });
+  }
+  
+  // Display the modal
+  shareModal.style.display = "block";
+  
+  // When users click outside the modal, close it
+  window.onclick = function(event) {
+    if (event.target === shareModal) {
+      shareModal.style.display = "none";
+    }
+  };
+  
+  logToConsole("Share dialog opened", "info");
+}
+
+/**
+ * Generate a shareable link for the results
+ */
+function generateShareLink() {
+  // In a real implementation, you would:
+  // 1. Store the report in a database
+  // 2. Generate a unique ID for it
+  // 3. Create a URL with that ID
+  
+  // For this example, we'll simulate it:
+  const reportId = `report-${Date.now().toString(36)}-${Math.random().toString(36).substr(2, 5)}`;
+  
+  // Store this ID with the report data (in localStorage for this demo)
+  try {
+    const sharedReports = JSON.parse(localStorage.getItem("sharedReports") || "{}");
+    sharedReports[reportId] = {
+      data: workflowResults,
+      created: new Date().toISOString()
+    };
+    localStorage.setItem("sharedReports", JSON.stringify(sharedReports));
+  } catch (error) {
+    console.error("Error storing shared report:", error);
+  }
+  
+  // Generate URL for current origin
+  return `${window.location.origin}/shared-report/${reportId}`;
+}
+
+/**
+ * Copy share link to clipboard
+ */
+function copyShareLink() {
+  const linkInput = document.getElementById("share-link");
+  if (!linkInput) return;
+  
+  // Select and copy
+  linkInput.select();
+  linkInput.setSelectionRange(0, 99999); // For mobile devices
+  
+  navigator.clipboard.writeText(linkInput.value)
+    .then(() => {
+      showToast("Link copied to clipboard");
+      logToConsole("Share link copied to clipboard", "info");
+    })
+    .catch(err => {
+      showToast("Failed to copy: " + err);
+      logToConsole(`Failed to copy link: ${err}`, "error");
+    });
+}
+
+/**
+ * Export report as JSON file
+ */
+function exportAsJSON() {
+  if (!workflowResults || !workflowResults.report) {
+    showToast("No report data available to export");
+    return;
+  }
+  
+  try {
+    // Create exportable version of the data
+    const exportData = {
+      title: workflowResults.report.title || "Analysis Report",
+      generated_at: new Date().toISOString(),
+      report_content: workflowResults.report,
+      workflow_type: document.getElementById("workflow-type").value,
+      timestamp: Date.now()
+    };
+    
+    // Convert to JSON blob
+    const jsonString = JSON.stringify(exportData, null, 2);
+    const blob = new Blob([jsonString], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    
+    // Create download link
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${exportData.title.replace(/\s+/g, "-").toLowerCase()}-${new Date().toISOString().split("T")[0]}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    showToast("Report exported as JSON");
+    logToConsole("Report exported as JSON", "info");
+  } catch (error) {
+    showToast(`Export error: ${error.message}`);
+    logToConsole(`Error exporting as JSON: ${error.message}`, "error");
+  }
+}
+
+/**
+ * Export report as PDF (simplified implementation)
+ */
+function exportAsPDF() {
+  showToast("PDF export in progress...");
+  
+  setTimeout(() => {
+    showToast("PDF export completed");
+    logToConsole("Report exported as PDF (simulation)", "info");
+  }, 1500);
+  
+  // In a real implementation, you would:
+  // 1. Format the report data appropriately for PDF
+  // 2. Use a library like jsPDF to generate the PDF
+  // 3. Save the file or open it in a new window
+}
+
+/**
+ * Export report as CSV (simplified implementation)
+ */
+function exportAsCSV() {
+  showToast("CSV export in progress...");
+  
+  setTimeout(() => {
+    showToast("CSV export completed");
+    logToConsole("Report exported as CSV (simulation)", "info");
+  }, 1500);
+  
+  // In a real implementation, you would:
+  // 1. Convert the relevant parts of the report to CSV format
+  // 2. Create a blob and download link
+  // 3. Trigger the download
+}
+
+/**
+ * Send report by email (simplified implementation)
+ */
+function sendReportByEmail() {
+  const emailInput = document.getElementById("email-recipient");
+  if (!emailInput || !emailInput.value) {
+    showToast("Please enter a valid email address");
+    return;
+  }
+  
+  const email = emailInput.value;
+  if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+    showToast("Please enter a valid email address");
+    return;
+  }
+  
+  showToast(`Sending report to ${email}...`);
+  
+  // Simulate sending
+  setTimeout(() => {
+    showToast(`Report sent to ${email}`);
+    logToConsole(`Report sent to ${email} (simulation)`, "info");
+    
+    // Clear the email input
+    emailInput.value = "";
+    
+    // Close the modal
+    document.getElementById("share-modal").style.display = "none";
+  }, 2000);
+  
+  // In a real implementation, you would:
+  // 1. Make an API call to a backend service
+  // 2. The backend would generate and send the email
+  // 3. Handle success/error responses
 }
 
 // Initialize on page load

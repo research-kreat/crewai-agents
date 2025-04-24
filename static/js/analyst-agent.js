@@ -458,7 +458,7 @@ function processAnalystQuery(predefinedData = null) {
 
       // Render S-Curve Visualization
       try {
-        safeRenderSCurve(data);
+        renderSCurve(data);
       } catch (error) {
         logToConsole(
           `Error in S-Curve visualization: ${error.message}`,
@@ -1102,33 +1102,69 @@ function showLinkDetails(link) {
 }
 
 // Show related nodes
+/**
+ * Show related nodes with enhanced graph visualization integration
+ */
 function showRelatedNodes() {
-  if (!selectedNodeId || !forceGraph) return;
+  if (!selectedNodeId || !forceGraph || !graphData) {
+    showToast("No node selected or graph not available");
+    return;
+  }
 
   const graphData = forceGraph.graphData();
 
   // Find links connected to the selected node
   const connectedLinks = graphData.links.filter(
     (link) =>
-      (typeof link.source === "object" ? link.source.id : link.source) ===
-        selectedNodeId ||
-      (typeof link.target === "object" ? link.target.id : link.target) ===
-        selectedNodeId
+      (typeof link.source === "object" ? link.source.id : link.source) === selectedNodeId ||
+      (typeof link.target === "object" ? link.target.id : link.target) === selectedNodeId
   );
 
   // Get connected node IDs
   const connectedNodeIds = new Set();
   connectedLinks.forEach((link) => {
-    const sourceId =
-      typeof link.source === "object" ? link.source.id : link.source;
-    const targetId =
-      typeof link.target === "object" ? link.target.id : link.target;
+    const sourceId = typeof link.source === "object" ? link.source.id : link.source;
+    const targetId = typeof link.target === "object" ? link.target.id : link.target;
 
     if (sourceId !== selectedNodeId) connectedNodeIds.add(sourceId);
     if (targetId !== selectedNodeId) connectedNodeIds.add(targetId);
   });
 
+  // If no connections, show a message
+  if (connectedNodeIds.size === 0) {
+    showToast("No related nodes found for this node");
+    return;
+  }
+
   logToConsole(`Found ${connectedNodeIds.size} related nodes`, "info");
+
+  // Create an array of connectedNodeIds for camera animation
+  const connectedNodes = Array.from(connectedNodeIds)
+    .map(id => graphData.nodes.find(node => node.id === id))
+    .filter(Boolean);
+
+  // Focus camera on the network of nodes (selected node + connected nodes)
+  if (connectedNodes.length > 0) {
+    // Calculate positions for camera focusing
+    const allNodesToFocus = [
+      graphData.nodes.find(node => node.id === selectedNodeId),
+      ...connectedNodes
+    ].filter(Boolean);
+    
+    // Calculate bounds for centering
+    const nodePositions = allNodesToFocus.map(node => ({x: node.x, y: node.y}));
+    const bounds = calculateBounds(nodePositions);
+    
+    // Focus camera on the network
+    const distance = 100; // Extra padding around the network
+    forceGraph.centerAt(bounds.centerX, bounds.centerY, 1000);
+    
+    // Apply appropriate zoom level based on bounds size
+    setTimeout(() => {
+      const zoomLevel = calculateZoomLevel(bounds.width, bounds.height, forceGraph);
+      forceGraph.zoom(zoomLevel, 1000);
+    }, 1100);
+  }
 
   // Update node colors
   forceGraph.nodeColor((node) => {
@@ -1138,7 +1174,117 @@ function showRelatedNodes() {
       return "#ffab00"; // Connected nodes
     }
 
-    // Default colors
+    // Default colors (dimmed)
+    switch (node.type) {
+      case "trend":
+        return "rgba(74, 109, 229, 0.3)"; // Dimmed blue
+      case "technology":
+        return "rgba(40, 167, 69, 0.3)"; // Dimmed green
+      case "keyword":
+        return "rgba(253, 126, 20, 0.3)"; // Dimmed orange
+      default:
+        return "rgba(108, 117, 125, 0.3)"; // Dimmed gray
+    }
+  });
+
+  // Update link widths and colors
+  forceGraph.linkWidth((link) => {
+    const sourceId = typeof link.source === "object" ? link.source.id : link.source;
+    const targetId = typeof link.target === "object" ? link.target.id : link.target;
+
+    if (sourceId === selectedNodeId || targetId === selectedNodeId) {
+      return 4; // Highlight connected links
+    }
+    return link.value || 1;
+  }).linkColor((link) => {
+    const sourceId = typeof link.source === "object" ? link.source.id : link.source;
+    const targetId = typeof link.target === "object" ? link.target.id : link.target;
+
+    if (sourceId === selectedNodeId || targetId === selectedNodeId) {
+      return "#ffab00"; // Highlight connected links
+    }
+    return "rgba(150, 150, 150, 0.2)"; // Dim other links
+  });
+
+  // Update link particles
+  forceGraph.linkDirectionalParticles((link) => {
+    const sourceId = typeof link.source === "object" ? link.source.id : link.source;
+    const targetId = typeof link.target === "object" ? link.target.id : link.target;
+
+    if (sourceId === selectedNodeId || targetId === selectedNodeId) {
+      return 4; // Animated particles on connected links
+    }
+    return 0;
+  }).linkDirectionalParticleColor(() => "#ffab00");
+
+  // Close the modal
+  document.getElementById("node-details-modal").style.display = "none";
+  
+  // Add "Reset View" button if it doesn't exist
+  if (!document.getElementById("reset-relationship-view")) {
+    const resetBtn = document.createElement("button");
+    resetBtn.id = "reset-relationship-view";
+    resetBtn.className = "reset-view-btn";
+    resetBtn.innerHTML = '<i class="fas fa-undo"></i> Reset View';
+    resetBtn.onclick = resetGraphView;
+    
+    const container = document.querySelector(".graph-visualization");
+    container.appendChild(resetBtn);
+  }
+  
+  // Show a toast with instructions
+  showToast(`Showing ${connectedNodeIds.size} related nodes. Click on any node to view details.`);
+}
+
+/**
+ * Helper function to calculate bounds for a set of node positions
+ */
+function calculateBounds(positions) {
+  if (!positions || positions.length === 0) {
+    return { minX: 0, minY: 0, maxX: 0, maxY: 0, width: 0, height: 0, centerX: 0, centerY: 0 };
+  }
+  
+  const minX = Math.min(...positions.map(p => p.x));
+  const maxX = Math.max(...positions.map(p => p.x));
+  const minY = Math.min(...positions.map(p => p.y));
+  const maxY = Math.max(...positions.map(p => p.y));
+  
+  const width = maxX - minX;
+  const height = maxY - minY;
+  const centerX = minX + width / 2;
+  const centerY = minY + height / 2;
+  
+  return { minX, minY, maxX, maxY, width, height, centerX, centerY };
+}
+
+/**
+ * Helper function to calculate appropriate zoom level
+ */
+function calculateZoomLevel(width, height, graph) {
+  const graphWidth = graph.width();
+  const graphHeight = graph.height();
+  
+  // Add padding
+  const paddedWidth = width * 1.5;
+  const paddedHeight = height * 1.5;
+  
+  // Calculate zoom levels for width and height to fit in view
+  const zoomX = graphWidth / paddedWidth;
+  const zoomY = graphHeight / paddedHeight;
+  
+  // Use the smaller value to ensure all nodes are visible
+  return Math.min(zoomX, zoomY, 2.5); // Cap at 2.5x zoom
+}
+
+/**
+ * Reset graph view to normal
+ */
+function resetGraphView() {
+  if (!forceGraph) return;
+  
+  // Reset node colors
+  forceGraph.nodeColor((node) => {
+    // Default node colors
     switch (node.type) {
       case "trend":
         return "#4a6de5";
@@ -1150,63 +1296,144 @@ function showRelatedNodes() {
         return "#6c757d";
     }
   });
-
-  // Update link widths
-  forceGraph.linkWidth((link) => {
-    const sourceId =
-      typeof link.source === "object" ? link.source.id : link.source;
-    const targetId =
-      typeof link.target === "object" ? link.target.id : link.target;
-
-    if (sourceId === selectedNodeId || targetId === selectedNodeId) {
-      return 4; // Highlight connected links
-    }
-    return link.value || 1;
-  });
-
-  // Update link particles
-  forceGraph.linkDirectionalParticles((link) => {
-    const sourceId =
-      typeof link.source === "object" ? link.source.id : link.source;
-    const targetId =
-      typeof link.target === "object" ? link.target.id : link.target;
-
-    if (sourceId === selectedNodeId || targetId === selectedNodeId) {
-      return 4;
-    }
-    return 0;
-  });
-
-  // Close the modal
-  document.getElementById("node-details-modal").style.display = "none";
+  
+  // Reset link properties
+  forceGraph
+    .linkWidth((link) => link.value || 1)
+    .linkColor(() => "#cccccc")
+    .linkDirectionalParticles(0);
+  
+  // Reset zoom to fit all nodes
+  forceGraph.zoomToFit(1000, 50);
+  
+  // Clear selected node
+  selectedNodeId = null;
+  
+  // Remove reset button
+  const resetBtn = document.getElementById("reset-relationship-view");
+  if (resetBtn) {
+    resetBtn.remove();
+  }
+  
+  showToast("Graph view reset");
 }
 
-// Toggle fullscreen for graph
+/**
+ * Toggle fullscreen mode for the graph visualization
+ * Handles all major browsers and properly resizes the graph when entering/exiting fullscreen
+ */
 function toggleFullscreenGraph() {
   const container = document.querySelector(".graph-visualization");
 
-  if (!document.fullscreenElement) {
-    if (container.requestFullscreen) {
-      container.requestFullscreen();
-    } else if (container.mozRequestFullScreen) {
-      container.mozRequestFullScreen();
-    } else if (container.webkitRequestFullscreen) {
-      container.webkitRequestFullscreen();
-    } else if (container.msRequestFullscreen) {
-      container.msRequestFullscreen();
+  if (!container) {
+    logToConsole("Graph container not found", "error");
+    return;
+  }
+
+  // Function to handle fullscreen change events
+  function fullscreenChangeHandler() {
+    if (
+      document.fullscreenElement ||
+      document.webkitFullscreenElement ||
+      document.mozFullScreenElement ||
+      document.msFullscreenElement
+    ) {
+      // We've entered fullscreen mode
+      logToConsole("Entered fullscreen mode", "info");
+
+      // Update button icon if it exists
+      const fsButton = document.querySelector(
+        ".visualization-controls .icon-button:first-child i"
+      );
+      if (fsButton) {
+        fsButton.className = "fas fa-compress";
+      }
+
+      // Resize the graph if it exists
+      if (forceGraph) {
+        // Use setTimeout to ensure DOM has updated
+        setTimeout(() => {
+          const width = container.clientWidth;
+          const height = container.clientHeight;
+          forceGraph.width(width).height(height);
+          forceGraph.refresh();
+        }, 100);
+      }
+    } else {
+      // We've exited fullscreen mode
+      logToConsole("Exited fullscreen mode", "info");
+
+      // Update button icon back to expand
+      const fsButton = document.querySelector(
+        ".visualization-controls .icon-button:first-child i"
+      );
+      if (fsButton) {
+        fsButton.className = "fas fa-expand";
+      }
+
+      // Resize the graph back to normal
+      if (forceGraph) {
+        // Use setTimeout to ensure DOM has updated
+        setTimeout(() => {
+          const width = container.clientWidth;
+          const height = container.clientHeight;
+          forceGraph.width(width).height(height);
+          forceGraph.refresh();
+        }, 100);
+      }
     }
-    logToConsole("Entered fullscreen mode", "info");
+  }
+
+  // Add event listeners for all browsers
+  document.addEventListener("fullscreenchange", fullscreenChangeHandler);
+  document.addEventListener("webkitfullscreenchange", fullscreenChangeHandler);
+  document.addEventListener("mozfullscreenchange", fullscreenChangeHandler);
+  document.addEventListener("MSFullscreenChange", fullscreenChangeHandler);
+
+  // Toggle fullscreen state
+  if (
+    !document.fullscreenElement &&
+    !document.webkitFullscreenElement &&
+    !document.mozFullScreenElement &&
+    !document.msFullscreenElement
+  ) {
+    // Enter fullscreen mode
+    try {
+      if (container.requestFullscreen) {
+        container.requestFullscreen();
+      } else if (container.mozRequestFullScreen) {
+        container.mozRequestFullScreen();
+      } else if (container.webkitRequestFullscreen) {
+        container.webkitRequestFullscreen();
+      } else if (container.msRequestFullscreen) {
+        container.msRequestFullscreen();
+      } else {
+        throw new Error("Fullscreen API not supported");
+      }
+    } catch (error) {
+      logToConsole(
+        `Failed to enter fullscreen mode: ${error.message}`,
+        "error"
+      );
+      showToast("Fullscreen mode not supported in this browser");
+    }
   } else {
-    if (document.exitFullscreen) {
-      document.exitFullscreen();
-    } else if (document.mozCancelFullScreen) {
-      document.mozCancelFullScreen();
-    } else if (document.webkitExitFullscreen) {
-      document.webkitExitFullscreen();
-    } else if (document.msExitFullscreen) {
-      document.msExitFullscreen();
+    // Exit fullscreen mode
+    try {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.mozCancelFullScreen) {
+        document.mozCancelFullScreen();
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      } else if (document.msExitFullscreen) {
+        document.msExitFullscreen();
+      } else {
+        throw new Error("Fullscreen API not supported");
+      }
+    } catch (error) {
+      logToConsole(`Failed to exit fullscreen mode: ${error.message}`, "error");
     }
-    logToConsole("Exited fullscreen mode", "info");
   }
 }
 
@@ -2215,67 +2442,6 @@ function updateSCurveVisualization(period) {
 }
 
 /**
- * Download S-Curve image
- */
-function downloadSCurveImage() {
-  // Check if S-Curve exists
-  const svgContainer = document.querySelector("#s-curve-container svg");
-  if (!svgContainer) {
-    logToConsole("No S-Curve to download", "warning");
-    showToast("No S-Curve visualization to download");
-    return;
-  }
-
-  try {
-    // Get SVG string
-    const svgString = new XMLSerializer().serializeToString(svgContainer);
-
-    // Create a canvas
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
-
-    // Set dimensions
-    const svgWidth = svgContainer.width.baseVal.value;
-    const svgHeight = svgContainer.height.baseVal.value;
-    canvas.width = svgWidth;
-    canvas.height = svgHeight;
-
-    // Create SVG image
-    const img = new Image();
-    img.onload = function () {
-      // Draw SVG on canvas
-      ctx.fillStyle = "white";
-      ctx.fillRect(0, 0, svgWidth, svgHeight);
-      ctx.drawImage(img, 0, 0);
-
-      // Convert to PNG
-      const pngData = canvas.toDataURL("image/png");
-
-      // Create download link
-      const downloadLink = document.createElement("a");
-      downloadLink.href = pngData;
-      downloadLink.download = "technology-s-curve.png";
-
-      // Trigger download
-      document.body.appendChild(downloadLink);
-      downloadLink.click();
-      document.body.removeChild(downloadLink);
-
-      logToConsole("S-Curve image downloaded", "info");
-      showToast("S-Curve image downloaded");
-    };
-
-    // Load SVG data
-    img.src =
-      "data:image/svg+xml;base64," +
-      btoa(unescape(encodeURIComponent(svgString)));
-  } catch (error) {
-    logToConsole(`Error downloading S-Curve: ${error.message}`, "error");
-    showToast("Failed to download S-Curve image");
-  }
-}
-
-/**
  * Initialize S-Curve functionality
  */
 function initSCurveVisualization() {
@@ -2386,85 +2552,6 @@ function downloadSCurveImage() {
   } catch (error) {
     logToConsole(`Error downloading S-Curve: ${error.message}`, "error");
     showToast("Failed to download S-Curve image");
-  }
-}
-
-/**
- * Safely render the S-Curve visualization with DOM error prevention
- */
-function safeRenderSCurve(data) {
-  try {
-    // Get container and verify it exists
-    const container = document.getElementById("s-curve-container");
-    if (!container) {
-      console.error("S-curve container not found");
-      return;
-    }
-
-    // Clear any existing content
-    while (container.firstChild) {
-      container.removeChild(container.firstChild);
-    }
-
-    // Show error message if no data
-    if (!data || !data.s_curve_data) {
-      container.innerHTML = `
-        <div class="error-message">
-          <i class="fas fa-exclamation-circle"></i>
-          <p>No data available for S-Curve visualization</p>
-        </div>
-      `;
-      return;
-    }
-
-    // Create a new SVG element with D3
-    try {
-      // Set dimensions
-      const margin = { top: 40, right: 120, bottom: 60, left: 50 };
-      const width = container.clientWidth - margin.left - margin.right;
-      const height = 400 - margin.top - margin.bottom;
-
-      // Create SVG element using document.createElementNS
-      const svgNS = "http://www.w3.org/2000/svg";
-      const svg = document.createElementNS(svgNS, "svg");
-      svg.setAttribute("width", width + margin.left + margin.right);
-      svg.setAttribute("height", height + margin.top + margin.bottom);
-
-      // Append SVG to container directly
-      container.appendChild(svg);
-
-      // Now use D3 to manipulate the existing SVG
-      const svgGroup = d3
-        .select(svg)
-        .append("g")
-        .attr("transform", `translate(${margin.left},${margin.top})`);
-
-      // Once SVG is attached to DOM, proceed with visualization
-      renderSCurveContent(svgGroup, data.s_curve_data, width, height, margin);
-
-      logToConsole("S-Curve rendered successfully", "info");
-    } catch (e) {
-      console.error("Error creating SVG:", e);
-      container.innerHTML = `
-        <div class="error-message">
-          <i class="fas fa-exclamation-circle"></i>
-          <p>Error rendering S-Curve: ${e.message}</p>
-        </div>
-      `;
-    }
-  } catch (e) {
-    console.error("Fatal error in S-Curve rendering:", e);
-    // Try to show error message
-    try {
-      document.getElementById("s-curve-container").innerHTML = `
-        <div class="error-message">
-          <i class="fas fa-exclamation-circle"></i>
-          <p>Fatal error in S-Curve visualization: ${e.message}</p>
-        </div>
-      `;
-    } catch (innerError) {
-      console.error("Could not even show error message:", innerError);
-    }
   }
 }
 
@@ -2613,54 +2700,5 @@ function renderSCurveContent(svgGroup, data, width, height, margin) {
   } catch (e) {
     console.error("Error rendering S-Curve content:", e);
     throw e;
-  }
-}
-
-
-function saveAnalystResultToLocalStorage(data) {
-  try {
-    // Get existing index or create new one
-    const storedIndex = localStorage.getItem("analystResultsIndex");
-    let indexData = storedIndex ? JSON.parse(storedIndex) : [];
-    
-    // Create result metadata
-    const resultId = "analyst-" + Date.now();
-    const timestamp = new Date().toLocaleTimeString();
-    const date = new Date().toLocaleDateString();
-    
-    // Determine prompt from data
-    let prompt = "Analyst query";
-    if (data.original_scout_data && data.original_scout_data.prompt) {
-      prompt = data.original_scout_data.prompt;
-    } else if (data.original_scout_data && data.original_scout_data.response_to_user_prompt) {
-      prompt = data.original_scout_data.response_to_user_prompt.substring(0, 50) + "...";
-    }
-    
-    // Create index entry
-    const indexEntry = {
-      id: resultId,
-      timestamp: timestamp,
-      date: date,
-      prompt: prompt,
-      trendsCount: data.original_scout_data?.relevant_trends?.length || 0
-    };
-    
-    // Add to index
-    indexData.push(indexEntry);
-    
-    // Keep only the last 20 results
-    if (indexData.length > 20) {
-      indexData = indexData.slice(-20);
-    }
-    
-    // Save index and full data
-    localStorage.setItem("analystResultsIndex", JSON.stringify(indexData));
-    localStorage.setItem(`analystResult_${resultId}`, JSON.stringify(data));
-    
-    logToConsole("Analyst result saved to localStorage", "info");
-    return resultId;
-  } catch (e) {
-    logToConsole(`Error saving to localStorage: ${e.message}`, "error");
-    return null;
   }
 }
