@@ -1873,271 +1873,11 @@ function copyScoutResultJson(resultId) {
     });
 }
 
-// ==================================================
-// S-CURVE VISUALIZATION FUNCTIONS
-// ==================================================
-
 // S-curve variables
 let sCurveData = null;
 let sCurveChart = null;
 let currentTimeFilter = "All";
 
-/**
- * Render S-Curve visualization using D3.js
- */
-/**
- * Render S-Curve visualization using D3.js with error handling
- */
-function renderSCurve(data) {
-  const sCurveContainer = document.getElementById("s-curve-container");
-  if (!sCurveContainer) {
-    console.error("S-curve container not found in DOM");
-    return;
-  }
-
-  // Clear previous content
-  sCurveContainer.innerHTML = "";
-
-  if (!data || !data.s_curve_data || data.s_curve_data.error) {
-    sCurveContainer.innerHTML = `
-      <div class="error-message">
-        <i class="fas fa-exclamation-circle"></i>
-        <p>${
-          data.s_curve_data?.error ||
-          "No data available for S-Curve visualization"
-        }</p>
-      </div>
-    `;
-    return;
-  }
-
-  // Store data globally for filtering later
-  sCurveData = data.s_curve_data;
-
-  try {
-    // Set up the S-Curve container
-    const margin = { top: 40, right: 120, bottom: 60, left: 50 };
-    const width = sCurveContainer.clientWidth - margin.left - margin.right;
-    const height = 400 - margin.top - margin.bottom;
-
-    // Create SVG element - with defensive check
-    d3.select("#s-curve-container svg").remove(); // First remove any existing SVG
-
-    const svg = d3
-      .select("#s-curve-container")
-      .append("svg")
-      .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom)
-      .append("g")
-      .attr("transform", `translate(${margin.left},${margin.top})`);
-
-    // Extract technologies data
-    const technologies = sCurveData.technologies;
-
-    // If no technologies, show error message
-    if (!technologies || technologies.length === 0) {
-      sCurveContainer.innerHTML = `
-        <div class="error-message">
-          <i class="fas fa-exclamation-circle"></i>
-          <p>No technology trends available for S-Curve visualization</p>
-        </div>
-      `;
-      return;
-    }
-
-    // Filter data based on selected time period
-    const filteredData = filterSCurveDataByTime(
-      technologies,
-      currentTimeFilter
-    );
-
-    // Set up scales
-    const x = d3
-      .scaleTime()
-      .domain([
-        new Date(filteredData.minYear, 0, 1),
-        new Date(filteredData.maxYear, 11, 31),
-      ])
-      .range([0, width]);
-
-    const y = d3
-      .scaleLinear()
-      .domain([0, filteredData.maxCumulative * 1.1]) // Add 10% padding
-      .range([height, 0]);
-
-    // Add X and Y axes
-    svg
-      .append("g")
-      .attr("transform", `translate(0,${height})`)
-      .call(d3.axisBottom(x).tickFormat(d3.timeFormat("%Y")))
-      .selectAll("text")
-      .attr("transform", "rotate(-45)")
-      .style("text-anchor", "end");
-
-    svg.append("g").call(d3.axisLeft(y));
-
-    // Add X and Y axis labels
-    svg
-      .append("text")
-      .attr("text-anchor", "middle")
-      .attr("x", width / 2)
-      .attr("y", height + margin.bottom - 10)
-      .text("Year");
-
-    svg
-      .append("text")
-      .attr("text-anchor", "middle")
-      .attr("transform", "rotate(-90)")
-      .attr("x", -height / 2)
-      .attr("y", -margin.left + 15)
-      .text("Technology Adoption (Cumulative Mentions)");
-
-    // Add title
-    svg
-      .append("text")
-      .attr("text-anchor", "middle")
-      .attr("x", width / 2)
-      .attr("y", -15)
-      .style("font-size", "16px")
-      .style("font-weight", "bold")
-      .text("Technology S-Curve Analysis");
-
-    // Generate line paths
-    const line = d3
-      .line()
-      .x((d) => x(new Date(d.year, 0, 1)))
-      .y((d) => y(d.cumulative))
-      .curve(d3.curveMonotoneX);
-
-    // Create color scale for technologies
-    const colorScale = d3
-      .scaleOrdinal(d3.schemeCategory10)
-      .domain(filteredData.technologies.map((t) => t.technology));
-
-    // Add the lines
-    const paths = svg
-      .selectAll(".line")
-      .data(filteredData.technologies)
-      .enter()
-      .append("path")
-      .attr("fill", "none")
-      .attr("class", "line")
-      .attr("stroke", (d) => colorScale(d.technology))
-      .attr("stroke-width", 2)
-      .attr("d", (d) => line(d.filteredData));
-
-    // Add hover effect
-    paths
-      .on("mouseover", function (event, d) {
-        d3.select(this).attr("stroke-width", 4);
-
-        // Show tooltip
-        const tooltip = d3
-          .select("body")
-          .append("div")
-          .attr("class", "tooltip")
-          .style("position", "absolute")
-          .style("background", "rgba(0,0,0,0.7)")
-          .style("color", "white")
-          .style("padding", "8px")
-          .style("border-radius", "4px")
-          .style("pointer-events", "none")
-          .style("font-size", "12px")
-          .style("opacity", 0);
-
-        tooltip.transition().duration(200).style("opacity", 0.9);
-
-        tooltip
-          .html(
-            `
-          <strong>${d.technology}</strong><br/>
-          Stage: ${d.stage}<br/>
-          Total Mentions: ${d.total_mentions}<br/>
-          Domains: ${d.domains.join(", ")}
-        `
-          )
-          .style("left", event.pageX + 10 + "px")
-          .style("top", event.pageY - 28 + "px");
-      })
-      .on("mouseout", function (event, d) {
-        d3.select(this).attr("stroke-width", 2);
-
-        // Remove tooltip
-        d3.selectAll(".tooltip").remove();
-      });
-
-    // Add dots for each data point
-    filteredData.technologies.forEach((tech) => {
-      svg
-        .selectAll(`.dot-${tech.technology.replace(/\s+/g, "-").toLowerCase()}`)
-        .data(tech.filteredData)
-        .enter()
-        .append("circle")
-        .attr("class", "dot")
-        .attr("cx", (d) => x(new Date(d.year, 0, 1)))
-        .attr("cy", (d) => y(d.cumulative))
-        .attr("r", 3)
-        .attr("fill", colorScale(tech.technology));
-    });
-
-    // Add a legend
-    const legend = svg
-      .append("g")
-      .attr("class", "legend")
-      .attr("transform", `translate(${width + 10}, 0)`);
-
-    const legendItems = legend
-      .selectAll(".legend-item")
-      .data(filteredData.technologies)
-      .enter()
-      .append("g")
-      .attr("class", "legend-item")
-      .attr("transform", (d, i) => `translate(0, ${i * 20})`);
-
-    legendItems
-      .append("rect")
-      .attr("width", 10)
-      .attr("height", 10)
-      .attr("fill", (d) => colorScale(d.technology));
-
-    legendItems
-      .append("text")
-      .attr("x", 15)
-      .attr("y", 8)
-      .attr("font-size", "10px")
-      .text((d) => `${d.technology} (${d.stage})`);
-
-    // Save reference to the chart for later updates
-    sCurveChart = {
-      svg,
-      width,
-      height,
-      margin,
-      x,
-      y,
-      colorScale,
-      line,
-    };
-
-    logToConsole(
-      `Rendered S-Curve with ${filteredData.technologies.length} technologies`,
-      "info"
-    );
-  } catch (error) {
-    logToConsole(`Error rendering S-Curve: ${error.message}`, "error");
-    sCurveContainer.innerHTML = `
-      <div class="error-message">
-        <i class="fas fa-exclamation-circle"></i>
-        <p>Error rendering S-Curve: ${error.message}</p>
-      </div>
-    `;
-    console.error("S-Curve rendering error:", error);
-  }
-}
-
-/**
- * Filter S-Curve data by time period
- */
 /**
  * Filter S-Curve data by time period with improved error handling
  */
@@ -2700,5 +2440,85 @@ function renderSCurveContent(svgGroup, data, width, height, margin) {
   } catch (e) {
     console.error("Error rendering S-Curve content:", e);
     throw e;
+  }
+}
+
+
+/**
+ * Safely render the S-Curve visualization with DOM error prevention
+ */
+function renderSCurve(data) {
+  try {
+    // Get container and verify it exists
+    const container = document.getElementById("s-curve-container");
+    if (!container) {
+      console.error("S-curve container not found");
+      return;
+    }
+
+    // Clear any existing content
+    while (container.firstChild) {
+      container.removeChild(container.firstChild);
+    }
+
+    // Show error message if no data
+    if (!data || !data.s_curve_data) {
+      container.innerHTML = `
+        <div class="error-message">
+          <i class="fas fa-exclamation-circle"></i>
+          <p>No data available for S-Curve visualization</p>
+        </div>
+      `;
+      return;
+    }
+
+    // Create a new SVG element with D3
+    try {
+      // Set dimensions
+      const margin = { top: 40, right: 120, bottom: 60, left: 50 };
+      const width = container.clientWidth - margin.left - margin.right;
+      const height = 400 - margin.top - margin.bottom;
+
+      // Create SVG element using document.createElementNS
+      const svgNS = "http://www.w3.org/2000/svg";
+      const svg = document.createElementNS(svgNS, "svg");
+      svg.setAttribute("width", width + margin.left + margin.right);
+      svg.setAttribute("height", height + margin.top + margin.bottom);
+
+      // Append SVG to container directly
+      container.appendChild(svg);
+
+      // Now use D3 to manipulate the existing SVG
+      const svgGroup = d3
+        .select(svg)
+        .append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`);
+
+      // Once SVG is attached to DOM, proceed with visualization
+      renderSCurveContent(svgGroup, data.s_curve_data, width, height, margin);
+
+      logToConsole("S-Curve rendered successfully", "info");
+    } catch (e) {
+      console.error("Error creating SVG:", e);
+      container.innerHTML = `
+        <div class="error-message">
+          <i class="fas fa-exclamation-circle"></i>
+          <p>Error rendering S-Curve: ${e.message}</p>
+        </div>
+      `;
+    }
+  } catch (e) {
+    console.error("Fatal error in S-Curve rendering:", e);
+    // Try to show error message
+    try {
+      document.getElementById("s-curve-container").innerHTML = `
+        <div class="error-message">
+          <i class="fas fa-exclamation-circle"></i>
+          <p>Fatal error in S-Curve visualization: ${e.message}</p>
+        </div>
+      `;
+    } catch (innerError) {
+      console.error("Could not even show error message:", innerError);
+    }
   }
 }
