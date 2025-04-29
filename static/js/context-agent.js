@@ -1,25 +1,9 @@
-// ==================================================
-// CONTEXT AGENT FUNCTIONALITY
-// ==================================================
-
-// Store results for context analysis
-let analystResults = [];
-let lastAnalysisResult = null;
-
-/**
- * Load Analyst results from localStorage on page load
- */
 function loadAnalystResultsFromLocalStorage() {
   try {
-    // Try to load analyst results first
     const storedAnalyst = localStorage.getItem("analystResultsIndex");
     if (storedAnalyst) {
       const indexData = JSON.parse(storedAnalyst);
-
-      // Clear current results
       analystResults = [];
-
-      // Load each result
       indexData.forEach((item) => {
         const storedData = localStorage.getItem(`analystResult_${item.id}`);
         if (storedData) {
@@ -32,23 +16,17 @@ function loadAnalystResultsFromLocalStorage() {
           });
         }
       });
-
       logToConsole(
         `Loaded ${analystResults.length} analyst results from localStorage`,
         "system"
       );
     } else {
-      // Fall back to scout results if no analyst results
       const storedScout = localStorage.getItem("scoutResultsIndex");
       if (!storedScout) return;
-
       const scoutIndexData = JSON.parse(storedScout);
-
-      // We'll convert scout results to a format compatible with analyst
       scoutIndexData.forEach((item) => {
         const storedData = localStorage.getItem(`scoutResult_${item.id}`);
         if (storedData) {
-          // Create a simple analyst result with the scout data embedded
           const scoutData = JSON.parse(storedData);
           const analystResult = {
             id: "analyst-" + item.id,
@@ -61,49 +39,35 @@ function loadAnalystResultsFromLocalStorage() {
               graph_insights: {},
             },
           };
-
           analystResults.push(analystResult);
         }
       });
-
       logToConsole(
         `Converted ${analystResults.length} scout results to analyst format`,
         "system"
       );
     }
-
-    // Update select dropdown
     updateAnalystSelect();
   } catch (e) {
     logToConsole(`Error loading from localStorage: ${e.message}`, "error");
   }
 }
 
-/**
- * Update Analyst results select dropdown
- */
 function updateAnalystSelect() {
   const selectElement = document.getElementById("analyst-select");
   if (!selectElement) return;
-
-  // Clear current options except the first one
   while (selectElement.options.length > 1) {
     selectElement.remove(1);
   }
-
-  // Sort results by date (newest first)
   const sortedResults = [...analystResults].sort((a, b) => {
     return (
       new Date(b.date) - new Date(a.date) ||
       b.timestamp.localeCompare(a.timestamp)
     );
   });
-
-  // Add options
   sortedResults.forEach((result) => {
     const option = document.createElement("option");
     option.value = result.id;
-    // Truncate prompt if too long
     const promptDisplay =
       result.prompt.length > 40
         ? result.prompt.substring(0, 40) + "..."
@@ -111,28 +75,19 @@ function updateAnalystSelect() {
     option.textContent = `${result.date} - ${promptDisplay}`;
     selectElement.appendChild(option);
   });
-
   logToConsole("Analyst select dropdown updated", "system");
 }
 
-/**
- * Load selected Analyst result
- */
 function loadAnalystResult() {
   const selectElement = document.getElementById("analyst-select");
   const resultTextarea = document.getElementById("analyst-data");
-
   if (!selectElement || !resultTextarea) return;
-
   const selectedId = selectElement.value;
-
   if (!selectedId) {
     resultTextarea.value = "";
     return;
   }
-
   const result = analystResults.find((r) => r.id === selectedId);
-
   if (result) {
     resultTextarea.value = JSON.stringify(result.data, null, 2);
     logToConsole(
@@ -145,31 +100,21 @@ function loadAnalystResult() {
   }
 }
 
-/**
- * Run context analysis
- */
 function runContextAnalysis() {
-  // Get input data
   const companyProfileText = document.getElementById("company-profile").value;
   const competitorDataText = document.getElementById("competitor-data").value;
   const analystDataText = document.getElementById("analyst-data").value;
-
-  // Validate inputs
   if (!companyProfileText) {
     showToast("Please enter company profile data");
     logToConsole("Missing company profile data", "warning");
     return;
   }
-
   if (!analystDataText) {
     showToast("Please select or enter Analyst result data");
     logToConsole("Missing analyst data", "warning");
     return;
   }
-
-  // Parse JSON inputs
   let companyProfile, competitorData, analystData;
-
   try {
     companyProfile = JSON.parse(companyProfileText);
     logToConsole("Successfully parsed company profile", "info");
@@ -178,7 +123,6 @@ function runContextAnalysis() {
     logToConsole("Invalid company profile JSON: " + e.message, "error");
     return;
   }
-
   if (competitorDataText) {
     try {
       competitorData = JSON.parse(competitorDataText);
@@ -189,7 +133,6 @@ function runContextAnalysis() {
       return;
     }
   }
-
   try {
     analystData = JSON.parse(analystDataText);
     logToConsole("Successfully parsed analyst data", "info");
@@ -198,25 +141,16 @@ function runContextAnalysis() {
     logToConsole("Invalid Analyst data JSON: " + e.message, "error");
     return;
   }
-
-  // Show loading state
   document.getElementById("loading").classList.remove("hidden");
   document.getElementById("no-results").classList.add("hidden");
   document.getElementById("results-container").classList.add("hidden");
-
-  // Disable analyze button
-  handleButtonState("#analyze-button", true, "Analyzing...");
-
+  handleButtonState("#analyze-button", !0, "Analyzing...");
   logToConsole("Starting context analysis...", "info");
-
-  // Prepare request body
   const requestBody = {
     company_profile: companyProfile,
     competitor_data: competitorData || null,
     analyst_data: analystData,
   };
-
-  // Send API request
   fetch(`${apiUrl}/agent/context/analyze`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -229,52 +163,30 @@ function runContextAnalysis() {
       return response.json();
     })
     .then((data) => {
-      // Hide loading spinner
       document.getElementById("loading").classList.add("hidden");
       logToConsole("Context analysis complete", "info");
-
-      // Store result
       lastAnalysisResult = data;
-
-      // Update UI with results
       updateResultsUI(data);
-
-      // Show results container
       document.getElementById("no-results").classList.add("hidden");
       document.getElementById("results-container").classList.remove("hidden");
-
-      // Save to localStorage if needed
       saveAnalysisToLocalStorage(data);
-
-      // Re-enable analyze button
-      handleButtonState("#analyze-button", false);
+      handleButtonState("#analyze-button", !1);
     })
     .catch((error) => {
-      // Hide loading spinner
       document.getElementById("loading").classList.add("hidden");
       logToConsole(`Analysis error: ${error}`, "error");
-
-      // Show error message
       showToast(`Error: ${error.message}`);
-
-      // Re-enable analyze button
-      handleButtonState("#analyze-button", false);
+      handleButtonState("#analyze-button", !1);
     });
 }
 
-/**
- * Update the results UI with context analysis data
- */
 function updateResultsUI(data) {
   if (!data || !data.context_analysis) {
     logToConsole("Invalid analysis data received", "error");
     return;
   }
-
   const context = data.context_analysis;
   const overall = data.overall_assessment;
-
-  // Update overall assessment section
   document.getElementById("relevance-score").textContent =
     overall.relevance_score ? overall.relevance_score.toFixed(2) : "0.00";
   document.getElementById("strategic-score").textContent =
@@ -289,30 +201,22 @@ function updateResultsUI(data) {
   document.getElementById(
     "approach"
   ).textContent = `Recommended Approach: ${overall.recommended_approach}`;
-
-  // Update considerations
   const considerationsList = document.getElementById("considerations-list");
   considerationsList.innerHTML = overall.key_considerations
     .map((item) => `<li>${item}</li>`)
     .join("");
-
-  // Update next steps
   const nextStepsList = document.getElementById("next-steps-list");
   nextStepsList.innerHTML = overall.next_steps
     .map((item) => `<li>${item}</li>`)
     .join("");
-
-  // Update strategic alignment
   const strategicScore = document.getElementById("strategic-alignment-score");
   strategicScore.textContent = context.strategic_alignment.score.toFixed(2);
   updateScoreBadgeClass(strategicScore, context.strategic_alignment.score);
-
   const alignedPrioritiesList = document.getElementById("aligned-priorities");
   alignedPrioritiesList.innerHTML =
     context.strategic_alignment.aligned_priorities
       .map(
-        (item) =>
-          `<li>
+        (item) => `<li>
       <div class="panel-item">
         <span class="panel-label">${item.priority}</span>
         <span class="panel-value">Relevance: ${item.relevance.toFixed(2)}</span>
@@ -320,25 +224,20 @@ function updateResultsUI(data) {
     </li>`
       )
       .join("");
-
   document.getElementById("strategic-rationale").textContent =
     context.strategic_alignment.rationale;
-
-  // Update capability assessment
   const capabilityScore = document.getElementById(
     "capability-assessment-score"
   );
   capabilityScore.textContent = context.capability_assessment.score.toFixed(2);
   updateScoreBadgeClass(capabilityScore, context.capability_assessment.score);
-
   const existingCapabilitiesList = document.getElementById(
     "existing-capabilities"
   );
   existingCapabilitiesList.innerHTML =
     context.capability_assessment.existing_capabilities
       .map(
-        (item) =>
-          `<li>
+        (item) => `<li>
       <div class="panel-item">
         <span class="panel-label">${item.capability}</span>
         <span class="panel-value">Potential: ${item.leverage_potential}</span>
@@ -347,12 +246,10 @@ function updateResultsUI(data) {
     </li>`
       )
       .join("");
-
   const capabilityGapsList = document.getElementById("capability-gaps");
   capabilityGapsList.innerHTML = context.capability_assessment.capability_gaps
     .map(
-      (item) =>
-        `<li>
+      (item) => `<li>
       <div class="panel-item">
         <span class="panel-label">${item.gap}</span>
         <span class="panel-value">Criticality: ${item.criticality}</span>
@@ -361,25 +258,19 @@ function updateResultsUI(data) {
     </li>`
     )
     .join("");
-
   document.getElementById("capability-rationale").textContent =
     context.capability_assessment.rationale;
-
-  // Update competitive landscape
   const competitiveScore = document.getElementById(
     "competitive-landscape-score"
   );
   competitiveScore.textContent = context.competitive_landscape.score.toFixed(2);
   updateScoreBadgeClass(competitiveScore, context.competitive_landscape.score);
-
   document.getElementById("competitive-position").textContent =
     context.competitive_landscape.position;
-
   const keyCompetitorsList = document.getElementById("key-competitors");
   keyCompetitorsList.innerHTML = context.competitive_landscape.key_competitors
     .map(
-      (item) =>
-        `<li>
+      (item) => `<li>
       <div class="panel-item">
         <span class="panel-label">${item.name}</span>
         <span class="panel-value">Threat: ${item.threat_level}</span>
@@ -388,13 +279,10 @@ function updateResultsUI(data) {
     </li>`
     )
     .join("");
-
   document.getElementById("market-opportunity").textContent =
     context.competitive_landscape.market_opportunity;
   document.getElementById("competitive-rationale").textContent =
     context.competitive_landscape.rationale;
-
-  // Update integration opportunities
   const integrationScore = document.getElementById(
     "integration-opportunities-score"
   );
@@ -404,13 +292,11 @@ function updateResultsUI(data) {
     integrationScore,
     context.integration_opportunities.score
   );
-
   const projectSynergiesList = document.getElementById("project-synergies");
   projectSynergiesList.innerHTML =
     context.integration_opportunities.project_synergies
       .map(
-        (item) =>
-          `<li>
+        (item) => `<li>
       <div class="panel-item">
         <span class="panel-label">${item.project}</span>
         <span class="panel-value">Synergy: ${item.synergy_level}</span>
@@ -419,11 +305,8 @@ function updateResultsUI(data) {
     </li>`
       )
       .join("");
-
   document.getElementById("integration-rationale").textContent =
     context.integration_opportunities.rationale;
-
-  // Update resource requirements
   const estimatedInvestmentList = document.getElementById(
     "estimated-investment"
   );
@@ -454,12 +337,10 @@ function updateResultsUI(data) {
       </div>
     </li>
   `;
-
   const talentNeedsList = document.getElementById("talent-needs");
   talentNeedsList.innerHTML = context.resource_requirements.talent_needs
     .map(
-      (item) =>
-        `<li>
+      (item) => `<li>
       <div class="panel-item">
         <span class="panel-label">${item.role}</span>
         <span class="panel-value">Count: ${item.count}</span>
@@ -468,7 +349,6 @@ function updateResultsUI(data) {
     </li>`
     )
     .join("");
-
   const timelineList = document.getElementById("timeline");
   const timeline = context.resource_requirements.timeline;
   timelineList.innerHTML = `
@@ -491,23 +371,15 @@ function updateResultsUI(data) {
       </div>
     </li>
   `;
-
   document.getElementById("feasibility").textContent =
     context.resource_requirements.feasibility;
   document.getElementById("resource-rationale").textContent =
     context.resource_requirements.rationale;
-
   logToConsole("Results UI updated with analysis data", "info");
 }
 
-/**
- * Update score badge class based on score value
- */
 function updateScoreBadgeClass(element, score) {
-  // Remove existing classes
   element.classList.remove("score-high", "score-medium", "score-low");
-
-  // Add appropriate class based on score
   if (score >= 0.7) {
     element.classList.add("score-high");
   } else if (score >= 0.4) {
@@ -517,36 +389,24 @@ function updateScoreBadgeClass(element, score) {
   }
 }
 
-/**
- * Save analysis result to localStorage
- */
 function saveAnalysisToLocalStorage(data) {
   try {
     const analysisHistory = JSON.parse(
       localStorage.getItem("contextAnalysisHistory") || "[]"
     );
-
-    // Add timestamp
     const analysisWithTimestamp = {
       ...data,
       timestamp: new Date().toISOString(),
       id: "analysis-" + Date.now(),
     };
-
-    // Add to history
     analysisHistory.push(analysisWithTimestamp);
-
-    // Keep only the last 10 analyses
     if (analysisHistory.length > 10) {
       analysisHistory.shift();
     }
-
-    // Save back to localStorage
     localStorage.setItem(
       "contextAnalysisHistory",
       JSON.stringify(analysisHistory)
     );
-
     logToConsole("Analysis saved to localStorage", "system");
   } catch (e) {
     logToConsole(
@@ -556,15 +416,11 @@ function saveAnalysisToLocalStorage(data) {
   }
 }
 
-/**
- * Copy results to clipboard
- */
 function copyResults() {
   if (!lastAnalysisResult) {
     showToast("No analysis results to copy");
     return;
   }
-
   try {
     const jsonString = JSON.stringify(lastAnalysisResult, null, 2);
     navigator.clipboard.writeText(jsonString).then(() => {
@@ -577,20 +433,15 @@ function copyResults() {
   }
 }
 
-/**
- * Download results as JSON
- */
 function downloadResults() {
   if (!lastAnalysisResult) {
     showToast("No analysis results to download");
     return;
   }
-
   try {
     const jsonString = JSON.stringify(lastAnalysisResult, null, 2);
     const blob = new Blob([jsonString], { type: "application/json" });
     const url = URL.createObjectURL(blob);
-
     const a = document.createElement("a");
     a.href = url;
     a.download = `context-analysis-${new Date()
@@ -600,32 +451,21 @@ function downloadResults() {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-
     logToConsole("Analysis downloaded as JSON", "info");
   } catch (e) {
     showToast("Failed to download: " + e.message);
     logToConsole(`Failed to download: ${e.message}`, "error");
   }
 }
-
-// Initialize on page load if this is the context agent page
 document.addEventListener("DOMContentLoaded", () => {
   if (document.getElementById("analyst-select")) {
     logToConsole("Context Agent initialized", "system");
-
-    // Load analyst results
     loadAnalystResultsFromLocalStorage();
-
-    // Connect to socket if available
     if (typeof io !== "undefined") {
       connectSocket();
     }
   }
 });
-
-/**
- * Load company profile template
- */
 function loadCompanyTemplate() {
   const template = {
     name: "Mahindra & Mahindra Ltd.",
@@ -701,7 +541,6 @@ function loadCompanyTemplate() {
       },
     ],
   };
-
   document.getElementById("company-profile").value = JSON.stringify(
     template,
     null,
@@ -710,9 +549,6 @@ function loadCompanyTemplate() {
   logToConsole("Company profile template loaded", "info");
 }
 
-/**
- * Load competitor data template
- */
 function loadCompetitorTemplate() {
   const template = [
     {
@@ -846,7 +682,6 @@ function loadCompetitorTemplate() {
       ],
     },
   ];
-
   document.getElementById("competitor-data").value = JSON.stringify(
     template,
     null,
@@ -855,9 +690,6 @@ function loadCompetitorTemplate() {
   logToConsole("Competitor data template loaded", "info");
 }
 
-/**
- * Load analyst data template
- */
 function loadAnalystTemplate() {
   const template = {
     date: "2025-04-23",
@@ -3004,7 +2836,7 @@ function loadAnalystTemplate() {
         "The rise of connected vehicles necessitates smart infrastructure solutions that enable vehicle-to-infrastructure (V2I) communication, which enhances safety and operational efficiency for autonomous vehicles.",
         "There's a growing interest in sustainable transportation options beyond electric vehicles, such as hydrogen fuel cells, highlighting the importance of cross-domain innovation in the mobility sector.",
       ],
-      isData: true,
+      isData: !0,
       message: "Successfully generated insights.",
       notes:
         "The mobility sector is undergoing a transformative phase with electric vehicles at the forefront. Current trends highlight innovations in integrating EVs with energy systems like vehicle-to-grid technology, enhancing both the efficiency of energy usage and fleet management. Furthermore, advancements in wireless and robotic charging systems signal a move towards a more user-friendly charging infrastructure. Critical research into battery technology, particularly concerning thermal management systems, has emerged as essential for extending battery life and performance. The cross-saving implications of connected vehicles necessitate the need for smart infrastructure that enables effective V2I communication, particularly as autonomous vehicle technologies continue to evolve. Additionally, exploring alternative power sources such as hydrogen fuel cells reflects an encouraging trend towards sustainability in transportation. In light of these insights, strategies must focus on fostering partnerships for renewable energy integration, investing in smart infrastructure, and advancing material technology for electric vehicles to create a sustainable and efficient mobility ecosystem.",
@@ -3432,32 +3264,14 @@ function loadAnalystTemplate() {
       technologies: [
         {
           data: [
-            {
-              count: 2,
-              cumulative: 2,
-              year: 2021,
-            },
-            {
-              count: 0,
-              cumulative: 2,
-              year: 2022,
-            },
-            {
-              count: 0,
-              cumulative: 2,
-              year: 2023,
-            },
+            { count: 2, cumulative: 2, year: 2021 },
+            { count: 0, cumulative: 2, year: 2022 },
+            { count: 0, cumulative: 2, year: 2023 },
           ],
           domains: ["Mobility"],
           growth_data: [
-            {
-              growth: 0,
-              year: 2022,
-            },
-            {
-              growth: 0,
-              year: 2023,
-            },
+            { growth: 0, year: 2022 },
+            { growth: 0, year: 2023 },
           ],
           stage: "saturation",
           technology: "electric vehicles",
@@ -3465,32 +3279,14 @@ function loadAnalystTemplate() {
         },
         {
           data: [
-            {
-              count: 1,
-              cumulative: 1,
-              year: 2021,
-            },
-            {
-              count: 0,
-              cumulative: 1,
-              year: 2022,
-            },
-            {
-              count: 0,
-              cumulative: 1,
-              year: 2023,
-            },
+            { count: 1, cumulative: 1, year: 2021 },
+            { count: 0, cumulative: 1, year: 2022 },
+            { count: 0, cumulative: 1, year: 2023 },
           ],
           domains: ["Mobility"],
           growth_data: [
-            {
-              growth: 0,
-              year: 2022,
-            },
-            {
-              growth: 0,
-              year: 2023,
-            },
+            { growth: 0, year: 2022 },
+            { growth: 0, year: 2023 },
           ],
           stage: "saturation",
           technology: "power electronics",
@@ -3498,32 +3294,14 @@ function loadAnalystTemplate() {
         },
         {
           data: [
-            {
-              count: 1,
-              cumulative: 1,
-              year: 2021,
-            },
-            {
-              count: 0,
-              cumulative: 1,
-              year: 2022,
-            },
-            {
-              count: 0,
-              cumulative: 1,
-              year: 2023,
-            },
+            { count: 1, cumulative: 1, year: 2021 },
+            { count: 0, cumulative: 1, year: 2022 },
+            { count: 0, cumulative: 1, year: 2023 },
           ],
           domains: ["Mobility"],
           growth_data: [
-            {
-              growth: 0,
-              year: 2022,
-            },
-            {
-              growth: 0,
-              year: 2023,
-            },
+            { growth: 0, year: 2022 },
+            { growth: 0, year: 2023 },
           ],
           stage: "saturation",
           technology: "wireless charging",
@@ -3531,32 +3309,14 @@ function loadAnalystTemplate() {
         },
         {
           data: [
-            {
-              count: 1,
-              cumulative: 1,
-              year: 2021,
-            },
-            {
-              count: 0,
-              cumulative: 1,
-              year: 2022,
-            },
-            {
-              count: 0,
-              cumulative: 1,
-              year: 2023,
-            },
+            { count: 1, cumulative: 1, year: 2021 },
+            { count: 0, cumulative: 1, year: 2022 },
+            { count: 0, cumulative: 1, year: 2023 },
           ],
           domains: ["Mobility"],
           growth_data: [
-            {
-              growth: 0,
-              year: 2022,
-            },
-            {
-              growth: 0,
-              year: 2023,
-            },
+            { growth: 0, year: 2022 },
+            { growth: 0, year: 2023 },
           ],
           stage: "saturation",
           technology: "battery technology",
@@ -3564,32 +3324,14 @@ function loadAnalystTemplate() {
         },
         {
           data: [
-            {
-              count: 1,
-              cumulative: 1,
-              year: 2021,
-            },
-            {
-              count: 0,
-              cumulative: 1,
-              year: 2022,
-            },
-            {
-              count: 0,
-              cumulative: 1,
-              year: 2023,
-            },
+            { count: 1, cumulative: 1, year: 2021 },
+            { count: 0, cumulative: 1, year: 2022 },
+            { count: 0, cumulative: 1, year: 2023 },
           ],
           domains: ["Mobility"],
           growth_data: [
-            {
-              growth: 0,
-              year: 2022,
-            },
-            {
-              growth: 0,
-              year: 2023,
-            },
+            { growth: 0, year: 2022 },
+            { growth: 0, year: 2023 },
           ],
           stage: "saturation",
           technology: "thermal management",
@@ -3597,32 +3339,14 @@ function loadAnalystTemplate() {
         },
         {
           data: [
-            {
-              count: 0,
-              cumulative: 0,
-              year: 2021,
-            },
-            {
-              count: 0,
-              cumulative: 0,
-              year: 2022,
-            },
-            {
-              count: 1,
-              cumulative: 1,
-              year: 2023,
-            },
+            { count: 0, cumulative: 0, year: 2021 },
+            { count: 0, cumulative: 0, year: 2022 },
+            { count: 1, cumulative: 1, year: 2023 },
           ],
           domains: ["Mobility"],
           growth_data: [
-            {
-              growth: 0,
-              year: 2022,
-            },
-            {
-              growth: 0,
-              year: 2023,
-            },
+            { growth: 0, year: 2022 },
+            { growth: 0, year: 2023 },
           ],
           stage: "saturation",
           technology: "computer vision",
@@ -3630,32 +3354,14 @@ function loadAnalystTemplate() {
         },
         {
           data: [
-            {
-              count: 0,
-              cumulative: 0,
-              year: 2021,
-            },
-            {
-              count: 0,
-              cumulative: 0,
-              year: 2022,
-            },
-            {
-              count: 1,
-              cumulative: 1,
-              year: 2023,
-            },
+            { count: 0, cumulative: 0, year: 2021 },
+            { count: 0, cumulative: 0, year: 2022 },
+            { count: 1, cumulative: 1, year: 2023 },
           ],
           domains: ["Mobility"],
           growth_data: [
-            {
-              growth: 0,
-              year: 2022,
-            },
-            {
-              growth: 0,
-              year: 2023,
-            },
+            { growth: 0, year: 2022 },
+            { growth: 0, year: 2023 },
           ],
           stage: "saturation",
           technology: "robotics",
@@ -3663,32 +3369,14 @@ function loadAnalystTemplate() {
         },
         {
           data: [
-            {
-              count: 0,
-              cumulative: 0,
-              year: 2021,
-            },
-            {
-              count: 0,
-              cumulative: 0,
-              year: 2022,
-            },
-            {
-              count: 1,
-              cumulative: 1,
-              year: 2023,
-            },
+            { count: 0, cumulative: 0, year: 2021 },
+            { count: 0, cumulative: 0, year: 2022 },
+            { count: 1, cumulative: 1, year: 2023 },
           ],
           domains: ["Mobility"],
           growth_data: [
-            {
-              growth: 0,
-              year: 2022,
-            },
-            {
-              growth: 0,
-              year: 2023,
-            },
+            { growth: 0, year: 2022 },
+            { growth: 0, year: 2023 },
           ],
           stage: "saturation",
           technology: "electric vehicle charging",
@@ -3696,32 +3384,14 @@ function loadAnalystTemplate() {
         },
         {
           data: [
-            {
-              count: 0,
-              cumulative: 0,
-              year: 2021,
-            },
-            {
-              count: 1,
-              cumulative: 1,
-              year: 2022,
-            },
-            {
-              count: 0,
-              cumulative: 1,
-              year: 2023,
-            },
+            { count: 0, cumulative: 0, year: 2021 },
+            { count: 1, cumulative: 1, year: 2022 },
+            { count: 0, cumulative: 1, year: 2023 },
           ],
           domains: ["Mobility"],
           growth_data: [
-            {
-              growth: 0,
-              year: 2022,
-            },
-            {
-              growth: 0,
-              year: 2023,
-            },
+            { growth: 0, year: 2022 },
+            { growth: 0, year: 2023 },
           ],
           stage: "saturation",
           technology: "connected infrastructure",
@@ -3729,32 +3399,14 @@ function loadAnalystTemplate() {
         },
         {
           data: [
-            {
-              count: 0,
-              cumulative: 0,
-              year: 2021,
-            },
-            {
-              count: 1,
-              cumulative: 1,
-              year: 2022,
-            },
-            {
-              count: 0,
-              cumulative: 1,
-              year: 2023,
-            },
+            { count: 0, cumulative: 0, year: 2021 },
+            { count: 1, cumulative: 1, year: 2022 },
+            { count: 0, cumulative: 1, year: 2023 },
           ],
           domains: ["Mobility"],
           growth_data: [
-            {
-              growth: 0,
-              year: 2022,
-            },
-            {
-              growth: 0,
-              year: 2023,
-            },
+            { growth: 0, year: 2022 },
+            { growth: 0, year: 2023 },
           ],
           stage: "saturation",
           technology: "V2I communication",
@@ -3765,7 +3417,6 @@ function loadAnalystTemplate() {
     },
     timestamp: 1745401297,
   };
-
   document.getElementById("analyst-data").value = JSON.stringify(
     template,
     null,
@@ -3774,30 +3425,20 @@ function loadAnalystTemplate() {
   logToConsole("Analyst data template loaded", "info");
 }
 
-/**
- * Handle file upload for company profile
- */
 function handleCompanyFileUpload(input) {
   if (!input.files || input.files.length === 0) return;
-
   const file = input.files[0];
   if (file.type !== "application/json") {
     showToast("Please upload a JSON file");
     logToConsole("Invalid file type. Expected JSON", "error");
     return;
   }
-
   const fileNameDisplay = document.getElementById("company-filename");
   fileNameDisplay.textContent = file.name;
-
-  // Read the file
   const reader = new FileReader();
   reader.onload = function (e) {
     try {
-      // Validate JSON
       const content = JSON.parse(e.target.result);
-
-      // Update textarea
       document.getElementById("company-profile").value = JSON.stringify(
         content,
         null,
@@ -3809,34 +3450,23 @@ function handleCompanyFileUpload(input) {
       logToConsole("Error parsing JSON file: " + e.message, "error");
     }
   };
-
   reader.readAsText(file);
 }
 
-/**
- * Handle file upload for competitor data
- */
 function handleCompetitorFileUpload(input) {
   if (!input.files || input.files.length === 0) return;
-
   const file = input.files[0];
   if (file.type !== "application/json") {
     showToast("Please upload a JSON file");
     logToConsole("Invalid file type. Expected JSON", "error");
     return;
   }
-
   const fileNameDisplay = document.getElementById("competitor-filename");
   fileNameDisplay.textContent = file.name;
-
-  // Read the file
   const reader = new FileReader();
   reader.onload = function (e) {
     try {
-      // Validate JSON
       const content = JSON.parse(e.target.result);
-
-      // Update textarea
       document.getElementById("competitor-data").value = JSON.stringify(
         content,
         null,
@@ -3848,34 +3478,23 @@ function handleCompetitorFileUpload(input) {
       logToConsole("Error parsing JSON file: " + e.message, "error");
     }
   };
-
   reader.readAsText(file);
 }
 
-/**
- * Handle file upload for analyst data
- */
 function handleAnalystFileUpload(input) {
   if (!input.files || input.files.length === 0) return;
-
   const file = input.files[0];
   if (file.type !== "application/json") {
     showToast("Please upload a JSON file");
     logToConsole("Invalid file type. Expected JSON", "error");
     return;
   }
-
   const fileNameDisplay = document.getElementById("analyst-filename");
   fileNameDisplay.textContent = file.name;
-
-  // Read the file
   const reader = new FileReader();
   reader.onload = function (e) {
     try {
-      // Validate JSON
       const content = JSON.parse(e.target.result);
-
-      // Update textarea
       document.getElementById("analyst-data").value = JSON.stringify(
         content,
         null,
@@ -3887,22 +3506,15 @@ function handleAnalystFileUpload(input) {
       logToConsole("Error parsing JSON file: " + e.message, "error");
     }
   };
-
   reader.readAsText(file);
 }
 
-// Update loadAnalystResultsFromLocalStorage function
 function loadAnalystResultsFromLocalStorage() {
   try {
-    // Try to load analyst results directly from localStorage
     const storedAnalyst = localStorage.getItem("analystResultsIndex");
     if (storedAnalyst) {
       const indexData = JSON.parse(storedAnalyst);
-
-      // Clear current results
       analystResults = [];
-
-      // Load each result
       indexData.forEach((item) => {
         const storedData = localStorage.getItem(`analystResult_${item.id}`);
         if (storedData) {
@@ -3915,18 +3527,14 @@ function loadAnalystResultsFromLocalStorage() {
           });
         }
       });
-
       logToConsole(
         `Loaded ${analystResults.length} analyst results from localStorage`,
         "system"
       );
     } else {
-      // No analyst results found in localStorage
       logToConsole("No analyst results found in localStorage", "info");
       analystResults = [];
     }
-
-    // Update select dropdown
     updateAnalystSelect();
   } catch (e) {
     logToConsole(`Error loading from localStorage: ${e.message}`, "error");

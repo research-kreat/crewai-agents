@@ -2,9 +2,6 @@
 // CHATBOT AGENT FUNCTIONALITY
 // ==================================================
 
-// Store any chat-specific variables here
-let chatHistory = [];
-
 /**
  * Send a chat query to the chatbot
  */

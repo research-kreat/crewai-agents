@@ -2,12 +2,6 @@
 // SCOUT AGENT FUNCTIONALITY
 // ==================================================
 
-// Scout results storage
-let scoutResults = [];
-
-/**
- * Send Scout query
- */
 /**
  * Send Scout query
  */

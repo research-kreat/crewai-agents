@@ -2,13 +2,6 @@
 // VISUALIZATION AGENT FUNCTIONALITY
 // ==================================================
 
-// Store data sources and visualization settings
-let scoutResults = [];
-let contextResults = [];
-let currentData = null;
-let currentVizType = "treemap";
-let vizInstance = null;
-
 /**
  * Load data sources from localStorage
  */

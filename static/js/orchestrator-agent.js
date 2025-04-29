@@ -2,21 +2,6 @@
 // ORCHESTRATOR AGENT FUNCTIONALITY
 // ==================================================
 
-// Store workflow data and results
-let workflowConfig = null;
-let workflowResults = {
-  scout: null,
-  context: null,
-  visualization: null,
-  report: null,
-};
-let workflowStatus = "pending";
-let workflowTimer = null;
-let workflowStartTime = null;
-
-// Store scout results for selection
-let scoutResults = [];
-
 /**
  * Load Scout results from localStorage
  */

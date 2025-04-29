@@ -3,6 +3,37 @@
 // ==================================================
 const apiUrl = "http://localhost:5000";
 let socket = null;
+let lastAnalysisResult = null;
+let chatHistory = [];
+
+// Graph visualization variables
+let graphData = null;
+let forceGraph = null;
+let selectedNodeId = null;
+let currentNodeSize = 8;
+
+// Store workflow data and results
+let workflowConfig = null;
+let workflowResults = {
+  scout: null,
+  context: null,
+  visualization: null,
+  report: null,
+};
+let workflowStatus = "pending";
+let workflowTimer = null;
+let workflowStartTime = null;
+
+let contextResults = [];
+let currentData = null;
+let currentVizType = "treemap";
+let vizInstance = null;
+
+// Scout results storage if needed in analyst page
+let scoutResults = [];
+
+// Initialize analyst results array
+let analystResults = [];
 
 // ==================================================
 // CORE UTILITY FUNCTIONS (SHARED ACROSS ALL TEMPLATES)
@@ -420,7 +451,7 @@ function saveAnalystResultToLocalStorage(data = null) {
       return resultId;
     } 
     // If no data is provided, we're saving all results from the analystResults array
-    else if (typeof analystResults !== 'undefined' && Array.isArray(analystResults)) {
+    else if (Array.isArray(analystResults)) {
       // Create a version suitable for storage
       const storageData = analystResults.map((result) => ({
         id: result.id,
@@ -453,7 +484,6 @@ function saveAnalystResultToLocalStorage(data = null) {
   }
 }
 
-// Add a function to handle incoming analyst results
 function handleAnalystResult(result) {
   if (!result || !result.prompt) return;
 
@@ -482,8 +512,10 @@ function handleAnalystResult(result) {
   // Save to localStorage
   saveAnalystResultToLocalStorage();
 
-  // Update dropdown
-  updateAnalystSelect();
+  // Update dropdown if the function exists
+  if (typeof updateAnalystSelect === "function") {
+    updateAnalystSelect();
+  }
 
   logToConsole(
     `Added/updated analyst result for "${result.prompt.substring(0, 20)}..."`,
