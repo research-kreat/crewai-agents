@@ -115,7 +115,10 @@
                 </button>
               </div>
               <div id="console-log" class="console-log">
-                <div class="log-message system"><span class="log-timestamp">System</span> Analyst Agent ready to process data</div>
+                <div class="log-message system">
+                  <span class="log-timestamp">System</span> Analyst Agent ready
+                  to process data
+                </div>
               </div>
             </div>
           </div>
@@ -123,41 +126,10 @@
           <!-- Results Section -->
           <div class="results-section">
             <!-- Graph Visualization Container -->
-            <div class="graph-visualization">
-              <div class="visualization-header">
-                <h3>Knowledge Graph</h3>
-                <div class="visualization-controls">
-                  <button
-                    class="icon-button"
-                    onclick="toggleFullscreenGraph()"
-                    title="Toggle Fullscreen"
-                  >
-                    <i class="fas fa-expand"></i>
-                  </button>
-                  <button
-                    class="icon-button"
-                    onclick="downloadGraphImage()"
-                    title="Download Graph"
-                  >
-                    <i class="fas fa-download"></i>
-                  </button>
-                  <!-- increase or decrease node size -->
-                  <input
-                    type="range"
-                    title="Node Size"
-                    id="node-size"
-                    min="1"
-                    max="20"
-                    value="8"
-                    oninput="updateNodeSize(this.value)"
-                  />
-                </div>
-              </div>
-              <div id="graph-container" class="graph-container">
-                <div class="placeholder-message">
-                  <i class="fas fa-project-diagram"></i>
-                  <p>Analyze Scout data to generate Knowledge Graph</p>
-                </div>
+            <div id="graph-container" class="graph-container">
+              <div class="placeholder-message">
+                <i class="fas fa-project-diagram"></i>
+                <p>Analyze Scout data to generate Knowledge Graph</p>
               </div>
             </div>
 

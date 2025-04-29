@@ -632,94 +632,6 @@ function populateDomainFilter(data) {
   });
 }
 
-// Filter graph by domain
-function filterByDomain(domain) {
-  if (!graphData || !forceGraph) return;
-
-  logToConsole(`Filtering graph by domain: ${domain}`, "info");
-
-  if (domain === "all") {
-    // Reset to original graph
-    renderForceGraph(graphData);
-    return;
-  }
-
-  // Filter nodes and links
-  const filteredData = {
-    nodes: graphData.graph_data.nodes.filter((node) => node.domain === domain),
-    links: [],
-  };
-
-  // Only keep links between remaining nodes
-  const nodeIds = new Set(filteredData.nodes.map((n) => n.id));
-  filteredData.links = graphData.graph_data.links.filter(
-    (link) => nodeIds.has(link.source) && nodeIds.has(link.target)
-  );
-
-  // Update graph
-  forceGraph.graphData(filteredData);
-}
-
-// Search for nodes
-function searchNodes() {
-  const searchTerm = document.getElementById("node-search").value.toLowerCase();
-  if (!searchTerm || !forceGraph) return;
-
-  logToConsole(`Searching for: ${searchTerm}`, "info");
-
-  // Find matching nodes
-  const matchingNodes = graphData.graph_data.nodes.filter(
-    (node) =>
-      (node.title && node.title.toLowerCase().includes(searchTerm)) ||
-      (node.id && node.id.toLowerCase().includes(searchTerm))
-  );
-
-  if (matchingNodes.length === 0) {
-    logToConsole(`No nodes found matching "${searchTerm}"`, "warning");
-    return;
-  }
-
-  // Highlight the first matching node
-  const firstMatch = matchingNodes[0];
-
-  // Center view on the node
-  forceGraph.centerAt(
-    firstMatch.x,
-    firstMatch.y,
-    1000 // transition duration
-  );
-
-  setTimeout(() => {
-    forceGraph.zoom(2.5, 1000); // zoom level, transition duration
-
-    // Highlight the node
-    selectedNodeId = firstMatch.id;
-
-    forceGraph.nodeColor((node) => {
-      if (node.id === selectedNodeId) {
-        return "#ff5252"; // Highlighted node color
-      }
-
-      // Default node colors
-      switch (node.type) {
-        case "trend":
-          return "#4a6de5";
-        case "technology":
-          return "#28a745";
-        case "keyword":
-          return "#fd7e14";
-        default:
-          return "#6c757d";
-      }
-    });
-
-    // Show node details
-    showNodeDetails(firstMatch);
-  }, 1000);
-
-  logToConsole(`Found ${matchingNodes.length} matching nodes`, "info");
-}
-
 // Switch between graph and card views
 function switchView(viewType) {
   // Update button states
@@ -744,196 +656,782 @@ function switchView(viewType) {
   logToConsole(`Switched to ${viewType} view`, "info");
 }
 
-// Render Force Graph using force-graph library
 function renderForceGraph(data) {
   const graphContainer = document.getElementById("graph-container");
   graphContainer.innerHTML = ""; // Clear previous content
 
   if (
     !data ||
-    !data.original_scout_data ||
-    !data.original_scout_data.relevant_trends
+    !data.graph_data ||
+    !data.graph_data.nodes ||
+    data.graph_data.nodes.length === 0
   ) {
     graphContainer.innerHTML = `
       <div class="error-message">
         <i class="fas fa-exclamation-circle"></i>
-        <p>No trend data available for visualization</p>
+        <p>No graph data available for visualization</p>
       </div>
     `;
     return;
   }
 
-  // Transform scout data into graph structure
-  const trends = data.original_scout_data.relevant_trends;
+  // Extract graph data
+  const nodes = data.graph_data.nodes;
+  const links = data.graph_data.links;
 
-  // Generate graph data
-  const nodes = [];
-  const links = [];
-  const nodeMap = new Map();
+  // Set dimensions
+  const width = graphContainer.clientWidth;
+  const height = graphContainer.clientHeight || 600;
 
-  // Add trend nodes
-  trends.forEach((trend, index) => {
-    const node = {
-      id: trend.id || `trend-${index}`,
-      title: trend.title || "Unnamed Trend",
-      type: "trend",
-      domain: trend.domain || "Unknown",
-      knowledge_type: trend.knowledge_type || "Unknown",
-      similarity_score: trend.similarity_score || 0,
-      data: trend,
-    };
+  // Create SVG element
+  const svg = d3
+    .create("svg")
+    .attr("width", width)
+    .attr("height", height)
+    .attr("viewBox", [0, 0, width, height]);
 
-    nodes.push(node);
-    nodeMap.set(node.id, node);
+  // Create tooltip
+  const tooltip = d3
+    .select("body")
+    .append("div")
+    .attr("class", "graph-tooltip")
+    .style("opacity", 0)
+    .style("position", "absolute")
+    .style("background-color", "rgba(0, 0, 0, 0.7)")
+    .style("color", "white")
+    .style("border-radius", "5px")
+    .style("padding", "10px")
+    .style("font-size", "12px")
+    .style("pointer-events", "none")
+    .style("z-index", 1000);
 
-    // Add technology nodes from each trend
-    if (trend.technologies && Array.isArray(trend.technologies)) {
-      trend.technologies.forEach((tech) => {
-        const techId = `tech-${tech.replace(/\s+/g, "-").toLowerCase()}`;
+  // Generate color scale based on node type
+  const colorScale = d3
+    .scaleOrdinal()
+    .domain(["trend", "technology", "keyword", "unknown"])
+    .range(["#4a6de5", "#28a745", "#fd7e14", "#6c757d"]);
 
-        // Only add if not already in nodes
-        if (!nodeMap.has(techId)) {
-          const techNode = {
-            id: techId,
-            title: tech,
-            type: "technology",
-            domain: trend.domain || "Unknown",
-          };
-          nodes.push(techNode);
-          nodeMap.set(techId, techNode);
-        }
+  // Create force simulation
+  const simulation = d3
+    .forceSimulation(nodes)
+    .force(
+      "link",
+      d3
+        .forceLink(links)
+        .id((d) => d.id)
+        .distance(100)
+    )
+    .force("charge", d3.forceManyBody().strength(-200))
+    .force("center", d3.forceCenter(width / 2, height / 2))
+    .force(
+      "collide",
+      d3.forceCollide().radius((d) => calculateNodeRadius(d) + 5)
+    );
 
-        // Add link from trend to technology
-        links.push({
-          source: node.id,
-          target: techId,
-          type: "uses",
-        });
-      });
+  // Add links
+  const link = svg
+    .append("g")
+    .attr("stroke", "#999")
+    .attr("stroke-opacity", 0.6)
+    .selectAll("line")
+    .data(links)
+    .join("line")
+    .attr("stroke-width", (d) => Math.sqrt(d.weight || 1));
+
+  // Add nodes
+  const node = svg
+    .append("g")
+    .selectAll(".node")
+    .data(nodes)
+    .join("g")
+    .attr("class", "node")
+    .call(
+      d3
+        .drag()
+        .on("start", dragstarted)
+        .on("drag", dragged)
+        .on("end", dragended)
+    )
+    .on("click", (event, d) => {
+      event.stopPropagation();
+      selectedNodeId = d.id;
+      showNodeDetails(d);
+    });
+
+  // Function to calculate node radius based on type and score
+  function calculateNodeRadius(d) {
+    if (d.type === "trend") {
+      return 5 + (d.similarity_score || 0) * 15;
+    } else if (d.type === "technology") {
+      return 8;
+    } else if (d.type === "keyword") {
+      return 6;
+    } else {
+      return 5;
     }
+  }
 
-    // Add keyword nodes
-    if (trend.keywords && Array.isArray(trend.keywords)) {
-      trend.keywords.forEach((keyword) => {
-        const keywordId = `keyword-${keyword
-          .replace(/\s+/g, "-")
-          .toLowerCase()}`;
+  // Add circles for nodes
+  node
+    .append("circle")
+    .attr("r", calculateNodeRadius)
+    .attr("fill", (d) => d.color || colorScale(d.type || "unknown"))
+    .attr("stroke", "#fff")
+    .attr("stroke-width", 1.5)
+    .on("mouseover", function (event, d) {
+      // Highlight the node
+      d3.select(this).attr("stroke", "#ff5252").attr("stroke-width", 2);
 
-        if (!nodeMap.has(keywordId)) {
-          const keywordNode = {
-            id: keywordId,
-            title: keyword,
-            type: "keyword",
-            domain: trend.domain || "Unknown",
-          };
-          nodes.push(keywordNode);
-          nodeMap.set(keywordId, keywordNode);
-        }
+      // Show tooltip
+      tooltip.transition().duration(200).style("opacity", 0.9);
 
-        links.push({
-          source: node.id,
-          target: keywordId,
-          type: "has",
-        });
-      });
-    }
+      // Format tooltip content
+      let content = `<strong>${d.title || d.id}</strong><br>`;
+      content += `Type: ${d.type || "Unknown"}<br>`;
+
+      if (d.domain) {
+        content += `Domain: ${d.domain}<br>`;
+      }
+
+      if (d.knowledge_type) {
+        content += `Knowledge Type: ${d.knowledge_type}<br>`;
+      }
+
+      if (d.similarity_score !== undefined) {
+        content += `Similarity Score: ${d.similarity_score.toFixed(2)}<br>`;
+      }
+
+      if (d.publication_date) {
+        content += `Published: ${d.publication_date}<br>`;
+      }
+
+      tooltip
+        .html(content)
+        .style("left", event.pageX + 15 + "px")
+        .style("top", event.pageY - 30 + "px");
+    })
+    .on("mouseout", function () {
+      // Reset highlight
+      d3.select(this).attr("stroke", "#fff").attr("stroke-width", 1.5);
+
+      // Hide tooltip
+      tooltip.transition().duration(500).style("opacity", 0);
+    });
+
+  // Add labels to nodes
+  node
+    .append("text")
+    .text((d) => d.title || d.id)
+    .attr("x", (d) => calculateNodeRadius(d) + 5)
+    .attr("y", "0.31em")
+    .style("font-size", "10px")
+    .style("pointer-events", "none")
+    .style("text-shadow", "0 1px 0 rgba(255,255,255,0.6)")
+    .style("fill", "#333");
+
+  // Add title for accessibility
+  node.append("title").text((d) => d.title || d.id);
+
+  // Update positions in simulation
+  simulation.on("tick", () => {
+    // Keep nodes within bounds
+    nodes.forEach((d) => {
+      d.x = Math.max(20, Math.min(width - 20, d.x));
+      d.y = Math.max(20, Math.min(height - 20, d.y));
+    });
+
+    link
+      .attr("x1", (d) => d.source.x)
+      .attr("y1", (d) => d.source.y)
+      .attr("x2", (d) => d.target.x)
+      .attr("y2", (d) => d.target.y);
+
+    node.attr("transform", (d) => `translate(${d.x},${d.y})`);
   });
 
-  // Add connections between trends based on similarity
-  trends.forEach((trend1, i) => {
-    trends.slice(i + 1).forEach((trend2) => {
-      // Add link if they share domain or have similar scores
-      if (
-        trend1.domain === trend2.domain ||
-        (trend1.similarity_score &&
-          trend2.similarity_score &&
-          Math.abs(trend1.similarity_score - trend2.similarity_score) < 0.2)
-      ) {
-        const weight = trend1.domain === trend2.domain ? 2 : 1;
-        links.push({
-          source: trend1.id || `trend-${i}`,
-          target: trend2.id || `trend-${trends.indexOf(trend2)}`,
-          type: "related",
-          value: weight,
-        });
-      }
+  // Drag functions
+  function dragstarted(event, d) {
+    if (!event.active) simulation.alphaTarget(0.3).restart();
+    d.fx = d.x;
+    d.fy = d.y;
+  }
+
+  function dragged(event, d) {
+    d.fx = event.x;
+    d.fy = event.y;
+  }
+
+  function dragended(event, d) {
+    if (!event.active) simulation.alphaTarget(0);
+    d.fx = null;
+    d.fy = null;
+  }
+
+  // Add zoom capabilities
+  const zoom = d3
+    .zoom()
+    .scaleExtent([0.1, 3])
+    .on("zoom", (event) => {
+      svg.selectAll("g").attr("transform", event.transform);
     });
-  });
 
-  // Save graph data for future reference
-  data.graph_data = { nodes, links };
+  svg.call(zoom);
 
-  // Create Force Graph
-  forceGraph = ForceGraph()(graphContainer)
-    .graphData({ nodes, links })
-    .nodeId("id")
-    .nodeLabel((node) => `${node.title} (${node.type})`)
-    .nodeColor((node) => {
-      switch (node.type) {
-        case "trend":
-          return "#4a6de5";
-        case "technology":
-          return "#28a745";
-        case "keyword":
-          return "#fd7e14";
-        default:
-          return "#6c757d";
-      }
-    })
-    .nodeRelSize(currentNodeSize)
-    .linkWidth((link) => link.value || 1)
-    .linkDirectionalParticles(2)
-    .linkDirectionalParticleWidth((link) => link.value || 1)
-    .onNodeClick((node) => {
-      selectedNodeId = node.id;
-      showNodeDetails(node);
-    })
-    .onLinkClick((link) => {
-      showLinkDetails(link);
-    })
-    .nodeCanvasObject((node, ctx, globalScale) => {
-      // Node base rendering
-      const label = node.title;
-      const fontSize = 12 / globalScale;
-      const nodeSize =
-        node.id === selectedNodeId
-          ? 14 / globalScale
-          : ((node.similarity_score || 1) * 10) / globalScale;
+  // Add nodes to container
+  graphContainer.appendChild(svg.node());
 
-      ctx.beginPath();
-      ctx.arc(node.x, node.y, nodeSize, 0, 2 * Math.PI, false);
-      ctx.fillStyle =
-        node.id === selectedNodeId
-          ? "#ff5252" // Highlighted node
-          : node.color ||
-            (node.type === "trend"
-              ? "#4a6de5"
-              : node.type === "technology"
-              ? "#28a745"
-              : "#fd7e14");
-      ctx.fill();
+  // Create legend
+  createGraphLegend(colorScale);
 
-      // Add text only if zoomed in enough for readability
-      if (globalScale > 0.4) {
-        ctx.font = `${fontSize}px Sans-Serif`;
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillStyle = "white";
-        ctx.fillText(label, node.x, node.y);
-      }
-    });
+  // Store reference to simulation and other elements for later use
+  window.graphViz = {
+    svg: svg,
+    simulation: simulation,
+    nodes: nodes,
+    links: links,
+    colorScale: colorScale,
+    zoom: zoom,
+  };
 
   logToConsole(
     `Rendered knowledge graph with ${nodes.length} nodes and ${links.length} links`,
     "info"
   );
+
+  return {
+    svg: svg,
+    simulation: simulation,
+    nodes: nodes,
+    links: links,
+  };
 }
 
-// Update node size
+/**
+ * Create legend for the graph visualization
+ */
+function createGraphLegend(colorScale) {
+  const legendContainer = document.createElement("div");
+  legendContainer.className = "graph-legend";
+  legendContainer.style.position = "absolute";
+  legendContainer.style.top = "10px";
+  legendContainer.style.right = "10px";
+  legendContainer.style.background = "rgba(255, 255, 255, 0.8)";
+  legendContainer.style.padding = "10px";
+  legendContainer.style.borderRadius = "5px";
+  legendContainer.style.boxShadow = "0 1px 4px rgba(0,0,0,0.2)";
+
+  const title = document.createElement("div");
+  title.textContent = "Node Types";
+  title.style.fontWeight = "bold";
+  title.style.marginBottom = "5px";
+  legendContainer.appendChild(title);
+
+  const types = ["trend", "technology", "keyword", "unknown"];
+  const labels = ["Trend", "Technology", "Keyword", "Other"];
+
+  types.forEach((type, i) => {
+    const item = document.createElement("div");
+    item.style.display = "flex";
+    item.style.alignItems = "center";
+    item.style.marginBottom = "5px";
+
+    const colorBox = document.createElement("div");
+    colorBox.style.width = "12px";
+    colorBox.style.height = "12px";
+    colorBox.style.backgroundColor = colorScale(type);
+    colorBox.style.marginRight = "5px";
+
+    const label = document.createElement("span");
+    label.textContent = labels[i];
+    label.style.fontSize = "12px";
+
+    item.appendChild(colorBox);
+    item.appendChild(label);
+    legendContainer.appendChild(item);
+  });
+
+  const graphContainer = document.getElementById("graph-container");
+  graphContainer.appendChild(legendContainer);
+}
+
+/**
+ * Show related nodes
+ */
+function showRelatedNodes() {
+  if (!window.graphViz || !selectedNodeId) {
+    showToast("No node selected or graph not available");
+    return;
+  }
+
+  const { svg, simulation, nodes, links, colorScale } = window.graphViz;
+
+  // Find links connected to the selected node
+  const connectedLinks = links.filter(
+    (link) =>
+      (typeof link.source === "object" ? link.source.id : link.source) ===
+        selectedNodeId ||
+      (typeof link.target === "object" ? link.target.id : link.target) ===
+        selectedNodeId
+  );
+
+  // Get connected node IDs
+  const connectedNodeIds = new Set();
+  connectedLinks.forEach((link) => {
+    const sourceId =
+      typeof link.source === "object" ? link.source.id : link.source;
+    const targetId =
+      typeof link.target === "object" ? link.target.id : link.target;
+
+    if (sourceId !== selectedNodeId) connectedNodeIds.add(sourceId);
+    if (targetId !== selectedNodeId) connectedNodeIds.add(targetId);
+  });
+
+  // If no connections, show a message
+  if (connectedNodeIds.size === 0) {
+    showToast("No related nodes found for this node");
+    return;
+  }
+
+  logToConsole(`Found ${connectedNodeIds.size} related nodes`, "info");
+
+  // Update node colors
+  svg
+    .selectAll("circle")
+    .attr("fill", (d) => {
+      if (d.id === selectedNodeId) {
+        return "#ff5252"; // Selected node
+      } else if (connectedNodeIds.has(d.id)) {
+        return "#ffab00"; // Connected nodes
+      }
+
+      // Default colors (dimmed)
+      return d.color || colorScale(d.type || "unknown");
+    })
+    .attr("opacity", (d) => {
+      if (d.id === selectedNodeId || connectedNodeIds.has(d.id)) {
+        return 1; // Full opacity for selected and connected nodes
+      }
+      return 0.3; // Dim other nodes
+    });
+
+  // Update link visibility and width
+  svg
+    .selectAll("line")
+    .attr("stroke-opacity", (d) => {
+      const sourceId = typeof d.source === "object" ? d.source.id : d.source;
+      const targetId = typeof d.target === "object" ? d.target.id : d.target;
+
+      if (sourceId === selectedNodeId || targetId === selectedNodeId) {
+        return 0.8; // Higher opacity for connected links
+      }
+      return 0.1; // Very dim for other links
+    })
+    .attr("stroke-width", (d) => {
+      const sourceId = typeof d.source === "object" ? d.source.id : d.source;
+      const targetId = typeof d.target === "object" ? d.target.id : d.target;
+
+      if (sourceId === selectedNodeId || targetId === selectedNodeId) {
+        return Math.sqrt(d.weight || 1) * 2; // Thicker for connected links
+      }
+      return Math.sqrt(d.weight || 1);
+    })
+    .attr("stroke", (d) => {
+      const sourceId = typeof d.source === "object" ? d.source.id : d.source;
+      const targetId = typeof d.target === "object" ? d.target.id : d.target;
+
+      if (sourceId === selectedNodeId || targetId === selectedNodeId) {
+        return "#ffab00"; // Highlight connected links
+      }
+      return "#999"; // Default color for other links
+    });
+
+  // Update text opacity
+  svg.selectAll("text").attr("opacity", (d) => {
+    if (d.id === selectedNodeId || connectedNodeIds.has(d.id)) {
+      return 1; // Full opacity for selected and connected node labels
+    }
+    return 0.3; // Dim other labels
+  });
+
+  // Close the modal
+  document.getElementById("node-details-modal").style.display = "none";
+
+  // Add a reset button if it doesn't exist already
+  if (!document.getElementById("reset-graph-view")) {
+    const resetBtn = document.createElement("button");
+    resetBtn.id = "reset-graph-view";
+    resetBtn.className = "reset-view-btn";
+    resetBtn.innerHTML = '<i class="fas fa-undo"></i> Reset View';
+    resetBtn.onclick = resetGraphView;
+    resetBtn.style.position = "absolute";
+    resetBtn.style.bottom = "20px";
+    resetBtn.style.right = "20px";
+    resetBtn.style.zIndex = "100";
+
+    const graphContainer = document.getElementById("graph-container");
+    graphContainer.appendChild(resetBtn);
+  }
+
+  showToast(`Showing ${connectedNodeIds.size} related nodes`);
+}
+
+/**
+ * Reset graph view to normal
+ */
+function resetGraphView() {
+  if (!window.graphViz) return;
+
+  const { svg, colorScale } = window.graphViz;
+
+  // Reset node colors and opacity
+  svg
+    .selectAll("circle")
+    .attr("fill", (d) => d.color || colorScale(d.type || "unknown"))
+    .attr("opacity", 1)
+    .attr("stroke", "#fff")
+    .attr("stroke-width", 1.5);
+
+  // Reset link properties
+  svg
+    .selectAll("line")
+    .attr("stroke", "#999")
+    .attr("stroke-opacity", 0.6)
+    .attr("stroke-width", (d) => Math.sqrt(d.weight || 1));
+
+  // Reset text opacity
+  svg.selectAll("text").attr("opacity", 1);
+
+  // Clear selected node
+  selectedNodeId = null;
+
+  // Remove reset button
+  const resetBtn = document.getElementById("reset-graph-view");
+  if (resetBtn) {
+    resetBtn.remove();
+  }
+
+  showToast("Graph view reset");
+}
+
+/**
+ * Filter graph by domain
+ */
+function filterByDomain(domain) {
+  if (!window.graphViz) {
+    logToConsole("No graph data to filter", "warning");
+    return;
+  }
+
+  const { svg, nodes, links, simulation } = window.graphViz;
+
+  if (domain === "all") {
+    // Show all nodes and links
+    svg.selectAll("circle").attr("opacity", 1);
+    svg.selectAll("text").attr("opacity", 1);
+    svg.selectAll("line").attr("opacity", 0.6);
+
+    logToConsole("Showing all domains", "info");
+    return;
+  }
+
+  // Filter nodes by domain
+  const filteredNodeIds = new Set();
+  nodes.forEach((node) => {
+    if (node.domain === domain) {
+      filteredNodeIds.add(node.id);
+    }
+  });
+
+  // Update node visibility
+  svg
+    .selectAll("circle")
+    .attr("opacity", (d) => (filteredNodeIds.has(d.id) ? 1 : 0.2));
+
+  svg
+    .selectAll("text")
+    .attr("opacity", (d) => (filteredNodeIds.has(d.id) ? 1 : 0.2));
+
+  // Update link visibility
+  svg.selectAll("line").attr("opacity", (d) => {
+    const sourceId = typeof d.source === "object" ? d.source.id : d.source;
+    const targetId = typeof d.target === "object" ? d.target.id : d.target;
+
+    return filteredNodeIds.has(sourceId) && filteredNodeIds.has(targetId)
+      ? 0.6
+      : 0.1;
+  });
+
+  logToConsole(`Filtered graph to domain: ${domain}`, "info");
+}
+
+/**
+ * Search for nodes
+ */
+function searchNodes() {
+  const searchTerm = document.getElementById("node-search").value.toLowerCase();
+  if (!searchTerm || !window.graphViz) return;
+
+  const { svg, nodes, zoom } = window.graphViz;
+
+  logToConsole(`Searching for: ${searchTerm}`, "info");
+
+  // Find matching nodes
+  const matchingNodes = nodes.filter(
+    (node) =>
+      (node.title && node.title.toLowerCase().includes(searchTerm)) ||
+      (node.id && node.id.toLowerCase().includes(searchTerm))
+  );
+
+  if (matchingNodes.length === 0) {
+    logToConsole(`No nodes found matching "${searchTerm}"`, "warning");
+    showToast("No matching nodes found");
+    return;
+  }
+
+  // Highlight the matching nodes
+  svg
+    .selectAll("circle")
+    .attr("stroke", (d) => (matchingNodes.includes(d) ? "#ff5252" : "#fff"))
+    .attr("stroke-width", (d) => (matchingNodes.includes(d) ? 3 : 1.5))
+    .attr("opacity", (d) => (matchingNodes.includes(d) ? 1 : 0.3));
+
+  svg
+    .selectAll("text")
+    .attr("opacity", (d) => (matchingNodes.includes(d) ? 1 : 0.3));
+
+  // Focus on the first match if available
+  if (matchingNodes.length > 0) {
+    const firstMatch = matchingNodes[0];
+
+    // Center view on the first matching node
+    if (zoom && firstMatch.x && firstMatch.y) {
+      const zoomTransform = d3.zoomIdentity
+        .translate(window.innerWidth / 2, window.innerHeight / 2)
+        .scale(1.5)
+        .translate(-firstMatch.x, -firstMatch.y);
+
+      svg.transition().duration(750).call(zoom.transform, zoomTransform);
+    }
+
+    // Show details for the first match
+    showNodeDetails(firstMatch);
+  }
+
+  // Add a reset button if it doesn't exist already
+  if (!document.getElementById("reset-search")) {
+    const resetBtn = document.createElement("button");
+    resetBtn.id = "reset-search";
+    resetBtn.className = "reset-search-btn";
+    resetBtn.innerHTML = '<i class="fas fa-times"></i>';
+    resetBtn.onclick = resetSearch;
+    resetBtn.style.position = "absolute";
+    resetBtn.style.right = "10px";
+    resetBtn.style.top = "10px";
+
+    const searchBox = document.querySelector(".search-box");
+    if (searchBox) {
+      searchBox.style.position = "relative";
+      searchBox.appendChild(resetBtn);
+    }
+  }
+
+  logToConsole(`Found ${matchingNodes.length} matching nodes`, "info");
+  showToast(`Found ${matchingNodes.length} matches`);
+}
+
+/**
+ * Reset search highlighting
+ */
+function resetSearch() {
+  if (!window.graphViz) return;
+
+  const { svg } = window.graphViz;
+
+  // Reset node highlighting
+  svg
+    .selectAll("circle")
+    .attr("stroke", "#fff")
+    .attr("stroke-width", 1.5)
+    .attr("opacity", 1);
+
+  svg.selectAll("text").attr("opacity", 1);
+
+  // Clear search input
+  document.getElementById("node-search").value = "";
+
+  // Remove reset button
+  const resetBtn = document.getElementById("reset-search");
+  if (resetBtn) {
+    resetBtn.remove();
+  }
+
+  logToConsole("Search reset", "info");
+}
+
+/**
+ * Update node size
+ */
 function updateNodeSize(size) {
-  currentNodeSize = size;
-  if (forceGraph) {
-    forceGraph.nodeRelSize(currentNodeSize);
+  if (!window.graphViz) return;
+
+  const { svg, simulation } = window.graphViz;
+
+  // Update node sizes
+  svg.selectAll("circle").attr("r", (d) => {
+    // Base calculation from node type
+    let baseSize;
+    if (d.type === "trend") {
+      baseSize = 5 + (d.similarity_score || 0) * 15;
+    } else if (d.type === "technology") {
+      baseSize = 8;
+    } else if (d.type === "keyword") {
+      baseSize = 6;
+    } else {
+      baseSize = 5;
+    }
+
+    // Scale by the size factor
+    return baseSize * (parseInt(size) / 8);
+  });
+
+  // Update collision force
+  simulation.force(
+    "collide",
+    d3.forceCollide().radius((d) => {
+      let baseSize;
+      if (d.type === "trend") {
+        baseSize = 5 + (d.similarity_score || 0) * 15;
+      } else if (d.type === "technology") {
+        baseSize = 8;
+      } else if (d.type === "keyword") {
+        baseSize = 6;
+      } else {
+        baseSize = 5;
+      }
+
+      return baseSize * (parseInt(size) / 8) + 5;
+    })
+  );
+
+  // Restart simulation
+  simulation.alpha(0.3).restart();
+
+  logToConsole(`Updated node size to ${size}`, "info");
+}
+
+/**
+ * Toggle fullscreen mode for the graph visualization
+ */
+function toggleFullscreenGraph() {
+  const container = document.querySelector(".graph-visualization");
+
+  if (!container) {
+    logToConsole("Graph container not found", "error");
+    return;
+  }
+
+  // Function to handle fullscreen change
+  function fullscreenChangeHandler() {
+    if (
+      document.fullscreenElement ||
+      document.webkitFullscreenElement ||
+      document.mozFullScreenElement ||
+      document.msFullscreenElement
+    ) {
+      // We've entered fullscreen mode
+      logToConsole("Entered fullscreen mode", "info");
+
+      // Update button icon if it exists
+      const fsButton = document.querySelector(
+        ".visualization-controls .icon-button:first-child i"
+      );
+      if (fsButton) {
+        fsButton.className = "fas fa-compress";
+      }
+
+      // Resize the graph if it exists
+      if (window.graphViz && window.graphViz.svg) {
+        // Use setTimeout to ensure DOM has updated
+        setTimeout(() => {
+          window.graphViz.svg
+            .attr("width", window.innerWidth)
+            .attr("height", window.innerHeight);
+        }, 100);
+      }
+    } else {
+      // We've exited fullscreen mode
+      logToConsole("Exited fullscreen mode", "info");
+
+      // Update button icon back to expand
+      const fsButton = document.querySelector(
+        ".visualization-controls .icon-button:first-child i"
+      );
+      if (fsButton) {
+        fsButton.className = "fas fa-expand";
+      }
+
+      // Resize the graph back to normal
+      if (window.graphViz && window.graphViz.svg) {
+        // Use setTimeout to ensure DOM has updated
+        setTimeout(() => {
+          window.graphViz.svg
+            .attr("width", container.clientWidth)
+            .attr("height", container.clientHeight);
+        }, 100);
+      }
+    }
+  }
+
+  // Add event listeners for all browsers
+  document.addEventListener("fullscreenchange", fullscreenChangeHandler);
+  document.addEventListener("webkitfullscreenchange", fullscreenChangeHandler);
+  document.addEventListener("mozfullscreenchange", fullscreenChangeHandler);
+  document.addEventListener("MSFullscreenChange", fullscreenChangeHandler);
+
+  // Toggle fullscreen state
+  if (
+    !document.fullscreenElement &&
+    !document.webkitFullscreenElement &&
+    !document.mozFullScreenElement &&
+    !document.msFullscreenElement
+  ) {
+    // Enter fullscreen mode
+    try {
+      if (container.requestFullscreen) {
+        container.requestFullscreen();
+      } else if (container.mozRequestFullScreen) {
+        container.mozRequestFullScreen();
+      } else if (container.webkitRequestFullscreen) {
+        container.webkitRequestFullscreen();
+      } else if (container.msRequestFullscreen) {
+        container.msRequestFullscreen();
+      } else {
+        throw new Error("Fullscreen API not supported");
+      }
+    } catch (error) {
+      logToConsole(
+        `Failed to enter fullscreen mode: ${error.message}`,
+        "error"
+      );
+      showToast("Fullscreen mode not supported in this browser");
+    }
+  } else {
+    // Exit fullscreen mode
+    try {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.mozCancelFullScreen) {
+        document.mozCancelFullScreen();
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      } else if (document.msExitFullscreen) {
+        document.msExitFullscreen();
+      } else {
+        throw new Error("Fullscreen API not supported");
+      }
+    } catch (error) {
+      logToConsole(`Failed to exit fullscreen mode: ${error.message}`, "error");
+    }
   }
 }
 
@@ -1101,159 +1599,33 @@ function showLinkDetails(link) {
   }
 }
 
-// Show related nodes
-/**
- * Show related nodes with enhanced graph visualization integration
- */
-function showRelatedNodes() {
-  if (!selectedNodeId || !forceGraph || !graphData) {
-    showToast("No node selected or graph not available");
-    return;
-  }
-
-  const graphData = forceGraph.graphData();
-
-  // Find links connected to the selected node
-  const connectedLinks = graphData.links.filter(
-    (link) =>
-      (typeof link.source === "object" ? link.source.id : link.source) === selectedNodeId ||
-      (typeof link.target === "object" ? link.target.id : link.target) === selectedNodeId
-  );
-
-  // Get connected node IDs
-  const connectedNodeIds = new Set();
-  connectedLinks.forEach((link) => {
-    const sourceId = typeof link.source === "object" ? link.source.id : link.source;
-    const targetId = typeof link.target === "object" ? link.target.id : link.target;
-
-    if (sourceId !== selectedNodeId) connectedNodeIds.add(sourceId);
-    if (targetId !== selectedNodeId) connectedNodeIds.add(targetId);
-  });
-
-  // If no connections, show a message
-  if (connectedNodeIds.size === 0) {
-    showToast("No related nodes found for this node");
-    return;
-  }
-
-  logToConsole(`Found ${connectedNodeIds.size} related nodes`, "info");
-
-  // Create an array of connectedNodeIds for camera animation
-  const connectedNodes = Array.from(connectedNodeIds)
-    .map(id => graphData.nodes.find(node => node.id === id))
-    .filter(Boolean);
-
-  // Focus camera on the network of nodes (selected node + connected nodes)
-  if (connectedNodes.length > 0) {
-    // Calculate positions for camera focusing
-    const allNodesToFocus = [
-      graphData.nodes.find(node => node.id === selectedNodeId),
-      ...connectedNodes
-    ].filter(Boolean);
-    
-    // Calculate bounds for centering
-    const nodePositions = allNodesToFocus.map(node => ({x: node.x, y: node.y}));
-    const bounds = calculateBounds(nodePositions);
-    
-    // Focus camera on the network
-    const distance = 100; // Extra padding around the network
-    forceGraph.centerAt(bounds.centerX, bounds.centerY, 1000);
-    
-    // Apply appropriate zoom level based on bounds size
-    setTimeout(() => {
-      const zoomLevel = calculateZoomLevel(bounds.width, bounds.height, forceGraph);
-      forceGraph.zoom(zoomLevel, 1000);
-    }, 1100);
-  }
-
-  // Update node colors
-  forceGraph.nodeColor((node) => {
-    if (node.id === selectedNodeId) {
-      return "#ff5252"; // Selected node
-    } else if (connectedNodeIds.has(node.id)) {
-      return "#ffab00"; // Connected nodes
-    }
-
-    // Default colors (dimmed)
-    switch (node.type) {
-      case "trend":
-        return "rgba(74, 109, 229, 0.3)"; // Dimmed blue
-      case "technology":
-        return "rgba(40, 167, 69, 0.3)"; // Dimmed green
-      case "keyword":
-        return "rgba(253, 126, 20, 0.3)"; // Dimmed orange
-      default:
-        return "rgba(108, 117, 125, 0.3)"; // Dimmed gray
-    }
-  });
-
-  // Update link widths and colors
-  forceGraph.linkWidth((link) => {
-    const sourceId = typeof link.source === "object" ? link.source.id : link.source;
-    const targetId = typeof link.target === "object" ? link.target.id : link.target;
-
-    if (sourceId === selectedNodeId || targetId === selectedNodeId) {
-      return 4; // Highlight connected links
-    }
-    return link.value || 1;
-  }).linkColor((link) => {
-    const sourceId = typeof link.source === "object" ? link.source.id : link.source;
-    const targetId = typeof link.target === "object" ? link.target.id : link.target;
-
-    if (sourceId === selectedNodeId || targetId === selectedNodeId) {
-      return "#ffab00"; // Highlight connected links
-    }
-    return "rgba(150, 150, 150, 0.2)"; // Dim other links
-  });
-
-  // Update link particles
-  forceGraph.linkDirectionalParticles((link) => {
-    const sourceId = typeof link.source === "object" ? link.source.id : link.source;
-    const targetId = typeof link.target === "object" ? link.target.id : link.target;
-
-    if (sourceId === selectedNodeId || targetId === selectedNodeId) {
-      return 4; // Animated particles on connected links
-    }
-    return 0;
-  }).linkDirectionalParticleColor(() => "#ffab00");
-
-  // Close the modal
-  document.getElementById("node-details-modal").style.display = "none";
-  
-  // Add "Reset View" button if it doesn't exist
-  if (!document.getElementById("reset-relationship-view")) {
-    const resetBtn = document.createElement("button");
-    resetBtn.id = "reset-relationship-view";
-    resetBtn.className = "reset-view-btn";
-    resetBtn.innerHTML = '<i class="fas fa-undo"></i> Reset View';
-    resetBtn.onclick = resetGraphView;
-    
-    const container = document.querySelector(".graph-visualization");
-    container.appendChild(resetBtn);
-  }
-  
-  // Show a toast with instructions
-  showToast(`Showing ${connectedNodeIds.size} related nodes. Click on any node to view details.`);
-}
-
 /**
  * Helper function to calculate bounds for a set of node positions
  */
 function calculateBounds(positions) {
   if (!positions || positions.length === 0) {
-    return { minX: 0, minY: 0, maxX: 0, maxY: 0, width: 0, height: 0, centerX: 0, centerY: 0 };
+    return {
+      minX: 0,
+      minY: 0,
+      maxX: 0,
+      maxY: 0,
+      width: 0,
+      height: 0,
+      centerX: 0,
+      centerY: 0,
+    };
   }
-  
-  const minX = Math.min(...positions.map(p => p.x));
-  const maxX = Math.max(...positions.map(p => p.x));
-  const minY = Math.min(...positions.map(p => p.y));
-  const maxY = Math.max(...positions.map(p => p.y));
-  
+
+  const minX = Math.min(...positions.map((p) => p.x));
+  const maxX = Math.max(...positions.map((p) => p.x));
+  const minY = Math.min(...positions.map((p) => p.y));
+  const maxY = Math.max(...positions.map((p) => p.y));
+
   const width = maxX - minX;
   const height = maxY - minY;
   const centerX = minX + width / 2;
   const centerY = minY + height / 2;
-  
+
   return { minX, minY, maxX, maxY, width, height, centerX, centerY };
 }
 
@@ -1263,208 +1635,86 @@ function calculateBounds(positions) {
 function calculateZoomLevel(width, height, graph) {
   const graphWidth = graph.width();
   const graphHeight = graph.height();
-  
+
   // Add padding
   const paddedWidth = width * 1.5;
   const paddedHeight = height * 1.5;
-  
+
   // Calculate zoom levels for width and height to fit in view
   const zoomX = graphWidth / paddedWidth;
   const zoomY = graphHeight / paddedHeight;
-  
+
   // Use the smaller value to ensure all nodes are visible
   return Math.min(zoomX, zoomY, 2.5); // Cap at 2.5x zoom
 }
 
 /**
- * Reset graph view to normal
+ * Download graph as image
  */
-function resetGraphView() {
-  if (!forceGraph) return;
-  
-  // Reset node colors
-  forceGraph.nodeColor((node) => {
-    // Default node colors
-    switch (node.type) {
-      case "trend":
-        return "#4a6de5";
-      case "technology":
-        return "#28a745";
-      case "keyword":
-        return "#fd7e14";
-      default:
-        return "#6c757d";
-    }
-  });
-  
-  // Reset link properties
-  forceGraph
-    .linkWidth((link) => link.value || 1)
-    .linkColor(() => "#cccccc")
-    .linkDirectionalParticles(0);
-  
-  // Reset zoom to fit all nodes
-  forceGraph.zoomToFit(1000, 50);
-  
-  // Clear selected node
-  selectedNodeId = null;
-  
-  // Remove reset button
-  const resetBtn = document.getElementById("reset-relationship-view");
-  if (resetBtn) {
-    resetBtn.remove();
-  }
-  
-  showToast("Graph view reset");
-}
-
-/**
- * Toggle fullscreen mode for the graph visualization
- * Handles all major browsers and properly resizes the graph when entering/exiting fullscreen
- */
-function toggleFullscreenGraph() {
-  const container = document.querySelector(".graph-visualization");
-
-  if (!container) {
-    logToConsole("Graph container not found", "error");
-    return;
-  }
-
-  // Function to handle fullscreen change events
-  function fullscreenChangeHandler() {
-    if (
-      document.fullscreenElement ||
-      document.webkitFullscreenElement ||
-      document.mozFullScreenElement ||
-      document.msFullscreenElement
-    ) {
-      // We've entered fullscreen mode
-      logToConsole("Entered fullscreen mode", "info");
-
-      // Update button icon if it exists
-      const fsButton = document.querySelector(
-        ".visualization-controls .icon-button:first-child i"
-      );
-      if (fsButton) {
-        fsButton.className = "fas fa-compress";
-      }
-
-      // Resize the graph if it exists
-      if (forceGraph) {
-        // Use setTimeout to ensure DOM has updated
-        setTimeout(() => {
-          const width = container.clientWidth;
-          const height = container.clientHeight;
-          forceGraph.width(width).height(height);
-          forceGraph.refresh();
-        }, 100);
-      }
-    } else {
-      // We've exited fullscreen mode
-      logToConsole("Exited fullscreen mode", "info");
-
-      // Update button icon back to expand
-      const fsButton = document.querySelector(
-        ".visualization-controls .icon-button:first-child i"
-      );
-      if (fsButton) {
-        fsButton.className = "fas fa-expand";
-      }
-
-      // Resize the graph back to normal
-      if (forceGraph) {
-        // Use setTimeout to ensure DOM has updated
-        setTimeout(() => {
-          const width = container.clientWidth;
-          const height = container.clientHeight;
-          forceGraph.width(width).height(height);
-          forceGraph.refresh();
-        }, 100);
-      }
-    }
-  }
-
-  // Add event listeners for all browsers
-  document.addEventListener("fullscreenchange", fullscreenChangeHandler);
-  document.addEventListener("webkitfullscreenchange", fullscreenChangeHandler);
-  document.addEventListener("mozfullscreenchange", fullscreenChangeHandler);
-  document.addEventListener("MSFullscreenChange", fullscreenChangeHandler);
-
-  // Toggle fullscreen state
-  if (
-    !document.fullscreenElement &&
-    !document.webkitFullscreenElement &&
-    !document.mozFullScreenElement &&
-    !document.msFullscreenElement
-  ) {
-    // Enter fullscreen mode
-    try {
-      if (container.requestFullscreen) {
-        container.requestFullscreen();
-      } else if (container.mozRequestFullScreen) {
-        container.mozRequestFullScreen();
-      } else if (container.webkitRequestFullscreen) {
-        container.webkitRequestFullscreen();
-      } else if (container.msRequestFullscreen) {
-        container.msRequestFullscreen();
-      } else {
-        throw new Error("Fullscreen API not supported");
-      }
-    } catch (error) {
-      logToConsole(
-        `Failed to enter fullscreen mode: ${error.message}`,
-        "error"
-      );
-      showToast("Fullscreen mode not supported in this browser");
-    }
-  } else {
-    // Exit fullscreen mode
-    try {
-      if (document.exitFullscreen) {
-        document.exitFullscreen();
-      } else if (document.mozCancelFullScreen) {
-        document.mozCancelFullScreen();
-      } else if (document.webkitExitFullscreen) {
-        document.webkitExitFullscreen();
-      } else if (document.msExitFullscreen) {
-        document.msExitFullscreen();
-      } else {
-        throw new Error("Fullscreen API not supported");
-      }
-    } catch (error) {
-      logToConsole(`Failed to exit fullscreen mode: ${error.message}`, "error");
-    }
-  }
-}
-
-// Download graph as image
 function downloadGraphImage() {
-  if (!forceGraph) {
+  if (!window.graphViz || !window.graphViz.svg) {
     logToConsole("No graph to download", "warning");
+    showToast("No graph to download");
     return;
   }
 
   try {
-    // Get canvas from force graph
-    const canvas = document.querySelector(".graph-visualization canvas");
-    if (!canvas) {
-      logToConsole("Graph canvas not found", "error");
-      return;
-    }
+    // Get SVG element
+    const svgElement = window.graphViz.svg.node();
 
-    // Create a download link
-    const link = document.createElement("a");
-    link.download = "knowledge-graph.png";
-    link.href = canvas
-      .toDataURL("image/png")
-      .replace("image/png", "image/octet-stream");
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    // Get SVG data
+    const svgData = new XMLSerializer().serializeToString(svgElement);
+    const svgBlob = new Blob([svgData], {
+      type: "image/svg+xml;charset=utf-8",
+    });
+    const svgUrl = URL.createObjectURL(svgBlob);
 
-    logToConsole("Graph image downloaded", "info");
+    // Create canvas
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("2d");
+
+    // Set canvas dimensions to match SVG
+    const width = svgElement.width.baseVal.value;
+    const height = svgElement.height.baseVal.value;
+    canvas.width = width;
+    canvas.height = height;
+
+    // Create image from SVG
+    const img = new Image();
+    img.onload = function () {
+      // Draw white background
+      context.fillStyle = "white";
+      context.fillRect(0, 0, width, height);
+
+      // Draw the image
+      context.drawImage(img, 0, 0);
+
+      // Convert to PNG
+      const pngUrl = canvas.toDataURL("image/png");
+
+      // Create download link
+      const downloadLink = document.createElement("a");
+      downloadLink.download = "knowledge-graph.png";
+      downloadLink.href = pngUrl;
+      downloadLink.style.display = "none";
+
+      // Append to body, click, and remove
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+
+      // Clean up
+      URL.revokeObjectURL(svgUrl);
+    };
+
+    // Load the SVG data
+    img.src = svgUrl;
+
+    logToConsole("Graph image downloading...", "info");
+    showToast("Downloading graph image...");
   } catch (error) {
-    logToConsole(`Error downloading image: ${error.message}`, "error");
+    logToConsole(`Error downloading graph: ${error.message}`, "error");
+    showToast("Error downloading graph image");
   }
 }
 
@@ -2442,7 +2692,6 @@ function renderSCurveContent(svgGroup, data, width, height, margin) {
     throw e;
   }
 }
-
 
 /**
  * Safely render the S-Curve visualization with DOM error prevention
