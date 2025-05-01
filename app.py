@@ -10,11 +10,13 @@ from flask_socketio import SocketIO
 import logging
 import json
 import time
+from flask_cors import CORS
 
 # Initialize Flask app and SocketIO
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app, cors_allowed_origins="*")
+CORS(app) 
 load_dotenv()
 
 # Configure logging
