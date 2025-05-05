@@ -181,7 +181,7 @@ def setup_vector_index():
                             text_parts.append(str(props["title"]))
                         
                         # Try different description fields
-                        for desc_field in ["description_text", "description", "summary_text", "summary", "abstract"]:
+                        for desc_field in ["description_text", "summary_text", "abstract"]:
                             if desc_field in props and props[desc_field]:
                                 text_content = str(props[desc_field])
                                 # Limit length for very long descriptions
